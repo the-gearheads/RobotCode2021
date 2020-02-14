@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 
 public final class Constants {
 
-
     // MOTOR CONTROLLER IDs
     public static final int FL_ID = 1;
     public static final int FR_ID = 5;
@@ -27,7 +26,6 @@ public final class Constants {
     public static final double ROT_SPEED = 2;
 
     ////
-
 
     //// DRIVETRAIN SETTINGS
 

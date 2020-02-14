@@ -54,9 +54,11 @@ public class Spinner extends SubsystemBase {
   public void stop() {
     spinnerMotor.set(0);
   }
-  public void periodic(){
+
+  public void periodic() {
     SmartDashboard.putString("Die Farbe", getColor());
   }
+
   public String getColor() {
     Color detectedColor = colorSensor.getColor();
     ColorMatchResult match = m_colorMatcher.matchClosestColor(detectedColor);

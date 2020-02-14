@@ -7,10 +7,7 @@
 
 package frc.robot.commands.spinner;
 
-import java.util.Set;
-
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Spinner;
 

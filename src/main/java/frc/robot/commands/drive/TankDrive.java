@@ -21,10 +21,7 @@ public class TankDrive extends CommandBase {
 
   @Override
   public void execute() {
-    drive.controller.rawTankDrive(
-      RobotContainer.controller.getRawAxis(1), 
-      RobotContainer.controller.getRawAxis(4)
-    );
+    drive.controller.rawTankDrive(RobotContainer.controller.getRawAxis(1), RobotContainer.controller.getRawAxis(4));
   }
 
   @Override
