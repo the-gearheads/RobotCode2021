@@ -5,26 +5,23 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands.drive;
+package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.DriveSubsystem;
 
-public class TankDrive extends CommandBase {
+public class RawTankDrive extends CommandBase {
   DriveSubsystem drive;
 
-  public TankDrive(DriveSubsystem subsystem) {
+  public RawTankDrive(DriveSubsystem subsystem) {
     drive = subsystem;
     addRequirements(subsystem);
   }
 
   @Override
   public void execute() {
-    drive.controller.rawTankDrive(
-      RobotContainer.controller.getRawAxis(1), 
-      RobotContainer.controller.getRawAxis(4)
-    );
+    drive.controller.rawTankDrive(RobotContainer.controller.getRawAxis(1), RobotContainer.controller.getRawAxis(4));
   }
 
   @Override
