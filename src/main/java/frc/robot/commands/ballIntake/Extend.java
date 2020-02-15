@@ -5,21 +5,24 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands.Ball_Intake;
+package frc.robot.commands.ballIntake;
 
+import edu.wpi.first.wpilibj.Ultrasonic.Unit;
+import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Extender;
 
-public class Intake extends CommandBase {
+public class Extend extends CommandBase {
   private Extender extender;
 
   /**
-   * Creates a new Intake.
+   * Creates a new Extender.
    */
-  public Intake(Extender extender) {
+  public Extend(Extender extender) {
+    // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(extender);
     this.extender = extender;
-    // Use addRequirements() here to declare subsystem dependencies.
+
   }
 
   // Called when the command is initially scheduled.
@@ -30,19 +33,19 @@ public class Intake extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    extender.intake(0.8);
-
+    extender.extend(0.5);
+    
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    extender.intake(0);
+    extender.extend(0);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return (extender.getPosition()>= Units.inchesToMeters(9));
   }
 }

@@ -5,22 +5,20 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands.Ball_Intake;
+package frc.robot.commands.ballIntake;
 
-import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Extender;
 
-public class Retract extends CommandBase {
+public class Intake extends CommandBase {
   private Extender extender;
 
   /**
-   * Creates a new Retract.
+   * Creates a new Intake.
    */
-  public Retract(Extender extender) {
+  public Intake(Extender extender) {
     addRequirements(extender);
     this.extender = extender;
-
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -32,19 +30,19 @@ public class Retract extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    extender.retract(0.5);
+    extender.intake(0.8);
 
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    extender.retract(0);
+    extender.intake(0);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (extender.getPosition() <= Units.inchesToMeters(.1));
+    return false;
   }
 }
