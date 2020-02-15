@@ -24,10 +24,13 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.commands.drive.ArcadeDrive;
 import frc.robot.util.WheelVoltages;
+import io.github.oblarg.oblog.Logger;
+import io.github.oblarg.oblog.annotations.Log;
 
 public class DriveSubsystem extends SubsystemBase {
 
-  private final double ENCODER_CONSTANT = (1 / (double) Constants.ENCODER_EPR) * (1 / Constants.GEARING)
+  @Log
+  private final double ENCODER_CONSTANT = (1 / (double) Constants.ENCODER_EPR) * (1 / (double) Constants.GEARING)
       * Constants.WHEEL_DIAMETER * Math.PI;
   private final WPI_TalonFX flMotor;
   private final WPI_TalonFX frMotor;
@@ -40,10 +43,14 @@ public class DriveSubsystem extends SubsystemBase {
 
   private Supplier<Double> leftVelocity;
   private Supplier<Double> rightVelocity;
+  @Log
+  private double leftVel;
 
   public final Control controller = new Control();
 
   public DriveSubsystem() {
+    Logger.configureLoggingAndConfig(this, false);
+
     flMotor = new WPI_TalonFX(Constants.FL_ID);
     frMotor = new WPI_TalonFX(Constants.FR_ID);
     blMotor = new WPI_TalonFX(Constants.BL_ID);
@@ -70,7 +77,7 @@ public class DriveSubsystem extends SubsystemBase {
     rightSide = new SpeedControllerGroup(frMotor, brMotor);
     rightSide.setInverted(true);
 
-    drive = new DifferentialDrive(flMotor, frMotor);
+    drive = new DifferentialDrive(blMotor, brMotor);
     drive.setSafetyEnabled(false); // disable auto-shutoff of motors... wpilib why??????
     drive.setDeadband(0);
 
@@ -117,6 +124,7 @@ public class DriveSubsystem extends SubsystemBase {
     public void arcadeDrive(ChassisSpeeds chs) {
       DifferentialDriveWheelSpeeds speeds = kinematics.toWheelSpeeds(chs);
       tankDrive(speeds);
+      leftVel = leftVelocity.get();
     }
 
     public void tankDrive(DifferentialDriveWheelSpeeds speeds) {

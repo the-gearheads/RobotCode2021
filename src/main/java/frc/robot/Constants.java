@@ -22,8 +22,8 @@ public final class Constants {
     // Final Speed = MAX_SPEED*SPEED_MULTIPLIER
 
     // Meters per second
-    public static final double THROTTLE_SPEED = 6;
-    public static final double ROT_SPEED = 2;
+    public static double THROTTLE_SPEED = 2.5;
+    public static double ROT_SPEED = 0.5;
 
     ////
 
@@ -33,16 +33,16 @@ public final class Constants {
     public static final double TRACK_WIDTH = 7.86;
     public static final double GEARING = 10.71;
     public static final double WHEEL_DIAMETER = .2032;
-    public static final double ENCODER_EPR = .2032;
+    public static final double ENCODER_EPR = 2048;
 
     // Feed Forward
     public static final SimpleMotorFeedforward leftFF = new SimpleMotorFeedforward(0.46, 1.84, 0.193);
     public static final SimpleMotorFeedforward rightFF = new SimpleMotorFeedforward(0.5, 1.82, 0.185);
 
     // PID Config
-    public static final double LEFT_P = 0.000425;
+    public static final double LEFT_P = 0;//.000425;
     public static final double LEFT_D = 0;
-    public static final double RIGHT_P = 0.000155;
+    public static final double RIGHT_P = 0;//.000155;
     public static final double RIGHT_D = 0;
 
     ////
