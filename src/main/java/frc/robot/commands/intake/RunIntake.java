@@ -5,20 +5,20 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands.ballIntake;
+package frc.robot.commands.intake;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Extender;
+import frc.robot.subsystems.Intake;
 
-public class Intake extends CommandBase {
-  private Extender extender;
+public class RunIntake extends CommandBase {
+  private Intake intake;
 
   /**
    * Creates a new Intake.
    */
-  public Intake(Extender extender) {
-    addRequirements(extender);
-    this.extender = extender;
+  public RunIntake(Intake intake) {
+    addRequirements(intake);
+    this.intake = intake;
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -30,14 +30,14 @@ public class Intake extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    extender.intake(0.8);
+    intake.intake(0.8);
 
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    extender.intake(0);
+    intake.intake(0);
   }
 
   // Returns true when the command should end.

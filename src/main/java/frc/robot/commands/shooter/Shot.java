@@ -5,24 +5,21 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands.ballIntake;
+package frc.robot.commands.shooter;
 
-import edu.wpi.first.wpilibj.Ultrasonic.Unit;
-import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Extender;
+import frc.robot.subsystems.Shooter;
 
-public class Extend extends CommandBase {
-  private Extender extender;
-
+public class Shot extends CommandBase {
+  private Shooter shooter; 
   /**
-   * Creates a new Extender.
+   * Creates a new elevator.
    */
-  public Extend(Extender extender) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(extender);
-    this.extender = extender;
+  public Shot(Shooter shooter) {
+    addRequirements(shooter);
+    this.shooter = shooter;
 
+    // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
@@ -33,19 +30,18 @@ public class Extend extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    extender.extend(0.5);
-    
+    shooter.shot(0.3);  
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    extender.extend(0);
+    shooter.shot(0);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (extender.getPosition()>= Units.inchesToMeters(9));
+    return false;
   }
 }

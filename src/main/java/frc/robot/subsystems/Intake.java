@@ -7,23 +7,22 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
-import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Extender extends SubsystemBase {
+public class Intake extends SubsystemBase {
   /**
-   * Creates a new Extender.
+   * Creates a new Intake.
    */
   private final CANSparkMax extension;
   private final CANEncoder encoder;
   private final WPI_TalonSRX intake;
 
-  public Extender() {
+  public Intake() {
     extension = new CANSparkMax(0, MotorType.kBrushless);
     intake = new WPI_TalonSRX(0);
     encoder = extension.getEncoder();
