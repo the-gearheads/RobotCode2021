@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.util.Deadband;
 import io.github.oblarg.oblog.Logger;
 import io.github.oblarg.oblog.annotations.Log;
 
@@ -34,16 +35,13 @@ public class ArcadeDrive extends CommandBase {
     // speed
     double x = RobotContainer.controller.getRawAxis(4);
     double y = RobotContainer.controller.getRawAxis(1); // TODO: Why does this have to be inverted?
-    double xdeadband = 0.15;
-    double ydeadband = 0.05;
-    if (!(Math.abs(x) > xdeadband)) {
-      x = 0;
-    }
-    if (!(Math.abs(y) > ydeadband)) {
-      y = 0;
-    }
-    x = -(Constants.ROT_SPEED) * Math.pow(x, 3);
+
+    x = Deadband.getSmart(x, Constants.X_DEADBAND);
+    y = Deadband.getSmart(y, Constants.Y_DEADBAND);
+
+    x *= -Math.toRadians(Constants.ROT_SPEED);
     y *= -(Constants.THROTTLE_SPEED);
+
     ChassisSpeeds speeds = new ChassisSpeeds(y, 0, x);
     drive.controller.arcadeDrive(speeds);
   }

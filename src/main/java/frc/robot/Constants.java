@@ -23,7 +23,11 @@ public final class Constants {
 
     // Meters per second
     public static double THROTTLE_SPEED = 2.5;
-    public static double ROT_SPEED = 0.5;
+    // Degrees per second
+    public static double ROT_SPEED = 50;
+
+    public static double X_DEADBAND = 0.25;
+    public static double Y_DEADBAND = 0.05;
 
     ////
 
