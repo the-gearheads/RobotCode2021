@@ -7,22 +7,21 @@
 
 package frc.robot.commands.extender;
 
-import edu.wpi.first.wpilibj.Ultrasonic.Unit;
 import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Extender;
 
-public class Extend extends CommandBase {
+public class Retract extends CommandBase {
   private Extender extender;
 
   /**
-   * Creates a new Extender.
+   * Creates a new Retract.
    */
-  public Extend(Extender extender) {
-    // Use addRequirements() here to declare subsystem dependencies.
+  public Retract(Extender extender) {
     addRequirements(extender);
     this.extender = extender;
 
+    // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
@@ -33,19 +32,19 @@ public class Extend extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    extender.extend(0.5);
-    
+    extender.retract(0.5);
+
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    extender.extend(0);
+    extender.retract(0);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (extender.getPosition()>= Units.inchesToMeters(9));
+    return (extender.getPosition() <= Units.inchesToMeters(.1));
   }
 }

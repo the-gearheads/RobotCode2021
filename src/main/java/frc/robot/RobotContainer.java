@@ -9,22 +9,36 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.commands.extender.Extend;
+import frc.robot.commands.extender.Intake;
+import frc.robot.commands.extender.Retract;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.Extender;
 
 public class RobotContainer {
   public static XboxController controller;
   private static DriveSubsystem drive;
+  private static Extender extender;
+  private final SequentialCommandGroup ballGrab;
 
   public RobotContainer() {
     controller = new XboxController(Constants.CONTROLLER_PORT);
     drive = new DriveSubsystem();
     configureButtonBindings();
+    ballGrab = new SequentialCommandGroup(new Extend(extender), new Intake(extender));
   }
 
   private void configureButtonBindings() {
+    JoystickButton buttonLB = new JoystickButton(controller, XboxController.Button.kBumperLeft.value);
+    buttonLB.whenPressed(ballGrab);
+    JoystickButton buttonRB = new JoystickButton(controller, XboxController.Button.kBumperRight.value);
+    buttonRB.whenPressed(new Retract(extender));
   }
 
   public Command getAutonomousCommand() {
     return null;
   }
 }
+
