@@ -9,11 +9,14 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.shooter.Elevator;
 import frc.robot.commands.shooter.Shot;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Shooter;
 import frc.robot.util.JoystickTrigger;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 public class RobotContainer {
   public static XboxController controller;
@@ -35,10 +38,13 @@ public class RobotContainer {
     // buttonLB.whenPressed(ballGrab);
     // JoystickButton buttonRB = new JoystickButton(controller, XboxController.Button.kBumperRight.value);
     // buttonRB.whenPressed(new Retract(intake));
-    JoystickTrigger lTrigger = new JoystickTrigger(controller, XboxController.Axis.kLeftTrigger, 0.9);
-    lTrigger.whileHeld(new Elevator(shooter));
-    JoystickTrigger rTrigger = new JoystickTrigger(controller, XboxController.Axis.kRightTrigger, 0.9);
-    rTrigger.whileHeld(new Shot(shooter));
+    // JoystickTrigger lTrigger = new JoystickTrigger(controller, XboxController.Axis.kLeftTrigger, 0.9);
+    // lTrigger.whileHeld(new Elevator(shooter));
+    // JoystickTrigger rTrigger = new JoystickTrigger(controller, XboxController.Axis.kRightTrigger, 0.9);
+    // rTrigger.whileHeld(new Shot(shooter)); }
+    SequentialCommandGroup group = new SequentialCommandGroup(new Shot(shooter).withTimeout(1.5), new ParallelCommandGroup(new Shot(shooter), new Elevator(shooter)).withTimeout(2));
+    JoystickButton buttonA = new JoystickButton(controller, XboxController.Button.kA.value);
+    buttonA.whenPressed(group);
   }
 
   public Command getAutonomousCommand() {
