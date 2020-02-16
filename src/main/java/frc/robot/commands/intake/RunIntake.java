@@ -17,7 +17,7 @@ public class RunIntake extends CommandBase {
    * Creates a new Intake.
    */
   public RunIntake(Intake intake) {
-    addRequirements(intake);
+    // addRequirements(intake);
     this.intake = intake;
     // Use addRequirements() here to declare subsystem dependencies.
   }

@@ -7,6 +7,7 @@
 
 package frc.robot.commands.shooter;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Shooter;
 
@@ -31,13 +32,15 @@ public class Elevator extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    shooterElevator.elevator(0.3);
+    double upperSpeed = SmartDashboard.getNumber("upperSpeed", 0);
+    double lowerSpeed = SmartDashboard.getNumber("lowerSpeed", 0);
+    shooterElevator.elevator(upperSpeed, lowerSpeed);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    shooterElevator.elevator(0);
+    shooterElevator.elevator(0, 0);
   }
 
   // Returns true when the command should end.

@@ -25,6 +25,7 @@ public class RobotContainer {
   public RobotContainer() {
     controller = new XboxController(Constants.CONTROLLER_PORT);
     drive = new DriveSubsystem();
+    shooter = new Shooter();
     configureButtonBindings();
     // ballGrab = new SequentialCommandGroup(new Extend(intake), new Intake(intake));
   }

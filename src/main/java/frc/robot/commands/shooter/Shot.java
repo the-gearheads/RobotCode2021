@@ -7,6 +7,7 @@
 
 package frc.robot.commands.shooter;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Shooter;
 
@@ -16,7 +17,7 @@ public class Shot extends CommandBase {
    * Creates a new elevator.
    */
   public Shot(Shooter shooter) {
-    addRequirements(shooter);
+    // addRequirements(shooter);
     this.shooter = shooter;
 
     // Use addRequirements() here to declare subsystem dependencies.
@@ -30,7 +31,8 @@ public class Shot extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    shooter.shot(0.3);  
+    double shootSpeed = SmartDashboard.getNumber("shootSpeed", 0);
+    shooter.shot(shootSpeed);  
   }
 
   // Called once the command ends or is interrupted.

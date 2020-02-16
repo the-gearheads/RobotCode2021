@@ -8,36 +8,52 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.SpeedControllerGroup;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
 
 public class Shooter extends SubsystemBase {
   private final CANSparkMax rShooter;
   private final CANSparkMax lShooter;
-  private final CANSparkMax elevatorT;
-  private final CANSparkMax elevatorB;
+  private final CANSparkMax elevatorUpper;
+  private final CANSparkMax elevatorLower;
+  private final SpeedControllerGroup elevator;
+  private final SpeedControllerGroup shooter;
 
   /**
    * Creates a new Shooter.
    */
   public Shooter() {
-    rShooter = new CANSparkMax(0,MotorType.kBrushless);
-    lShooter = new CANSparkMax(0,MotorType.kBrushless);
-    elevatorT = new CANSparkMax(0,MotorType.kBrushless);
-    elevatorB = new CANSparkMax(0,MotorType.kBrushless);
+    lShooter = new CANSparkMax(7, MotorType.kBrushless);
+    rShooter = new CANSparkMax(5, MotorType.kBrushless);
+
+    elevatorUpper = new CANSparkMax(15, MotorType.kBrushless);
+    elevatorLower = new CANSparkMax(11, MotorType.kBrushless);
+    // elevatorLower.setInverted(true);
+
+    lShooter.setIdleMode(IdleMode.kBrake);
+    rShooter.setIdleMode(IdleMode.kBrake);
+    elevatorUpper.setIdleMode(IdleMode.kBrake);
+    elevatorLower.setIdleMode(IdleMode.kBrake);
+
+    elevator = new SpeedControllerGroup(elevatorUpper, elevatorLower);
+    shooter = new SpeedControllerGroup(lShooter, rShooter);
+
+    SmartDashboard.putNumber("shootSpeed", .5);
+    SmartDashboard.putNumber("upperSpeed", .6);
+    SmartDashboard.putNumber("lowerSpeed", .3);
   }
 
-  public void elevator(double speed) {
-    elevatorT.set(speed);
-    elevatorB.set(-speed);
-
+  public void elevator(double left, double right) {
+    elevatorUpper.set(left);
+    elevatorLower.set(-right);
   }
+
   public void shot(double speed) {
-    rShooter.set(speed);
-    lShooter.set(-speed);
-
+    lShooter.set(speed);
+    rShooter.set(-speed);
   }
 }
-
