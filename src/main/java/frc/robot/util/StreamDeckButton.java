@@ -21,9 +21,10 @@ public class StreamDeckButton extends Trigger {
     return this.icon;
   }
 
-  public void setIcon(String icon) {
+  public StreamDeckButton setIcon(String icon) {
     this.icon = icon;
     this.streamdeck.setIcon(button, icon);
+    return this;
   }
 
   public void setAction(boolean action) {

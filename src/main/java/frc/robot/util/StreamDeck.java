@@ -7,29 +7,27 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
 public class StreamDeck {
+    private final int buttons;
     private final NetworkTableEntry icons;
     private final String[] iconsDefault;
+    private final NetworkTable actionTable;
+    private final NetworkTable statusTable;
     private NetworkTableEntry[] actions;
     private NetworkTableEntry[] statuses;
 
     public StreamDeck(int id, int buttons) {
         NetworkTable table = NetworkTableInstance.getDefault().getTable("/StreamDeck").getSubTable(String.valueOf(id));
-        NetworkTable actionTable = table.getSubTable("Action");
-        NetworkTable statusTable = table.getSubTable("Status");
         actions = new NetworkTableEntry[buttons];
         statuses = new NetworkTableEntry[buttons];
+        actionTable = table.getSubTable("Action");
+        statusTable = table.getSubTable("Status");
         this.icons = table.getEntry("Icons");
-
+        this.buttons = buttons;
         iconsDefault = new String[buttons];
         Arrays.fill(iconsDefault, "default");
-
-        for (int i = 0; i < buttons; i++) {
-            actions[i] = actionTable.getEntry(String.valueOf(i));
-            statuses[i] = statusTable.getEntry(String.valueOf(i));
-            actions[i].setBoolean(false);
-            statuses[i].setBoolean(false);
-        }
         this.icons.setStringArray(iconsDefault);
+
+        reset();
     }
 
     public String getIcon(int index) {
@@ -57,6 +55,15 @@ public class StreamDeck {
 
     public boolean getStatus(int index) {
         return statuses[index].getBoolean(false);
+    }
+
+    public void reset() {
+        for (int i = 0; i < buttons; i++) {
+            actions[i] = actionTable.getEntry(String.valueOf(i));
+            statuses[i] = statusTable.getEntry(String.valueOf(i));
+            actions[i].setBoolean(false);
+            statuses[i].setBoolean(false);
+        }
     }
 
 }
