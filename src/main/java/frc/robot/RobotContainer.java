@@ -30,19 +30,15 @@ public class RobotContainer {
     drive = new DriveSubsystem();
     shooter = new Shooter();
     configureButtonBindings();
-    // ballGrab = new SequentialCommandGroup(new Extend(intake), new Intake(intake));
   }
 
   private void configureButtonBindings() {
-    // JoystickButton buttonLB = new JoystickButton(controller, XboxController.Button.kBumperLeft.value);
-    // buttonLB.whenPressed(ballGrab);
-    // JoystickButton buttonRB = new JoystickButton(controller, XboxController.Button.kBumperRight.value);
-    // buttonRB.whenPressed(new Retract(intake));
-    // JoystickTrigger lTrigger = new JoystickTrigger(controller, XboxController.Axis.kLeftTrigger, 0.9);
-    // lTrigger.whileHeld(new Elevator(shooter));
-    // JoystickTrigger rTrigger = new JoystickTrigger(controller, XboxController.Axis.kRightTrigger, 0.9);
-    // rTrigger.whileHeld(new Shot(shooter)); }
-    SequentialCommandGroup group = new SequentialCommandGroup(new Shot(shooter).withTimeout(1.5), new ParallelCommandGroup(new Shot(shooter), new Elevator(shooter)).withTimeout(2));
+    JoystickTrigger lTrigger = new JoystickTrigger(controller, XboxController.Axis.kLeftTrigger, 0.9);
+    lTrigger.whileHeld(new Elevator(shooter));
+    JoystickTrigger rTrigger = new JoystickTrigger(controller, XboxController.Axis.kRightTrigger, 0.9);
+    rTrigger.whileHeld(new Shot(shooter));
+    SequentialCommandGroup group = new SequentialCommandGroup(new Shot(shooter).withTimeout(1.5),
+        new ParallelCommandGroup(new Shot(shooter), new Elevator(shooter)).withTimeout(2));
     JoystickButton buttonA = new JoystickButton(controller, XboxController.Button.kA.value);
     buttonA.whenPressed(group);
   }
