@@ -12,7 +12,9 @@ import java.util.function.Supplier;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
@@ -20,9 +22,11 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.commands.drive.ArcadeDrive;
+import frc.robot.util.Deadband;
 import frc.robot.util.WheelVoltages;
 import io.github.oblarg.oblog.Logger;
 import io.github.oblarg.oblog.annotations.Log;
@@ -40,11 +44,16 @@ public class DriveSubsystem extends SubsystemBase {
   private final SpeedControllerGroup rightSide;
   private final DifferentialDrive drive;
   private final DifferentialDriveKinematics kinematics;
+  // private final AHRS gyro;
+  private final AHRS gyro;
 
   private Supplier<Double> leftVelocity;
   private Supplier<Double> rightVelocity;
+
   @Log
-  private double leftVel;
+  private double effort;
+  @Log
+  private double angVelDegrees;
 
   public final Control controller = new Control();
 
@@ -70,6 +79,12 @@ public class DriveSubsystem extends SubsystemBase {
     brMotor.setNeutralMode(NeutralMode.Brake);
 
     kinematics = new DifferentialDriveKinematics(Constants.TRACK_WIDTH);
+    gyro = new AHRS(Constants.GYRO_PORT);
+    // gyro = new AHRS(SPI.Port.kMXP);
+    // gyro.reset();
+    // gyro.zeroYaw();
+    // updateSpeed = gyro.getActualUpdateRate();
+
     leftVelocity = () -> blMotor.getSelectedSensorVelocity() * (ENCODER_CONSTANT * 10);
     rightVelocity = () -> brMotor.getSelectedSensorVelocity() * (-ENCODER_CONSTANT * 10);
 
@@ -84,6 +99,10 @@ public class DriveSubsystem extends SubsystemBase {
     setDefaultCommand(new ArcadeDrive(this));
   }
 
+  public double getAngle() {
+    return gyro.getRawGyroZ();
+  }
+
   /*
    * NAMING SCHEME: FF = Feedforward without PID raw = Does not use PID or
    * feedforward no prefix = uses PID and feedforward
@@ -91,6 +110,7 @@ public class DriveSubsystem extends SubsystemBase {
   public class Control {
     final PIDController leftPid;
     final PIDController rightPid;
+    final PIDController gyroPid;
 
     final SimpleMotorFeedforward leftFF;
     final SimpleMotorFeedforward rightFF;
@@ -98,10 +118,12 @@ public class DriveSubsystem extends SubsystemBase {
     private Control() {
       leftPid = new PIDController(Constants.LEFT_P, 0, Constants.LEFT_D);
       rightPid = new PIDController(Constants.RIGHT_P, 0, Constants.RIGHT_D);
+      gyroPid = new PIDController(Constants.GYRO_P, 0, Constants.GYRO_D);
 
       leftFF = Constants.leftFF;
       rightFF = Constants.rightFF;
     }
+
 
     public void rawDrive(double left, double right) {
       leftSide.set(left);
@@ -121,10 +143,30 @@ public class DriveSubsystem extends SubsystemBase {
       rightSide.setVoltage(voltages.right + rightFF.calculate(speeds.rightMetersPerSecond));
     }
 
+    public double angleFeedForward(double input) {
+      double degs = Math.toDegrees(input);
+      degs = Deadband.get(degs, 5);
+      if (degs == 0) {
+        return 0;
+      }
+      double neg = 1;
+      if (input < 0) {
+        neg = -1;
+      }
+      return Math.toRadians(degs+(30*neg));
+    }
+
+    public ChassisSpeeds gyroLoop(ChassisSpeeds chs) {
+      double angVelRads = Math.toRadians(getAngle());
+      effort = gyroPid.calculate(angVelRads, chs.omegaRadiansPerSecond);
+      return new ChassisSpeeds(chs.vxMetersPerSecond, chs.vyMetersPerSecond,
+      angleFeedForward(chs.omegaRadiansPerSecond) + effort);
+    }
+
     public void arcadeDrive(ChassisSpeeds chs) {
-      DifferentialDriveWheelSpeeds speeds = kinematics.toWheelSpeeds(chs);
+      DifferentialDriveWheelSpeeds speeds = kinematics.toWheelSpeeds(gyroLoop(chs));
+      angVelDegrees = getAngle();
       tankDrive(speeds);
-      leftVel = leftVelocity.get();
     }
 
     public void tankDrive(DifferentialDriveWheelSpeeds speeds) {

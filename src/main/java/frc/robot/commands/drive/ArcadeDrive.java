@@ -33,8 +33,8 @@ public class ArcadeDrive extends CommandBase {
   public void execute() {
     // Speed multiplier should never be more than one, since it is multiplied by max
     // speed
-    double x = RobotContainer.controller.getRawAxis(4);
-    double y = RobotContainer.controller.getRawAxis(1); // TODO: Why does this have to be inverted?
+    x = RobotContainer.controller.getRawAxis(4);
+    y = RobotContainer.controller.getRawAxis(1); // TODO: Why does this have to be inverted?
 
     x = Deadband.getSmart(x, Constants.X_DEADBAND);
     y = Deadband.getSmart(y, Constants.Y_DEADBAND);

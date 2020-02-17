@@ -7,6 +7,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.SPI.Port;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 
 public final class Constants {
@@ -22,11 +23,11 @@ public final class Constants {
     // Final Speed = MAX_SPEED*SPEED_MULTIPLIER
 
     // Meters per second
-    public static double THROTTLE_SPEED = 2.5;
+    public static double THROTTLE_SPEED = 1;
     // Degrees per second
-    public static double ROT_SPEED = 50;
+    public static double ROT_SPEED = 90;
 
-    public static double X_DEADBAND = 0.25;
+    public static double X_DEADBAND = 0.3;
     public static double Y_DEADBAND = 0.05;
 
     ////
@@ -34,7 +35,7 @@ public final class Constants {
     //// DRIVETRAIN SETTINGS
 
     // Kinematics Measurements
-    public static final double TRACK_WIDTH = 7.86;
+    public static final double TRACK_WIDTH = .68;
     public static final double GEARING = 10.71;
     public static final double WHEEL_DIAMETER = .2032;
     public static final double ENCODER_EPR = 2048;
@@ -44,12 +45,17 @@ public final class Constants {
     public static final SimpleMotorFeedforward rightFF = new SimpleMotorFeedforward(0.5, 1.82, 0.185);
 
     // PID Config
-    public static final double LEFT_P = 0;//.000425;
+    public static final double LEFT_P = 0;// .000425;
     public static final double LEFT_D = 0;
-    public static final double RIGHT_P = 0;//.000155;
+    public static final double RIGHT_P = 0;// .000155;
     public static final double RIGHT_D = 0;
 
     ////
+
+    //// GYRO
+    public static final Port GYRO_PORT = Port.kMXP;
+    public static final double GYRO_P = 1;
+    public static final double GYRO_D = 0;
 
     //// MISC
 
