@@ -40,6 +40,8 @@ public final class Constants {
     public static final double ENCODER_EPR = 2048; // encoder units
     public static final double MAX_VELOCITY = 6; // m/s
     public static final double MAX_ACCEL = 3; // m/s²
+    public static final double RAMSETE_B = 2.0; // m/s²
+    public static final double RAMSETE_ZETA = 0.7; // m/s²
 
     // Feed Forward
     public static final SimpleMotorFeedforward leftFF = new SimpleMotorFeedforward(0.46, 1.84, 0.193);

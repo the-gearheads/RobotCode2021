@@ -120,6 +120,18 @@ public class DriveSubsystem extends SubsystemBase {
     return -gyro.getAngle();
   }
 
+  public DifferentialDriveKinematics getKinematics() {
+    return kinematics;
+  }
+
+  public Pose2d getPose() {
+    return odometry.getPoseMeters();
+  }
+
+  public DifferentialDriveWheelSpeeds getWheelSpeeds() {
+    return new DifferentialDriveWheelSpeeds(leftVelocity.get(), rightVelocity.get());
+  }
+
   @Override
   public void periodic() {
     angularVelocity = getAngularVelocity();
@@ -130,9 +142,13 @@ public class DriveSubsystem extends SubsystemBase {
     y = pose.getTranslation().getY();
   }
 
+  public void tankDriveVolts(Double left, Double right) {
+    controller.rawDriveVoltage(left, right);
+  }
+
   public class Control {
-    final PIDController leftPid;
-    final PIDController rightPid;
+    public final PIDController leftPid;
+    public final PIDController rightPid;
     final PIDController gyroPid;
 
     final SimpleMotorFeedforward leftFF;
@@ -158,6 +174,11 @@ public class DriveSubsystem extends SubsystemBase {
 
     public void rawArcadeDrive(double speed, double rotation) {
       drive.arcadeDrive(speed, rotation);
+    }
+    
+    public void rawDriveVoltage(double left, double right) {
+      leftSide.setVoltage(left);
+      rightSide.setVoltage(right);
     }
 
     public void driveVoltageFF(WheelVoltages voltages, DifferentialDriveWheelSpeeds speeds) {
