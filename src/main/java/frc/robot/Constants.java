@@ -53,7 +53,14 @@ public final class Constants {
 
     ////
 
-    //// GYRO
+    //// SHOOTER SETTINGS
+
+    public static final double SHOOTER_ENCODER_EPR = 8192;
+    public static final SimpleMotorFeedforward shooterFF = new SimpleMotorFeedforward(0, 0, 0);
+
+    ////
+
+    //// GYRO SETTINGS
     public static final Port GYRO_PORT = Port.kMXP;
     public static final double GYRO_P = 1;
     public static final double GYRO_D = 0;
