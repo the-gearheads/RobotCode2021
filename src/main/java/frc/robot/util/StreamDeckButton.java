@@ -17,14 +17,20 @@ public class StreamDeckButton extends Trigger {
     CommandScheduler.getInstance().onCommandFinish(command -> handleFinished(command));
   }
 
+  public StreamDeckButton(StreamDeck streamdeck, int button, String icon) {
+    this.streamdeck = streamdeck;
+    this.button = button;
+    setIcon(icon);
+    CommandScheduler.getInstance().onCommandFinish(command -> handleFinished(command));
+  }
+
   public String getIcon() {
     return this.icon;
   }
 
-  public StreamDeckButton setIcon(String icon) {
+  public void setIcon(String icon) {
     this.icon = icon;
     this.streamdeck.setIcon(button, icon);
-    return this;
   }
 
   public void setAction(boolean action) {

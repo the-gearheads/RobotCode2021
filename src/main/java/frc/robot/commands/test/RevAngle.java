@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DriveSubsystem;
 
 public class RevAngle extends CommandBase {
-  private static DriveSubsystem drive;
+  private DriveSubsystem drive;
   private double angle;
   /**
    * Creates a new RevAngle.
@@ -34,7 +34,7 @@ public class RevAngle extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    this.drive.controller.arcadeDrive(new ChassisSpeeds(0, 0, angle));
+    drive.controller.arcadeDrive(new ChassisSpeeds(0, 0, angle));
   }
 
   // Called once the command ends or is interrupted.

@@ -7,21 +7,23 @@
 
 package frc.robot.commands.drive;
 
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.RobotContainer;
 import frc.robot.subsystems.DriveSubsystem;
 
 public class RawTankDrive extends CommandBase {
-  DriveSubsystem drive;
+  private DriveSubsystem drive;
+  private XboxController controller;
 
-  public RawTankDrive(DriveSubsystem subsystem) {
-    drive = subsystem;
-    addRequirements(subsystem);
+  public RawTankDrive(DriveSubsystem drive, XboxController controller) {
+    this.drive = drive;
+    this.controller = controller;
+    addRequirements(drive);
   }
 
   @Override
   public void execute() {
-    drive.controller.rawTankDrive(RobotContainer.controller.getRawAxis(1), RobotContainer.controller.getRawAxis(4));
+    drive.controller.rawTankDrive(controller.getRawAxis(1), controller.getRawAxis(4));
   }
 
   @Override

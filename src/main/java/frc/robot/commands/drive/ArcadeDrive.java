@@ -7,37 +7,30 @@
 
 package frc.robot.commands.drive;
 
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
-import frc.robot.RobotContainer;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.util.Deadband;
-import io.github.oblarg.oblog.Logger;
-import io.github.oblarg.oblog.annotations.Log;
 
 public class ArcadeDrive extends CommandBase {
-  DriveSubsystem drive;
-  @Log
-  double x;
-  @Log
-  double y;
+  private DriveSubsystem drive;
+  private XboxController controller;
 
-  public ArcadeDrive(DriveSubsystem subsystem) {
-    Logger.configureLoggingAndConfig(this, false);
-    drive = subsystem;
-    addRequirements(subsystem);
+  public ArcadeDrive(DriveSubsystem drive, XboxController controller) {
+    this.drive = drive;
+    this.controller = controller;
+    addRequirements(drive);
   }
 
   @Override
   public void execute() {
-    // Speed multiplier should never be more than one, since it is multiplied by max
-    // speed
-    x = RobotContainer.controller.getRawAxis(4);
-    y = RobotContainer.controller.getRawAxis(1); // TODO: Why does this have to be inverted?
+    double x = controller.getRawAxis(4);
+    double y = controller.getRawAxis(1);
 
-    x = Deadband.getSmart(x, Constants.X_DEADBAND);
-    y = Deadband.getSmart(y, Constants.Y_DEADBAND);
+    x = Deadband.getSmart(x, Constants.ROT_DEADBAND);
+    y = Deadband.getSmart(y, Constants.THROTTLE_DEADBAND);
 
     x *= -Math.toRadians(Constants.ROT_SPEED);
     y *= -(Constants.THROTTLE_SPEED);

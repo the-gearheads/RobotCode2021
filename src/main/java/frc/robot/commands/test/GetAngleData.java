@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DriveSubsystem;
 
 public class GetAngleData extends CommandBase {
-  private static DriveSubsystem drive;
+  private DriveSubsystem drive;
   private double angle;
   /**
    * Creates a new GetAngleData.
@@ -34,8 +34,8 @@ public class GetAngleData extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    this.drive.controller.arcadeDrive(new ChassisSpeeds(0, 0, angle));
-    SmartDashboard.putNumber("Test/AngularVelocity", drive.getAngle());
+    drive.controller.arcadeDrive(new ChassisSpeeds(0, 0, angle));
+    SmartDashboard.putNumber("Test/AngularVelocity", drive.getAngularVelocity());
   }
 
   // Called once the command ends or is interrupted.
