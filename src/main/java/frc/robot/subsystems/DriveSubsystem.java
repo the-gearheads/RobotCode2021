@@ -95,7 +95,6 @@ public class DriveSubsystem extends SubsystemBase {
     kinematics = new DifferentialDriveKinematics(Constants.TRACK_WIDTH);
     odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getAngle()));
 
-
     leftPosition = () -> blMotor.getSelectedSensorPosition() * (ENCODER_CONSTANT * 10);
     rightPosition = () -> brMotor.getSelectedSensorPosition() * (-ENCODER_CONSTANT * 10);
     leftVelocity = () -> blMotor.getSelectedSensorVelocity() * (ENCODER_CONSTANT * 10);
@@ -175,7 +174,7 @@ public class DriveSubsystem extends SubsystemBase {
     public void rawArcadeDrive(double speed, double rotation) {
       drive.arcadeDrive(speed, rotation);
     }
-    
+
     public void rawDriveVoltage(double left, double right) {
       leftSide.setVoltage(left);
       rightSide.setVoltage(right);
@@ -186,11 +185,20 @@ public class DriveSubsystem extends SubsystemBase {
       rightSide.setVoltage(voltages.right + rightFF.calculate(speeds.rightMetersPerSecond));
     }
 
+    public void driveVoltageFF(WheelVoltages voltages, DifferentialDriveWheelSpeeds speeds,
+        DifferentialDriveWheelSpeeds prevSpeeds, double dt) {
+      double leftFeedforward = leftFF.calculate(speeds.leftMetersPerSecond,
+          (speeds.leftMetersPerSecond - prevSpeeds.leftMetersPerSecond) / dt);
+      double rightFeedforward = rightFF.calculate(speeds.rightMetersPerSecond,
+          (speeds.rightMetersPerSecond - prevSpeeds.rightMetersPerSecond) / dt);
+
+      leftSide.setVoltage(voltages.left + leftFeedforward);
+      rightSide.setVoltage(voltages.right + rightFeedforward);
+    }
+
     public double angleFeedForward(double input) {
       double degs = Math.toDegrees(input);
-      degs = Deadband.get(degs, 5);
-      if (degs == 0) { return 0; } // return pre-emptively if outside deadband
-      return Math.toRadians(degs + (30 * Math.signum(input)));
+      return Deadband.get(Math.toRadians(degs + Math.copySign(30, input)), 5);
     }
 
     public ChassisSpeeds gyroLoop(ChassisSpeeds chs) {
@@ -209,6 +217,12 @@ public class DriveSubsystem extends SubsystemBase {
       WheelVoltages voltages = new WheelVoltages(leftPid.calculate(leftVelocity.get(), speeds.leftMetersPerSecond),
           rightPid.calculate(rightVelocity.get(), speeds.rightMetersPerSecond));
       driveVoltageFF(voltages, speeds);
+    }
+
+    public void tankDrive(DifferentialDriveWheelSpeeds speeds, DifferentialDriveWheelSpeeds prevSpeeds, double dt) {
+      WheelVoltages voltages = new WheelVoltages(leftPid.calculate(leftVelocity.get(), speeds.leftMetersPerSecond),
+          rightPid.calculate(rightVelocity.get(), speeds.rightMetersPerSecond));
+      driveVoltageFF(voltages, speeds, prevSpeeds, dt);
     }
 
   }

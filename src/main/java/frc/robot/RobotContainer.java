@@ -19,11 +19,10 @@ import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.test.Spin;
 import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.util.AngleCharacterize;
+import frc.robot.util.Ramsete;
 import frc.robot.util.StreamDeck;
 import frc.robot.util.StreamDeckButton;
 
@@ -59,7 +58,7 @@ public class RobotContainer {
   }
 
   private void configureButtonBindings() {
-    new JoystickButton(controller, XboxController.Button.kA.value).whenPressed(new AngleCharacterize(drive));
+    new JoystickButton(controller, XboxController.Button.kA.value).whenPressed(routeToOrigin());
     new StreamDeckButton(streamdeck, 0, "arms up").whenPressed(new Spin(drive).withTimeout(1));
     new StreamDeckButton(streamdeck, 1, "intake out").whenPressed(new Spin(drive).withTimeout(1));
     new StreamDeckButton(streamdeck, 2).whenPressed(new Spin(drive).withTimeout(1));
@@ -106,17 +105,30 @@ public class RobotContainer {
         new Pose2d(3, 0, new Rotation2d(0)),
         // Pass config
         config);
-    RamseteCommand ramseteCommand = new RamseteCommand(
-        trajectory, 
-        () -> drive.getPose(),
-        new RamseteController(Constants.RAMSETE_B, Constants.RAMSETE_ZETA), 
-        Constants.leftFF, drive.getKinematics(),
-        () -> drive.getWheelSpeeds(), 
-        drive.controller.leftPid, 
-        drive.controller.rightPid, 
-        (left, right) -> drive.tankDriveVolts(left, right),
-        drive
-      );
+
+    Ramsete ramseteCommand = new Ramsete(trajectory, new RamseteController(Constants.RAMSETE_B, Constants.RAMSETE_ZETA),
+        drive);
+    return ramseteCommand;
+  }
+
+  public Command routeToOrigin() {
+    final DifferentialDriveVoltageConstraint autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
+        Constants.leftFF, drive.getKinematics(), 10);
+    final TrajectoryConfig config = new TrajectoryConfig(Constants.MAX_VELOCITY, Constants.MAX_ACCEL)
+        .setKinematics(drive.getKinematics()).addConstraint(autoVoltageConstraint);
+    // An example trajectory to follow. All units in meters.
+    Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
+        // Start where we are
+        drive.getPose(),
+        // idk if this will work lol but hopefully it does nothing
+        List.of(drive.getPose().getTranslation()),
+        // End at origin
+        new Pose2d(0, 0, new Rotation2d(0)),
+        // Pass config
+        config);
+
+    Ramsete ramseteCommand = new Ramsete(trajectory, new RamseteController(Constants.RAMSETE_B, Constants.RAMSETE_ZETA),
+        drive);
     return ramseteCommand;
   }
 
