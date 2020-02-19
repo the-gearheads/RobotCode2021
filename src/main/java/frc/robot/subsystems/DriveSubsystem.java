@@ -109,7 +109,7 @@ public class DriveSubsystem extends SubsystemBase {
     drive.setSafetyEnabled(false); // disable auto-shutoff of motors... wpilib why??????
     drive.setDeadband(0);
 
-    setDefaultCommand(new ArcadeDrive(this, RobotContainer.getController()));
+    setDefaultCommand(new ArcadeDrive(this));
   }
 
   public double getAngularVelocity() {
