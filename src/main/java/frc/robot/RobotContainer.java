@@ -7,35 +7,58 @@
 
 package frc.robot;
 
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.commands.test.Spin;
+import frc.robot.commands.arms.ExtendArms;
+import frc.robot.commands.arms.RetractArms;
+import frc.robot.commands.drive.TurnToAngle;
+import frc.robot.commands.intake.RunIntake;
+import frc.robot.commands.shooter.Elevator;
+import frc.robot.commands.shooter.Shot;
+import frc.robot.commands.spinner.SpinColor;
+import frc.robot.commands.spinner.SpinRotations;
+import frc.robot.subsystems.Arms;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Spinner;
 import frc.robot.util.AngleCharacterize;
+import frc.robot.util.JoystickTrigger;
 import frc.robot.util.StreamDeck;
 import frc.robot.util.StreamDeckButton;
 
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.subsystems.Shooter;
-import frc.robot.util.JoystickTrigger;
-import frc.robot.commands.shooter.Elevator;
-import frc.robot.commands.shooter.Shot;
-
 public class RobotContainer {
+  // OI
   public static XboxController controller;
   private static StreamDeck streamdeck;
+
+  // Subsystems
   private static DriveSubsystem drive;
   private static Shooter shooter;
+  private static Spinner spinner;
+  private static Intake intake;
+  private static Arms arms;
+
+  // Misc
+  private final NetworkTableEntry cameraAngle;
 
   public RobotContainer() {
     drive = new DriveSubsystem();
     shooter = new Shooter();
+    spinner = new Spinner();
+    intake = new Intake();
+    arms = new Arms();
 
     controller = new XboxController(Constants.CONTROLLER_PORT);
     streamdeck = new StreamDeck(0, 15);
     configureButtonBindings();
+
+    cameraAngle = NetworkTableInstance.getDefault().getTable("OpenSight").getEntry("camera");
   }
 
   // run on any mode init
@@ -43,37 +66,38 @@ public class RobotContainer {
     streamdeck.reset();
   }
 
-  public static XboxController getController() {
-    return controller;
+  public void createGroups() {
   }
 
   private void configureButtonBindings() {
-
+    // Set up command groups
     SequentialCommandGroup shootGroup = new SequentialCommandGroup(new Shot(shooter).withTimeout(1.5),
         new ParallelCommandGroup(new Shot(shooter), new Elevator(shooter)).withTimeout(2));
-    new JoystickButton(controller, XboxController.Button.kA.value).whenPressed(new AngleCharacterize(drive));
-    new StreamDeckButton(streamdeck, 0, "arms up").whenPressed(new Spin(drive).withTimeout(1));
-    new StreamDeckButton(streamdeck, 1, "intake out").whenPressed(new Spin(drive).withTimeout(1));
-    new StreamDeckButton(streamdeck, 2, "red").whenPressed(new Spin(drive).withTimeout(1));
-    new StreamDeckButton(streamdeck, 3, "elevator plus").whenPressed(new Spin(drive).withTimeout(1));
-    new StreamDeckButton(streamdeck, 4, "shoot");
-    new StreamDeckButton(streamdeck, 5, "color wheel").whenPressed(new Spin(drive).withTimeout(1));
-    new StreamDeckButton(streamdeck, 6, "green").whenPressed(new Spin(drive).withTimeout(1));
-    new StreamDeckButton(streamdeck, 7, "rotate").whenPressed(new Spin(drive).withTimeout(1));
-    new StreamDeckButton(streamdeck, 8, "yellow").whenPressed(new Spin(drive).withTimeout(1));
-    new StreamDeckButton(streamdeck, 9, "unjam").whenPressed(new Spin(drive).withTimeout(1));
-    new StreamDeckButton(streamdeck, 10, "arms down").whenPressed(new Spin(drive).withTimeout(1));
-    new StreamDeckButton(streamdeck, 11, "intake").whenPressed(new Spin(drive).withTimeout(1));
-    new StreamDeckButton(streamdeck, 12, "blue").whenPressed(new Spin(drive).withTimeout(1));
-    new StreamDeckButton(streamdeck, 13, "elevator minus").whenPressed(new Spin(drive).withTimeout(1));
-    new StreamDeckButton(streamdeck, 14, "aim").whenPressed(new Spin(drive).withTimeout(1));
 
+    // Set up joystick binds
+    new JoystickButton(controller, XboxController.Button.kA.value).whenPressed(new AngleCharacterize(drive));
     JoystickTrigger lTrigger = new JoystickTrigger(controller, XboxController.Axis.kLeftTrigger, 0.9);
     lTrigger.whileHeld(new Elevator(shooter));
     JoystickTrigger rTrigger = new JoystickTrigger(controller, XboxController.Axis.kRightTrigger, 0.9);
     rTrigger.whileHeld(new Shot(shooter));
-    JoystickButton buttonA = new JoystickButton(controller, XboxController.Button.kA.value);
-    buttonA.whenPressed(shootGroup);
+
+    // Set up StreamDeck buttons 
+    new StreamDeckButton(streamdeck, 0, "arms up").whenPressed(new ExtendArms(arms).withTimeout(5)); // TODO: Set timing
+    new StreamDeckButton(streamdeck, 1, "intake out").whenPressed(new RunIntake(intake, -0.8)); // TODO: Bind
+    new StreamDeckButton(streamdeck, 2, "red").whenPressed(new SpinColor(spinner, "Red"));
+    new StreamDeckButton(streamdeck, 3, "elevator plus"); // TODO: Bind
+    new StreamDeckButton(streamdeck, 4, "shoot").whenPressed(shootGroup);
+    new StreamDeckButton(streamdeck, 5, "color wheel"); // TODO: Bind
+    new StreamDeckButton(streamdeck, 6, "green").whenPressed(new SpinColor(spinner, "Green"));
+    new StreamDeckButton(streamdeck, 7, "rotate").whenPressed(new SpinRotations(spinner, 4));
+    new StreamDeckButton(streamdeck, 8, "yellow").whenPressed(new SpinColor(spinner, "Yellow"));
+    new StreamDeckButton(streamdeck, 9, "unjam"); // TODO: Bind
+    new StreamDeckButton(streamdeck, 10, "arms down").whenPressed(new RetractArms(arms).withTimeout(5)); // TODO: Set timing
+    new StreamDeckButton(streamdeck, 11, "intake").whenPressed(new RunIntake(intake, 0.8));
+    new StreamDeckButton(streamdeck, 12, "blue").whenPressed(new SpinColor(spinner, "Blue"));
+    new StreamDeckButton(streamdeck, 13, "elevator minus"); // TODO: Bind
+    new StreamDeckButton(streamdeck, 14, "aim").whenPressed(new TurnToAngle(drive, cameraAngle.getDouble(0), 5, true));
+
   }
 
   public Command getAutonomousCommand() {

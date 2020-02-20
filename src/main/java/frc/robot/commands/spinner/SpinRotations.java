@@ -7,30 +7,47 @@
 
 package frc.robot.commands.spinner;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Spinner;
 
-public class SpinColor extends CommandBase {
+public class SpinRotations extends CommandBase {
   private Spinner spinner;
+  private String lastColor;
   private String targetColor;
+  private int spinCount;
+  private int rotations;
 
   /**
-   * Creates a new SpinColor.
+   * Creates a new Spin360.
    */
-  public SpinColor(Spinner subsystem, String targetColor) {
-    addRequirements(subsystem);
-    spinner = subsystem;
-    this.targetColor = targetColor;
+  public SpinRotations(Spinner spinner, int rot) {
+    addRequirements(spinner);
+    this.spinner = spinner;
+    rotations = rot;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    targetColor = spinner.getColor();
+    lastColor = spinner.getColor();
+    spinCount = 0;
+
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    String currentColor = spinner.getColor();
+    if (currentColor != lastColor) {
+      lastColor = currentColor;
+      if (currentColor == targetColor) {
+        spinCount += 1;
+      }
+    }
+    SmartDashboard.putNumber("spinCount", spinCount);
+    SmartDashboard.putString("Color:", currentColor);
     spinner.spinClockwise();
   }
 
@@ -43,6 +60,6 @@ public class SpinColor extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (targetColor == spinner.getColor());
+    return (spinCount >= rotations * 2);
   }
 }
