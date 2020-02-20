@@ -14,6 +14,8 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
@@ -45,7 +47,7 @@ public class DriveSubsystem extends SubsystemBase {
   private final SpeedControllerGroup rightSide;
 
   private final DifferentialDrive drive;
-  private final DifferentialDriveKinematics kinematics;
+  public final DifferentialDriveKinematics kinematics;
   private final DifferentialDriveOdometry odometry;
 
   private final AHRS gyro;
@@ -93,10 +95,10 @@ public class DriveSubsystem extends SubsystemBase {
 
     gyro = new AHRS(Constants.GYRO_PORT);
     kinematics = new DifferentialDriveKinematics(Constants.TRACK_WIDTH);
-    odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getAngle()));
+    odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getAngle()), new Pose2d(5.5, 13.5, Rotation2d.fromDegrees(getAngle())));
 
-    leftPosition = () -> blMotor.getSelectedSensorPosition() * (ENCODER_CONSTANT * 10);
-    rightPosition = () -> brMotor.getSelectedSensorPosition() * (-ENCODER_CONSTANT * 10);
+    leftPosition = () -> blMotor.getSelectedSensorPosition() * (ENCODER_CONSTANT);
+    rightPosition = () -> brMotor.getSelectedSensorPosition() * (-ENCODER_CONSTANT);
     leftVelocity = () -> blMotor.getSelectedSensorVelocity() * (ENCODER_CONSTANT * 10);
     rightVelocity = () -> brMotor.getSelectedSensorVelocity() * (-ENCODER_CONSTANT * 10);
 
@@ -108,7 +110,7 @@ public class DriveSubsystem extends SubsystemBase {
     drive.setSafetyEnabled(false); // disable auto-shutoff of motors... wpilib why??????
     drive.setDeadband(0);
 
-    setDefaultCommand(new ArcadeDrive(this, RobotContainer.getController()));
+    setDefaultCommand(new ArcadeDrive(this));
   }
 
   public double getAngularVelocity() {
@@ -133,12 +135,16 @@ public class DriveSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    NetworkTable table = NetworkTableInstance.getDefault().getTable("Live_Dashboard");
     angularVelocity = getAngularVelocity();
     angle = getAngle();
     Rotation2d gyroAngle = Rotation2d.fromDegrees(angle);
     Pose2d pose = odometry.update(gyroAngle, leftPosition.get(), rightPosition.get());
     x = pose.getTranslation().getX();
     y = pose.getTranslation().getY();
+    table.getEntry("robotX").setNumber(x);
+    table.getEntry("robotY").setNumber(y);
+    table.getEntry("robotHeading").setNumber(Math.toRadians(angle));
   }
 
   public void tankDriveVolts(Double left, Double right) {
