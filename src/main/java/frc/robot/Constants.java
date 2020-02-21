@@ -57,6 +57,7 @@ public final class Constants {
 
     public static final double SHOOTER_ENCODER_EPR = 8192;
     public static final SimpleMotorFeedforward shooterFF = new SimpleMotorFeedforward(0, 0, 0);
+    public static final int SHOOTER_POT = 0;
 
     ////
 

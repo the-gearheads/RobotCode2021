@@ -15,6 +15,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -23,6 +24,7 @@ import frc.robot.Constants;
 public class Shooter extends SubsystemBase {
   private final CANSparkMax rShooter;
   private final CANSparkMax lShooter;
+  private final CANSparkMax angleMotor;
 
   private final CANEncoder lShooterEncoder;
   private final CANEncoder rShooterEncoder;
@@ -35,7 +37,9 @@ public class Shooter extends SubsystemBase {
 
   public final DoubleSupplier avgVelocity;
 
-  public final SimpleMotorFeedforward feedforward;
+  private final SimpleMotorFeedforward feedforward;
+
+  private final AnalogInput pot;
 
 
   /**
@@ -45,6 +49,8 @@ public class Shooter extends SubsystemBase {
     lShooter = new CANSparkMax(7, MotorType.kBrushless);
     rShooter = new CANSparkMax(5, MotorType.kBrushless);
     rShooter.setInverted(true);
+
+    angleMotor = new CANSparkMax(0, MotorType.kBrushless);
 
     lShooterEncoder = lShooter.getEncoder();
     rShooterEncoder = rShooter.getEncoder();
@@ -58,6 +64,8 @@ public class Shooter extends SubsystemBase {
     elevatorLower.setInverted(true);
 
     feedforward = Constants.shooterFF;
+
+    pot = new AnalogInput(Constants.SHOOTER_POT);
 
     lShooter.setIdleMode(IdleMode.kBrake);
     rShooter.setIdleMode(IdleMode.kBrake);
@@ -86,5 +94,13 @@ public class Shooter extends SubsystemBase {
 
   public double getAvgVelocity() {
     return (leftVelocity.get() + rightVelocity.get()) / 2;
+  }
+
+  public double getAnglePosition() {
+    return pot.getVoltage();
+  }
+
+  public void turnAngle(double speed) {
+    angleMotor.set(speed);
   }
 }
