@@ -18,7 +18,7 @@ public class Elevate extends CommandBase {
    */
   public Elevate(Shooter shooter) {
     this.shooter = shooter;
-    addRequirements(shooter);
+    // addRequirements(shooter);
   }
 
   // Called when the command is initially scheduled.

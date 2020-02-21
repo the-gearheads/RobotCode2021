@@ -84,6 +84,7 @@ public class RobotContainer {
     lTrigger.whileHeld(new Elevate(shooter));
     JoystickTrigger rTrigger = new JoystickTrigger(controller, XboxController.Axis.kRightTrigger, 0.9);
     rTrigger.whileHeld(new Shoot(shooter));
+    
 
     // Set up StreamDeck buttons 
     new StreamDeckButton(streamdeck, 0, "arms up").whenPressed(new ExtendArms(arms).withTimeout(5)); // TODO: Set timing
