@@ -5,21 +5,21 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands.extender;
+package frc.robot.commands.arms;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Extender;
+import frc.robot.subsystems.Arms;
 
-public class Extend extends CommandBase {
-  private Extender extender;
+public class ExtendArms extends CommandBase {
+  private Arms arms;
 
   /**
    * Creates a new Extender.
    */
-  public Extend(Extender extender) {
+  public ExtendArms(Arms arms) {
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(extender);
-    this.extender = extender;
+    addRequirements(arms);
+    this.arms = arms;
 
   }
 
@@ -31,12 +31,13 @@ public class Extend extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    extender.extend();
+    arms.extend();
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    arms.zero();
   }
 
   // Returns true when the command should end.

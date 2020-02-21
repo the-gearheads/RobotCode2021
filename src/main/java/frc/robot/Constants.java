@@ -26,8 +26,8 @@ public final class Constants {
     public static double ROT_SPEED = 90;
 
     // Controller deadband in % of stick
-    public static double THROTTLE_DEADBAND = 0.3;
-    public static double ROT_DEADBAND = 0.05;
+    public static double THROTTLE_DEADBAND = 0.05;
+    public static double ROT_DEADBAND = 0.3;
 
     ////
 

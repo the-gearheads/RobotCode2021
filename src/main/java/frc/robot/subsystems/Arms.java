@@ -12,21 +12,31 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Extender extends SubsystemBase {
+public class Arms extends SubsystemBase {
   /**
    * Creates a new Extender.
    */
-  private final CANSparkMax leftSpin;
-  private final CANSparkMax rightSpin;
+  private final CANSparkMax leftArm;
+  private final CANSparkMax rightArm;
 
-  public Extender() {
-    leftSpin = new CANSparkMax(22, MotorType.kBrushless);
-    rightSpin = new CANSparkMax(0, MotorType.kBrushless);
+  public Arms() {
+    leftArm = new CANSparkMax(0, MotorType.kBrushless);
+    rightArm = new CANSparkMax(0, MotorType.kBrushless);
   }
 
   public void extend() {
-    leftSpin.set(0.5);
-    rightSpin.set(0.5);
+    leftArm.set(0.5);
+    rightArm.set(0.5);
+  }
+
+  public void retract() {
+    leftArm.set(-0.5);
+    rightArm.set(-0.5);
+  }
+
+  public void zero() {
+    leftArm.set(0);
+    rightArm.set(0);
   }
 
   @Override

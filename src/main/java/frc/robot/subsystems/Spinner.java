@@ -16,7 +16,6 @@ import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorSensorV3;
 
 import edu.wpi.first.wpilibj.I2C.Port;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -31,7 +30,7 @@ public class Spinner extends SubsystemBase {
   private final HashMap<Color, String> map = new HashMap<>();
 
   public Spinner() {
-    spinnerMotor = new CANSparkMax(15, MotorType.kBrushless);
+    spinnerMotor = new CANSparkMax(0, MotorType.kBrushless);
     colorSensor = new ColorSensorV3(Port.kMXP);
     map.put(kBlueTarget, "Red");
     map.put(kYellowTarget, "Green");
@@ -53,10 +52,6 @@ public class Spinner extends SubsystemBase {
 
   public void stop() {
     spinnerMotor.set(0);
-  }
-
-  public void periodic() {
-    SmartDashboard.putString("Die Farbe", getColor());
   }
 
   public String getColor() {

@@ -26,7 +26,6 @@ import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.RobotContainer;
 import frc.robot.commands.drive.ArcadeDrive;
 import frc.robot.util.Deadband;
 import frc.robot.util.WheelVoltages;
@@ -95,7 +94,6 @@ public class DriveSubsystem extends SubsystemBase {
     kinematics = new DifferentialDriveKinematics(Constants.TRACK_WIDTH);
     odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getAngle()));
 
-
     leftPosition = () -> blMotor.getSelectedSensorPosition() * (ENCODER_CONSTANT * 10);
     rightPosition = () -> brMotor.getSelectedSensorPosition() * (-ENCODER_CONSTANT * 10);
     leftVelocity = () -> blMotor.getSelectedSensorVelocity() * (ENCODER_CONSTANT * 10);
@@ -109,7 +107,7 @@ public class DriveSubsystem extends SubsystemBase {
     drive.setSafetyEnabled(false); // disable auto-shutoff of motors... wpilib why??????
     drive.setDeadband(0);
 
-    setDefaultCommand(new ArcadeDrive(this, RobotContainer.getController()));
+    setDefaultCommand(new ArcadeDrive(this));
   }
 
   public double getAngularVelocity() {
@@ -168,7 +166,9 @@ public class DriveSubsystem extends SubsystemBase {
     public double angleFeedForward(double input) {
       double degs = Math.toDegrees(input);
       degs = Deadband.get(degs, 5);
-      if (degs == 0) { return 0; } // return pre-emptively if outside deadband
+      if (degs == 0) {
+        return 0;
+      } // return pre-emptively if outside deadband
       return Math.toRadians(degs + (30 * Math.signum(input)));
     }
 
@@ -188,6 +188,9 @@ public class DriveSubsystem extends SubsystemBase {
       WheelVoltages voltages = new WheelVoltages(leftPid.calculate(leftVelocity.get(), speeds.leftMetersPerSecond),
           rightPid.calculate(rightVelocity.get(), speeds.rightMetersPerSecond));
       driveVoltageFF(voltages, speeds);
+    }
+
+    public void turnToAngle(double angle) {
     }
 
   }
