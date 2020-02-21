@@ -28,7 +28,6 @@ import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.RobotContainer;
 import frc.robot.commands.drive.ArcadeDrive;
 import frc.robot.util.Deadband;
 import frc.robot.util.WheelVoltages;
@@ -95,7 +94,8 @@ public class DriveSubsystem extends SubsystemBase {
 
     gyro = new AHRS(Constants.GYRO_PORT);
     kinematics = new DifferentialDriveKinematics(Constants.TRACK_WIDTH);
-    odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getAngle()), new Pose2d(0, 0, Rotation2d.fromDegrees(getAngle())));
+    odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getAngle()),
+        new Pose2d(0, 0, Rotation2d.fromDegrees(getAngle())));
 
     leftPosition = () -> -blMotor.getSelectedSensorPosition() * (ENCODER_CONSTANT);
     rightPosition = () -> -brMotor.getSelectedSensorPosition() * (-ENCODER_CONSTANT);
