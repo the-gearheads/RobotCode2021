@@ -27,6 +27,7 @@ import frc.robot.commands.shooter.Shot;
 import frc.robot.commands.test.Spin;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Shooter;
+import frc.robot.util.AngleCharacterize;
 import frc.robot.util.JoystickTrigger;
 import frc.robot.util.Ramsete;
 import frc.robot.util.StreamDeck;
@@ -83,34 +84,38 @@ public class RobotContainer {
     rTrigger.whileHeld(new Shot(shooter));
     JoystickButton buttonA = new JoystickButton(controller, XboxController.Button.kA.value);
     buttonA.whenPressed(shootGroup);
+    JoystickButton buttonB = new JoystickButton(controller, XboxController.Button.kB.value);
+    buttonB.whenPressed(new AngleCharacterize(drive));
     JoystickButton buttonX = new JoystickButton(controller, XboxController.Button.kX.value);
     buttonX.whenPressed(this::routeToOrigin);
   }
 
   public Command getAutonomousCommand() {
     final DifferentialDriveVoltageConstraint autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
-        Constants.leftFF, drive.kinematics, 10);
+        Constants.leftFF, drive.getKinematics(), 10);
     final TrajectoryConfig config = new TrajectoryConfig(Constants.MAX_VELOCITY, Constants.MAX_ACCEL)
-        .setKinematics(drive.kinematics).addConstraint(autoVoltageConstraint);
+        .setKinematics(drive.getKinematics()).addConstraint(autoVoltageConstraint);
     // An example trajectory to follow. All units in meters.
     Trajectory trajectory = TrajectoryGenerator.generateTrajectory(new Pose2d(0, 0, new Rotation2d()),
         Collections.emptyList(), new Pose2d(1, 0, new Rotation2d()), config);
 
     Trajectory transformed = trajectory.transformBy(drive.getPose().minus(new Pose2d()));
+    System.out.println(transformed.getTotalTimeSeconds());
     Ramsete ramseteCommand = new Ramsete(transformed,
         new RamseteController(Constants.RAMSETE_B, Constants.RAMSETE_ZETA), drive);
+    ramseteCommand.schedule();
     return ramseteCommand;
   }
 
   public void routeToOrigin() {
     final DifferentialDriveVoltageConstraint autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
-        Constants.leftFF, drive.kinematics, 10);
+        Constants.leftFF, drive.kinematics, 2);
     final TrajectoryConfig config = new TrajectoryConfig(Constants.MAX_VELOCITY, Constants.MAX_ACCEL)
         .setKinematics(drive.kinematics).addConstraint(autoVoltageConstraint);
 
     try {
       Trajectory trajectory = TrajectoryGenerator.generateTrajectory(drive.getPose(), Collections.emptyList(),
-          new Pose2d(0, 0, new Rotation2d()), config);
+          new Pose2d(0, 0, new Rotation2d(0)), config);
       Ramsete ramseteCommand = new Ramsete(trajectory,
           new RamseteController(Constants.RAMSETE_B, Constants.RAMSETE_ZETA), drive);
       ramseteCommand.schedule();

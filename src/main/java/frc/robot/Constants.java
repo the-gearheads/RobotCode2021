@@ -23,7 +23,7 @@ public final class Constants {
     // Meters per second
     public static double THROTTLE_SPEED = 1;
     // Degrees per second
-    public static double ROT_SPEED = 90;
+    public static double ROT_SPEED = 40;
 
     // Controller deadband in % of stick
     public static double THROTTLE_DEADBAND = 0.05;
@@ -38,8 +38,8 @@ public final class Constants {
     public static final double GEARING = 10.71; // gear ratio
     public static final double WHEEL_DIAMETER = .2032; // m
     public static final double ENCODER_EPR = 2048; // encoder units
-    public static final double MAX_VELOCITY = .5; // m/s
-    public static final double MAX_ACCEL = .25; // m/s²
+    public static final double MAX_VELOCITY = .25; // m/s
+    public static final double MAX_ACCEL = .1; // m/s²
     public static final double RAMSETE_B = 2.0;
     public static final double RAMSETE_ZETA = 0.7;
 

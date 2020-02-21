@@ -67,6 +67,20 @@ public class DriveSubsystem extends SubsystemBase {
   double x;
   @Log
   double y;
+  double initAngle;
+
+  @Log
+  double debug1;
+  @Log
+  double debug2;
+  @Log
+  double debug3;
+  @Log
+  double debug4;
+  @Log
+  double debug5;
+  @Log
+  double debug6;
 
   public DriveSubsystem() {
     Logger.configureLoggingAndConfig(this, false);
@@ -93,6 +107,14 @@ public class DriveSubsystem extends SubsystemBase {
     brMotor.setNeutralMode(NeutralMode.Brake);
 
     gyro = new AHRS(Constants.GYRO_PORT);
+    while (gyro.isCalibrating()) {
+    }
+    gyro.reset();
+    gyro.zeroYaw();
+    while (gyro.getAngle() == 0) {
+    }
+    initAngle = -gyro.getAngle();
+
     kinematics = new DifferentialDriveKinematics(Constants.TRACK_WIDTH);
     odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getAngle()),
         new Pose2d(0, 0, Rotation2d.fromDegrees(getAngle())));
@@ -118,7 +140,7 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public double getAngle() {
-    return -gyro.getAngle();
+    return (-gyro.getAngle()) - initAngle;
   }
 
   public DifferentialDriveKinematics getKinematics() {
@@ -139,9 +161,12 @@ public class DriveSubsystem extends SubsystemBase {
     angularVelocity = getAngularVelocity();
     angle = getAngle();
     Rotation2d gyroAngle = Rotation2d.fromDegrees(angle);
-    Pose2d pose = odometry.update(gyroAngle, leftPosition.get(), rightPosition.get());
+    Pose2d pose = odometry.update(gyroAngle, -leftPosition.get(), -rightPosition.get());
     x = pose.getTranslation().getX();
     y = pose.getTranslation().getY();
+
+    debug1 = leftVelocity.get();
+    debug2 = rightVelocity.get();
     table.getEntry("robotX").setNumber(x);
     table.getEntry("robotY").setNumber(y);
     table.getEntry("robotHeading").setNumber(Math.toRadians(angle));
@@ -204,12 +229,18 @@ public class DriveSubsystem extends SubsystemBase {
 
     public double angleFeedForward(double input) {
       double degs = Math.toDegrees(input);
-      return Deadband.get(Math.toRadians(degs + Math.copySign(30, input)), 5);
+      if (Deadband.get(degs, 1) == 0) {
+        return 0;
+      }
+      return Math.toRadians(degs + Math.copySign(41.86, input));
     }
 
     public ChassisSpeeds gyroLoop(ChassisSpeeds chs) {
       double angVelRads = Math.toRadians(getAngularVelocity());
       double effort = gyroPid.calculate(angVelRads, chs.omegaRadiansPerSecond);
+      if (Deadband.get(angVelRads, Math.toRadians(3)) == 0) {
+        effort = 0;
+      }
       return new ChassisSpeeds(chs.vxMetersPerSecond, chs.vyMetersPerSecond,
           angleFeedForward(chs.omegaRadiansPerSecond) + effort);
     }
