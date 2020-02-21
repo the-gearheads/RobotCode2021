@@ -48,7 +48,6 @@ public class RobotContainer {
 
   // Misc
   private final NetworkTableEntry cameraAngle;
-  private final NetworkTableEntry shooterAngle;
 
   public RobotContainer() {
     drive = new DriveSubsystem();
@@ -86,7 +85,6 @@ public class RobotContainer {
     JoystickTrigger rTrigger = new JoystickTrigger(controller, XboxController.Axis.kRightTrigger, 0.9);
     rTrigger.whileHeld(new Shoot(shooter));
 
-
     // Set up StreamDeck buttons 
     new StreamDeckButton(streamdeck, 0, "arms up").whenPressed(new ExtendArms(arms).withTimeout(5)); // TODO: Set timing
     new StreamDeckButton(streamdeck, 1, "intake out").whenPressed(new RunIntake(intake, -0.8)); // TODO: Bind
@@ -102,13 +100,16 @@ public class RobotContainer {
     new StreamDeckButton(streamdeck, 11, "intake").whenPressed(new RunIntake(intake, 0.8));
     new StreamDeckButton(streamdeck, 12, "blue").whenPressed(new SpinColor(spinner, "Blue"));
     new StreamDeckButton(streamdeck, 13, "elevator minus"); // TODO: Bind
-    new StreamDeckButton(streamdeck, 14, "aim").whenPressed(new TurnToAngle(drive, cameraAngle.getDouble(0), 5, true));
-
+    new StreamDeckButton(streamdeck, 14, "aim").whenPressed(this::turnToAngle);
 
   }
 
   public Command getAutonomousCommand() {
     return null;
+  }
+
+  public void turnToAngle() {
+    (new TurnToAngle(drive, cameraAngle.getDouble(0), 1, true)).schedule();
   }
 
 }

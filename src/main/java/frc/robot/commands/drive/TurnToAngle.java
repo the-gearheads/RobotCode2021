@@ -15,17 +15,15 @@ import frc.robot.util.Deadband;
 
 public class TurnToAngle extends CommandBase {
   private final DriveSubsystem drive;
-  private final double angle;
+  private double angle;
   private final double tolerance;
+  private final boolean relative;
 
   public TurnToAngle(DriveSubsystem drive, double angle, double tolerance, boolean relative) {
     this.drive = drive;
-    if (relative) {
-      this.angle = angle + drive.getAngle();
-    } else {
-      this.angle = angle;
-    }
+    this.angle = angle;
     this.tolerance = tolerance;
+    this.relative = relative;
     addRequirements(drive);
   }
 
@@ -37,6 +35,9 @@ public class TurnToAngle extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    if (relative) {
+      angle += drive.getAngle();
+    }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
