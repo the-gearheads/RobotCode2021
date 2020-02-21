@@ -12,15 +12,15 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.arms.ExtendArms;
 import frc.robot.commands.arms.RetractArms;
 import frc.robot.commands.drive.TurnToAngle;
 import frc.robot.commands.intake.RunIntake;
-import frc.robot.commands.shooter.Elevator;
+import frc.robot.commands.shooter.Elevate;
 import frc.robot.commands.shooter.Shoot;
+import frc.robot.commands.shooter.ShootAndElevate;
 import frc.robot.commands.shooter.ShooterAngle;
 import frc.robot.commands.spinner.SpinColor;
 import frc.robot.commands.spinner.SpinRotations;
@@ -61,6 +61,7 @@ public class RobotContainer {
     configureButtonBindings();
 
     cameraAngle = NetworkTableInstance.getDefault().getTable("OpenSight").getEntry("camera");
+    cameraAngle.setNumber(0);
     SmartDashboard.putNumber("shooterAngle", shooter.getAnglePosition());
   }
 
@@ -74,14 +75,13 @@ public class RobotContainer {
 
   private void configureButtonBindings() {
     // Set up command groups
-    SequentialCommandGroup shootGroup = new SequentialCommandGroup(new Shoot(shooter).withTimeout(1.5),
-        new ParallelCommandGroup(new Shoot(shooter), new Elevator(shooter)).withTimeout(2));
+    SequentialCommandGroup shootGroup = (new Shoot(shooter).withTimeout(1)).andThen(new ShootAndElevate(shooter).withTimeout(2));
 
     // Set up joystick binds
-    new JoystickButton(controller, XboxController.Button.kA.value).whenPressed(new AngleCharacterize(drive));
+    new JoystickButton(controller, XboxController.Button.kA.value).whenPressed(shootGroup);
     new JoystickButton(controller, XboxController.Button.kX.value).whenPressed(new ShooterAngle(shooter));
     JoystickTrigger lTrigger = new JoystickTrigger(controller, XboxController.Axis.kLeftTrigger, 0.9);
-    lTrigger.whileHeld(new Elevator(shooter));
+    lTrigger.whileHeld(new Elevate(shooter));
     JoystickTrigger rTrigger = new JoystickTrigger(controller, XboxController.Axis.kRightTrigger, 0.9);
     rTrigger.whileHeld(new Shoot(shooter));
 
@@ -109,7 +109,7 @@ public class RobotContainer {
   }
 
   public void turnToAngle() {
-    (new TurnToAngle(drive, cameraAngle.getDouble(0), 1, true)).schedule();
+    (new TurnToAngle(drive, cameraAngle.getDouble(0), 8, true)).schedule();
   }
 
 }

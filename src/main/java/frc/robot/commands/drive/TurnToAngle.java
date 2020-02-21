@@ -56,6 +56,6 @@ public class TurnToAngle extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (Deadband.get(drive.getAngle(), tolerance) == 0);
+    return (Deadband.get(drive.getAngle() % 360, tolerance) == 0);
   }
 }

@@ -11,13 +11,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Shooter;
 
-public class Shoot extends CommandBase {
-  private Shooter shooter;
-
+public class ShootAndElevate extends CommandBase {
+  private Shooter shooter; 
   /**
    * Creates a new elevator.
    */
-  public Shoot(Shooter shooter) {
+  public ShootAndElevate(Shooter shooter) {
     this.shooter = shooter;
     addRequirements(shooter);
   }
@@ -30,14 +29,18 @@ public class Shoot extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double lowerSpeed = SmartDashboard.getNumber("shootSpeed", 0);
-    shooter.shoot(lowerSpeed);
+    double shootSpeed = SmartDashboard.getNumber("shootSpeed", 0);
+    double upperSpeed = SmartDashboard.getNumber("upperSpeed", 0);
+    double lowerSpeed = SmartDashboard.getNumber("lowerSpeed", 0);
+    shooter.shoot(shootSpeed);  
+    shooter.elevate(upperSpeed, lowerSpeed);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     shooter.shoot(0);
+    shooter.elevate(0, 0);
   }
 
   // Returns true when the command should end.

@@ -77,9 +77,9 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("lowerSpeed", .3);
   }
 
-  public void elevator(double left, double right) {
-    elevatorUpper.set(left);
-    elevatorLower.set(right);
+  public void elevate(double upper, double lower) {
+    elevatorUpper.set(upper);
+    elevatorLower.set(lower);
   }
 
   public void shoot(double speed) {
