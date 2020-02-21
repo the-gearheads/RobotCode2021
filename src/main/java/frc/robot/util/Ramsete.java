@@ -47,7 +47,7 @@ public class Ramsete extends CommandBase {
         double dt = curTime - m_prevTime;
 
         ChassisSpeeds chs = (m_controller.calculate(m_drive.getPose(), m_trajectory.sample(curTime)));
-        DifferentialDriveWheelSpeeds targetWheelSpeeds = m_kinematics.toWheelSpeeds(m_drive.controller.gyroLoop(chs));
+        DifferentialDriveWheelSpeeds targetWheelSpeeds = m_kinematics.toWheelSpeeds(chs);
         m_drive.controller.tankDrive(targetWheelSpeeds);
 
         m_prevTime = curTime;

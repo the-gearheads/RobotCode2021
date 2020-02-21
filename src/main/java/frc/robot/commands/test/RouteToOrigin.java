@@ -29,7 +29,7 @@ public class RouteToOrigin extends CommandBase {
      * Creates a new RouteToOrigin.
      */
     public RouteToOrigin(DriveSubsystem drive) {
-        drive = drive;
+        this.drive = drive;
         // Use addRequirements() here to declare subsystem dependencies.
     }
 
@@ -48,11 +48,11 @@ public class RouteToOrigin extends CommandBase {
     // An example trajectory to follow. All units in meters.
     Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
         // Start at the origin facing the +X direction
-        new Pose2d(0, 0, new Rotation2d(0)),
+        drive.getPose(),
         // Pass through these two interior waypoints, making an 's' curve path
-        List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
+        List.of(new Translation2d(drive.getPose().getTranslation().getX()+1, drive.getPose().getTranslation().getY())),
         // End 3 meters straight ahead of where we started, facing forward
-        new Pose2d(3, 0, new Rotation2d(0)),
+        new Pose2d(drive.getPose().getTranslation().getX()+2, drive.getPose().getTranslation().getY(), drive.getPose().getRotation()),
         // Pass config
         config);
 

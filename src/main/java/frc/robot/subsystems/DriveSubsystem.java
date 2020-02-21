@@ -95,10 +95,10 @@ public class DriveSubsystem extends SubsystemBase {
 
     gyro = new AHRS(Constants.GYRO_PORT);
     kinematics = new DifferentialDriveKinematics(Constants.TRACK_WIDTH);
-    odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getAngle()), new Pose2d(5.5, 13.5, Rotation2d.fromDegrees(getAngle())));
+    odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getAngle()), new Pose2d(0, 0, Rotation2d.fromDegrees(getAngle())));
 
-    leftPosition = () -> blMotor.getSelectedSensorPosition() * (ENCODER_CONSTANT);
-    rightPosition = () -> brMotor.getSelectedSensorPosition() * (-ENCODER_CONSTANT);
+    leftPosition = () -> -blMotor.getSelectedSensorPosition() * (ENCODER_CONSTANT);
+    rightPosition = () -> -brMotor.getSelectedSensorPosition() * (-ENCODER_CONSTANT);
     leftVelocity = () -> blMotor.getSelectedSensorVelocity() * (ENCODER_CONSTANT * 10);
     rightVelocity = () -> brMotor.getSelectedSensorVelocity() * (-ENCODER_CONSTANT * 10);
 

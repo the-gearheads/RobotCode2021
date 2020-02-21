@@ -43,11 +43,11 @@ public class Shooter extends SubsystemBase {
 
   public void elevator(double left, double right) {
     elevatorUpper.set(left);
-    elevatorLower.set(-right);
+    elevatorLower.set(right);
   }
 
   public void shot(double speed) {
     lShooter.set(speed);
-    rShooter.set(-speed);
+    rShooter.set(speed);
   }
 }

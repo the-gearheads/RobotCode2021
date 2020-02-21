@@ -63,7 +63,7 @@ public class RobotContainer {
 
     SequentialCommandGroup shootGroup = new SequentialCommandGroup(new Shot(shooter).withTimeout(1.5),
         new ParallelCommandGroup(new Shot(shooter), new Elevator(shooter)).withTimeout(2));
-    new JoystickButton(controller, XboxController.Button.kA.value).whenPressed(new AngleCharacterize(drive));
+    // new JoystickButton(controller, XboxController.Button.kA.value).whenPressed(new AngleCharacterize(drive));
     new StreamDeckButton(streamdeck, 0, "arms up").whenPressed(new Spin(drive).withTimeout(1));
     new StreamDeckButton(streamdeck, 1, "intake out").whenPressed(new Spin(drive).withTimeout(1));
     new StreamDeckButton(streamdeck, 2, "red").whenPressed(new Spin(drive).withTimeout(1));
@@ -100,7 +100,7 @@ public class RobotContainer {
         // Start at the origin facing the +X direction
         new Pose2d(0, 0, new Rotation2d(0)),
         // Pass through these two interior waypoints, making an 's' curve path
-        List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
+        List.of(new Translation2d(0.25, 1), new Translation2d(2, -1)),
         // End 3 meters straight ahead of where we started, facing forward
         new Pose2d(3, 0, new Rotation2d(0)),
         // Pass config
