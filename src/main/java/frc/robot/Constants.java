@@ -53,6 +53,13 @@ public final class Constants {
 
     ////
 
+    //// SHOOTER
+
+    public static final int IR_TOP = 0;
+    public static final int IR_BOTTOM = 0;
+
+    ////
+
     //// GYRO
     public static final Port GYRO_PORT = Port.kMXP;
     public static final double GYRO_P = 1;
