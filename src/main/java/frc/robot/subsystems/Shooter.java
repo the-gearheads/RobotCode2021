@@ -75,6 +75,8 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("shootSpeed", .5);
     SmartDashboard.putNumber("upperSpeed", .6);
     SmartDashboard.putNumber("lowerSpeed", .3);
+
+    SmartDashboard.putNumber("shooterAngle", getAnglePosition());
   }
 
   public void elevate(double upper, double lower) {
