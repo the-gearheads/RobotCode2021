@@ -185,9 +185,9 @@ public class DriveSubsystem extends SubsystemBase {
     final SimpleMotorFeedforward rightFF;
 
     private Control() {
-      leftPid = new PIDController(Constants.LEFT_P, 0, Constants.LEFT_D);
-      rightPid = new PIDController(Constants.RIGHT_P, 0, Constants.RIGHT_D);
-      gyroPid = new PIDController(Constants.GYRO_P, 0, Constants.GYRO_D);
+      leftPid = new PIDController(Constants.LEFT_P, 0, 0);
+      rightPid = new PIDController(Constants.RIGHT_P, 0, 0);
+      gyroPid = new PIDController(Constants.GYRO_P, 0, 0);
 
       leftFF = Constants.leftFF;
       rightFF = Constants.rightFF;

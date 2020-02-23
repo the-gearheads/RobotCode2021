@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.spline.SplineParameterizer.MalformedSplineException;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
@@ -28,8 +29,9 @@ import frc.robot.commands.arms.ExtendArms;
 import frc.robot.commands.arms.RetractArms;
 import frc.robot.commands.drive.TurnToAngle;
 import frc.robot.commands.intake.RunIntake;
-import frc.robot.commands.shooter.Elevator;
-import frc.robot.commands.shooter.Shot;
+import frc.robot.commands.shooter.Elevate;
+import frc.robot.commands.shooter.Shoot;
+import frc.robot.commands.shooter.ShootAndElevate;
 import frc.robot.commands.spinner.SpinColor;
 import frc.robot.commands.spinner.SpinRotations;
 import frc.robot.subsystems.Arms;
@@ -37,7 +39,6 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Spinner;
-import frc.robot.util.AngleCharacterize;
 import frc.robot.util.JoystickTrigger;
 import frc.robot.util.Ramsete;
 import frc.robot.util.StreamDeck;
@@ -70,6 +71,8 @@ public class RobotContainer {
     configureButtonBindings();
 
     cameraAngle = NetworkTableInstance.getDefault().getTable("OpenSight").getEntry("camera");
+    cameraAngle.setNumber(0);
+    SmartDashboard.putNumber("shooterAngle", shooter.getAnglePosition());
   }
 
   // run on any mode init
@@ -81,19 +84,19 @@ public class RobotContainer {
   }
 
   private void configureButtonBindings() {
+    // Set up command groups
+    SequentialCommandGroup shootGroup = (new Shoot(shooter).withTimeout(1))
+        .andThen(new ShootAndElevate(shooter).withTimeout(2));
 
     // Set up joystick binds
-    new JoystickButton(controller, XboxController.Button.kA.value).whenPressed(new AngleCharacterize(drive));
+    new JoystickButton(controller, XboxController.Button.kA.value).whenPressed(shootGroup);
+    new JoystickButton(controller, XboxController.Button.kX.value).whenPressed(this::routeToOrigin);
     JoystickTrigger lTrigger = new JoystickTrigger(controller, XboxController.Axis.kLeftTrigger, 0.9);
-    lTrigger.whileHeld(new Elevator(shooter));
+    lTrigger.whileHeld(new Elevate(shooter));
     JoystickTrigger rTrigger = new JoystickTrigger(controller, XboxController.Axis.kRightTrigger, 0.9);
-    rTrigger.whileHeld(new Shot(shooter));
+    rTrigger.whileHeld(new Shoot(shooter));
 
     // Set up StreamDeck buttons
-    SequentialCommandGroup shootGroup = (new Shot(shooter)).withTimeout(1.5)
-        .andThen(new Shot(shooter).alongWith(new Elevator(shooter)).withTimeout(2));
-    // new JoystickButton(controller,
-    // XboxController.Button.kA.value).whenPressed(new AngleCharacterize(drive));
     new StreamDeckButton(streamdeck, 0, "arms up").whenPressed(new ExtendArms(arms).withTimeout(5)); // TODO: Set timing
     new StreamDeckButton(streamdeck, 1, "intake out").whenPressed(new RunIntake(intake, -0.8)); // TODO: Bind
     new StreamDeckButton(streamdeck, 2, "red").whenPressed(new SpinColor(spinner, "Red"));
@@ -108,7 +111,7 @@ public class RobotContainer {
     new StreamDeckButton(streamdeck, 11, "intake").whenPressed(new RunIntake(intake, 0.8));
     new StreamDeckButton(streamdeck, 12, "blue").whenPressed(new SpinColor(spinner, "Blue"));
     new StreamDeckButton(streamdeck, 13, "elevator minus"); // TODO: Bind
-    new StreamDeckButton(streamdeck, 14, "aim").whenPressed(new TurnToAngle(drive, cameraAngle.getDouble(0), 5, true));
+    new StreamDeckButton(streamdeck, 14, "aim").whenPressed(this::turnToAngle);
 
   }
 
@@ -145,6 +148,10 @@ public class RobotContainer {
       DriverStation.reportError("Failed to generate routeToOrigin trajectory", e.getStackTrace());
     }
 
+  }
+
+  public void turnToAngle() {
+    (new TurnToAngle(drive, cameraAngle.getDouble(0), 8, true)).schedule();
   }
 
 }

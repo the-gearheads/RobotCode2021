@@ -7,19 +7,27 @@
 
 package frc.robot.commands.shooter;
 
+import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants;
 import frc.robot.subsystems.Shooter;
+import frc.robot.util.Deadband;
 
-public class Shot extends CommandBase {
-  private Shooter shooter; 
-  /**
-   * Creates a new elevator.
-   */
-  public Shot(Shooter shooter) {
-    // addRequirements(shooter);
+public class ShooterAngle extends CommandBase {
+  private final Shooter shooter;
+  private final PIDController controller;
+  
+
+  public ShooterAngle(Shooter shooter, double target) {
     this.shooter = shooter;
+    controller = new PIDController(Constants.SHOOTER_ANGLE_P, 0, Constants.SHOOTER_ANGLE_D);
+    controller.setSetpoint(target);
+    addRequirements(shooter);
+  }
 
-    // Use addRequirements() here to declare subsystem dependencies.
+  public ShooterAngle(Shooter shooter) {
+    this(shooter, SmartDashboard.getNumber("shooterAngle", shooter.getAnglePosition()));
   }
 
   // Called when the command is initially scheduled.
@@ -30,18 +38,19 @@ public class Shot extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    shooter.shot();  
+    double effort = controller.calculate(shooter.getAnglePosition());
+    shooter.turnAngle(effort);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    shooter.shot(0);
+    shooter.turnAngle(0);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return (Deadband.get(shooter.getAnglePosition(), 2) == 0);
   }
 }

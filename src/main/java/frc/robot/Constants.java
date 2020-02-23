@@ -49,23 +49,26 @@ public final class Constants {
 
     // PID Config
     public static final double LEFT_P = 0; // .000425;
-    public static final double LEFT_D = 0;
     public static final double RIGHT_P = 0; // .000155;
-    public static final double RIGHT_D = 0;
+    public static final double ANGLE_P = 0;
 
     ////
 
-    //// SHOOTER
+    //// SHOOTER SETTINGS
 
+    public static final double SHOOTER_ENCODER_EPR = 8192;
+    public static final SimpleMotorFeedforward shooterFF = new SimpleMotorFeedforward(0, 0, 0);
+    public static final int SHOOTER_POT = 0;
+    public static final double SHOOTER_ANGLE_P = 0;
+    public static final double SHOOTER_ANGLE_D = 0;
     public static final int IR_TOP = 0;
     public static final int IR_BOTTOM = 0;
 
     ////
 
-    //// GYRO
+    //// GYRO SETTINGS
     public static final Port GYRO_PORT = Port.kMXP;
     public static final double GYRO_P = 1;
-    public static final double GYRO_D = 0;
 
     //// MISC
 
