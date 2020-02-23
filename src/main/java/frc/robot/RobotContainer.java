@@ -7,11 +7,21 @@
 
 package frc.robot;
 
+import java.util.Collections;
+
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.controller.RamseteController;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.spline.SplineParameterizer.MalformedSplineException;
+import edu.wpi.first.wpilibj.trajectory.Trajectory;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
+import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.arms.ExtendArms;
@@ -29,6 +39,7 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Spinner;
 import frc.robot.util.AngleCharacterize;
 import frc.robot.util.JoystickTrigger;
+import frc.robot.util.Ramsete;
 import frc.robot.util.StreamDeck;
 import frc.robot.util.StreamDeckButton;
 
@@ -70,9 +81,6 @@ public class RobotContainer {
   }
 
   private void configureButtonBindings() {
-    // Set up command groups
-    SequentialCommandGroup shootGroup = new SequentialCommandGroup(new Shot(shooter).withTimeout(1.5),
-        new ParallelCommandGroup(new Shot(shooter), new Elevator(shooter)).withTimeout(2));
 
     // Set up joystick binds
     new JoystickButton(controller, XboxController.Button.kA.value).whenPressed(new AngleCharacterize(drive));
@@ -81,7 +89,11 @@ public class RobotContainer {
     JoystickTrigger rTrigger = new JoystickTrigger(controller, XboxController.Axis.kRightTrigger, 0.9);
     rTrigger.whileHeld(new Shot(shooter));
 
-    // Set up StreamDeck buttons 
+    // Set up StreamDeck buttons
+    SequentialCommandGroup shootGroup = (new Shot(shooter)).withTimeout(1.5)
+        .andThen(new Shot(shooter).alongWith(new Elevator(shooter)).withTimeout(2));
+    // new JoystickButton(controller,
+    // XboxController.Button.kA.value).whenPressed(new AngleCharacterize(drive));
     new StreamDeckButton(streamdeck, 0, "arms up").whenPressed(new ExtendArms(arms).withTimeout(5)); // TODO: Set timing
     new StreamDeckButton(streamdeck, 1, "intake out").whenPressed(new RunIntake(intake, -0.8)); // TODO: Bind
     new StreamDeckButton(streamdeck, 2, "red").whenPressed(new SpinColor(spinner, "Red"));
@@ -92,7 +104,7 @@ public class RobotContainer {
     new StreamDeckButton(streamdeck, 7, "rotate").whenPressed(new SpinRotations(spinner, 4));
     new StreamDeckButton(streamdeck, 8, "yellow").whenPressed(new SpinColor(spinner, "Yellow"));
     new StreamDeckButton(streamdeck, 9, "unjam"); // TODO: Bind
-    new StreamDeckButton(streamdeck, 10, "arms down").whenPressed(new RetractArms(arms).withTimeout(5)); // TODO: Set timing
+    new StreamDeckButton(streamdeck, 10, "arms down").whenPressed(new RetractArms(arms).withTimeout(5)); // TODO: timing
     new StreamDeckButton(streamdeck, 11, "intake").whenPressed(new RunIntake(intake, 0.8));
     new StreamDeckButton(streamdeck, 12, "blue").whenPressed(new SpinColor(spinner, "Blue"));
     new StreamDeckButton(streamdeck, 13, "elevator minus"); // TODO: Bind
@@ -101,7 +113,38 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    return null;
+    final DifferentialDriveVoltageConstraint autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
+        Constants.leftFF, drive.getKinematics(), 10);
+    final TrajectoryConfig config = new TrajectoryConfig(Constants.MAX_VELOCITY, Constants.MAX_ACCEL)
+        .setKinematics(drive.getKinematics()).addConstraint(autoVoltageConstraint);
+    // An example trajectory to follow. All units in meters.
+    Trajectory trajectory = TrajectoryGenerator.generateTrajectory(new Pose2d(0, 0, new Rotation2d()),
+        Collections.emptyList(), new Pose2d(1, 0, new Rotation2d()), config);
+
+    Trajectory transformed = trajectory.transformBy(drive.getPose().minus(new Pose2d()));
+    System.out.println(transformed.getTotalTimeSeconds());
+    Ramsete ramseteCommand = new Ramsete(transformed,
+        new RamseteController(Constants.RAMSETE_B, Constants.RAMSETE_ZETA), drive);
+    ramseteCommand.schedule();
+    return ramseteCommand;
+  }
+
+  public void routeToOrigin() {
+    final DifferentialDriveVoltageConstraint autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
+        Constants.leftFF, drive.kinematics, 2);
+    final TrajectoryConfig config = new TrajectoryConfig(Constants.MAX_VELOCITY, Constants.MAX_ACCEL)
+        .setKinematics(drive.kinematics).addConstraint(autoVoltageConstraint);
+
+    try {
+      Trajectory trajectory = TrajectoryGenerator.generateTrajectory(drive.getPose(), Collections.emptyList(),
+          new Pose2d(0, 0, new Rotation2d(0)), config);
+      Ramsete ramseteCommand = new Ramsete(trajectory,
+          new RamseteController(Constants.RAMSETE_B, Constants.RAMSETE_ZETA), drive);
+      ramseteCommand.schedule();
+    } catch (MalformedSplineException e) {
+      DriverStation.reportError("Failed to generate routeToOrigin trajectory", e.getStackTrace());
+    }
+
   }
 
 }

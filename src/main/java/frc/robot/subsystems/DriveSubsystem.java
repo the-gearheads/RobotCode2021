@@ -14,6 +14,8 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
@@ -44,7 +46,7 @@ public class DriveSubsystem extends SubsystemBase {
   private final SpeedControllerGroup rightSide;
 
   private final DifferentialDrive drive;
-  private final DifferentialDriveKinematics kinematics;
+  public final DifferentialDriveKinematics kinematics;
   private final DifferentialDriveOdometry odometry;
 
   private final AHRS gyro;
@@ -65,6 +67,20 @@ public class DriveSubsystem extends SubsystemBase {
   double x;
   @Log
   double y;
+  double initAngle;
+
+  @Log
+  double debug1;
+  @Log
+  double debug2;
+  @Log
+  double debug3;
+  @Log
+  double debug4;
+  @Log
+  double debug5;
+  @Log
+  double debug6;
 
   public DriveSubsystem() {
     Logger.configureLoggingAndConfig(this, false);
@@ -91,11 +107,20 @@ public class DriveSubsystem extends SubsystemBase {
     brMotor.setNeutralMode(NeutralMode.Brake);
 
     gyro = new AHRS(Constants.GYRO_PORT);
-    kinematics = new DifferentialDriveKinematics(Constants.TRACK_WIDTH);
-    odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getAngle()));
+    while (gyro.isCalibrating()) {
+    }
+    gyro.reset();
+    gyro.zeroYaw();
+    while (gyro.getAngle() == 0) {
+    }
+    initAngle = -gyro.getAngle();
 
-    leftPosition = () -> blMotor.getSelectedSensorPosition() * (ENCODER_CONSTANT * 10);
-    rightPosition = () -> brMotor.getSelectedSensorPosition() * (-ENCODER_CONSTANT * 10);
+    kinematics = new DifferentialDriveKinematics(Constants.TRACK_WIDTH);
+    odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getAngle()),
+        new Pose2d(0, 0, Rotation2d.fromDegrees(getAngle())));
+
+    leftPosition = () -> -blMotor.getSelectedSensorPosition() * (ENCODER_CONSTANT);
+    rightPosition = () -> -brMotor.getSelectedSensorPosition() * (-ENCODER_CONSTANT);
     leftVelocity = () -> blMotor.getSelectedSensorVelocity() * (ENCODER_CONSTANT * 10);
     rightVelocity = () -> brMotor.getSelectedSensorVelocity() * (-ENCODER_CONSTANT * 10);
 
@@ -115,22 +140,45 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public double getAngle() {
-    return -gyro.getAngle();
+    return (-gyro.getAngle()) - initAngle;
+  }
+
+  public DifferentialDriveKinematics getKinematics() {
+    return kinematics;
+  }
+
+  public Pose2d getPose() {
+    return odometry.getPoseMeters();
+  }
+
+  public DifferentialDriveWheelSpeeds getWheelSpeeds() {
+    return new DifferentialDriveWheelSpeeds(leftVelocity.get(), rightVelocity.get());
   }
 
   @Override
   public void periodic() {
+    NetworkTable table = NetworkTableInstance.getDefault().getTable("Live_Dashboard");
     angularVelocity = getAngularVelocity();
     angle = getAngle();
     Rotation2d gyroAngle = Rotation2d.fromDegrees(angle);
-    Pose2d pose = odometry.update(gyroAngle, leftPosition.get(), rightPosition.get());
+    Pose2d pose = odometry.update(gyroAngle, -leftPosition.get(), -rightPosition.get());
     x = pose.getTranslation().getX();
     y = pose.getTranslation().getY();
+
+    debug1 = leftVelocity.get();
+    debug2 = rightVelocity.get();
+    table.getEntry("robotX").setNumber(x);
+    table.getEntry("robotY").setNumber(y);
+    table.getEntry("robotHeading").setNumber(Math.toRadians(angle));
+  }
+
+  public void tankDriveVolts(Double left, Double right) {
+    controller.rawDriveVoltage(left, right);
   }
 
   public class Control {
-    final PIDController leftPid;
-    final PIDController rightPid;
+    public final PIDController leftPid;
+    public final PIDController rightPid;
     final PIDController gyroPid;
 
     final SimpleMotorFeedforward leftFF;
@@ -158,23 +206,41 @@ public class DriveSubsystem extends SubsystemBase {
       drive.arcadeDrive(speed, rotation);
     }
 
+    public void rawDriveVoltage(double left, double right) {
+      leftSide.setVoltage(left);
+      rightSide.setVoltage(right);
+    }
+
     public void driveVoltageFF(WheelVoltages voltages, DifferentialDriveWheelSpeeds speeds) {
       leftSide.setVoltage(voltages.left + leftFF.calculate(speeds.leftMetersPerSecond));
       rightSide.setVoltage(voltages.right + rightFF.calculate(speeds.rightMetersPerSecond));
     }
 
+    public void driveVoltageFF(WheelVoltages voltages, DifferentialDriveWheelSpeeds speeds,
+        DifferentialDriveWheelSpeeds prevSpeeds, double dt) {
+      double leftFeedforward = leftFF.calculate(speeds.leftMetersPerSecond,
+          (speeds.leftMetersPerSecond - prevSpeeds.leftMetersPerSecond) / dt);
+      double rightFeedforward = rightFF.calculate(speeds.rightMetersPerSecond,
+          (speeds.rightMetersPerSecond - prevSpeeds.rightMetersPerSecond) / dt);
+
+      leftSide.setVoltage(voltages.left + leftFeedforward);
+      rightSide.setVoltage(voltages.right + rightFeedforward);
+    }
+
     public double angleFeedForward(double input) {
       double degs = Math.toDegrees(input);
-      degs = Deadband.get(degs, 5);
-      if (degs == 0) {
+      if (Deadband.get(degs, 1) == 0) {
         return 0;
-      } // return pre-emptively if outside deadband
-      return Math.toRadians(degs + (30 * Math.signum(input)));
+      }
+      return Math.toRadians(degs + Math.copySign(41.86, input));
     }
 
     public ChassisSpeeds gyroLoop(ChassisSpeeds chs) {
       double angVelRads = Math.toRadians(getAngularVelocity());
       double effort = gyroPid.calculate(angVelRads, chs.omegaRadiansPerSecond);
+      if (Deadband.get(angVelRads, Math.toRadians(3)) == 0) {
+        effort = 0;
+      }
       return new ChassisSpeeds(chs.vxMetersPerSecond, chs.vyMetersPerSecond,
           angleFeedForward(chs.omegaRadiansPerSecond) + effort);
     }
@@ -190,7 +256,10 @@ public class DriveSubsystem extends SubsystemBase {
       driveVoltageFF(voltages, speeds);
     }
 
-    public void turnToAngle(double angle) {
+    public void tankDrive(DifferentialDriveWheelSpeeds speeds, DifferentialDriveWheelSpeeds prevSpeeds, double dt) {
+      WheelVoltages voltages = new WheelVoltages(leftPid.calculate(leftVelocity.get(), speeds.leftMetersPerSecond),
+          rightPid.calculate(rightVelocity.get(), speeds.rightMetersPerSecond));
+      driveVoltageFF(voltages, speeds, prevSpeeds, dt);
     }
 
   }

@@ -9,10 +9,10 @@ import frc.robot.commands.test.RevAngle;
 import frc.robot.subsystems.DriveSubsystem;
 
 public class AngleCharacterize implements Runnable {
-    private double angle = 20;
+    private double angle = 30;
     private CommandScheduler scheduler;
     private DriveSubsystem drive;
-    
+
     public AngleCharacterize(DriveSubsystem drive) {
         this.drive = drive;
     }
@@ -27,8 +27,7 @@ public class AngleCharacterize implements Runnable {
     public SequentialCommandGroup createGroup() {
         angle += 5;
         SmartDashboard.putNumber("Test/Target", angle);
-        return new SequentialCommandGroup(new RevAngle(drive, angle).withTimeout(1),
-                new GetAngleData(drive, angle).withTimeout(3));
+        return (new RevAngle(drive, angle).withTimeout(1)).andThen(new GetAngleData(drive, angle).withTimeout(3));
     }
 
     public void handleFinish(Command command) {
