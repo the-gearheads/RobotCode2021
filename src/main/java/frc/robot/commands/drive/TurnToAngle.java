@@ -7,49 +7,46 @@
 
 package frc.robot.commands.drive;
 
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
+import edu.wpi.first.wpiutil.math.MathUtil;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.util.Deadband;
+import io.github.oblarg.oblog.Logger;
+import io.github.oblarg.oblog.annotations.Log;
 
 public class TurnToAngle extends CommandBase {
   private final DriveSubsystem drive;
-  private final double tolerance;
-  private final boolean relative;
   private final PIDController controller;
+  private double offset = 0;
+  @Log
+  private double effort;
   
+  @Log
   private double angle;
 
-  public TurnToAngle(DriveSubsystem drive, double angle, double tolerance, boolean relative) {
+  public TurnToAngle(DriveSubsystem drive) {
     this.drive = drive;
-    this.angle = angle;
-    this.tolerance = tolerance;
-    this.relative = relative;
-    this.controller = new PIDController(Constants.ANGLE_P, 0, 0);
+    this.controller = new PIDController(10, 0, 0);
     addRequirements(drive);
-  }
-
-  public TurnToAngle(DriveSubsystem drive, double angle, double tolerance) {
-    // Assume absolute
-    this(drive, angle, tolerance, false);
+    Logger.configureLoggingAndConfig(this, false);
   }
 
   @Override
   public void initialize() {
-    if (relative) {
-      angle += (drive.getAngle() % 360);
-    }
+    angle = (NetworkTableInstance.getDefault().getTable("OpenSight").getEntry("camera").getDouble(0) + drive.getAngle()) % 360;
+    controller.enableContinuousInput(0, 360);
+    controller.setSetpoint(angle);
   }
 
   @Override
   public void execute() {
-    double error = angle - drive.getAngle();
-    double speed = Math.toRadians(Math.copySign(Constants.ROT_SPEED, error));
-    double effort = controller.calculate(error);
+    effort = MathUtil.clamp(controller.calculate((drive.getAngle() % 360)), -Constants.ROT_SPEED, Constants.ROT_SPEED);
     drive.controller
-        .arcadeDrive(new ChassisSpeeds(0.0, 0.0, speed + effort));
+        .arcadeDrive(new ChassisSpeeds(0.0, 0.0, Math.toRadians(effort)));
   }
 
   @Override
@@ -58,6 +55,6 @@ public class TurnToAngle extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    return (Deadband.get(drive.getAngle() % 360, tolerance) == 0);
+    return (Deadband.get(drive.getAngle() % 360, angle, 0.5) == 0);
   }
 }

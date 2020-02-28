@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 public final class Constants {
 
     // MOTOR CONTROLLER IDs
-    public static final int FL_ID = 1;
+    public static final int FL_ID = 3;
     public static final int FR_ID = 5;
     public static final int BL_ID = 2;
     public static final int BR_ID = 6;
@@ -23,7 +23,7 @@ public final class Constants {
     // Meters per second
     public static double THROTTLE_SPEED = 1;
     // Degrees per second
-    public static double ROT_SPEED = 40;
+    public static double ROT_SPEED = 200;
 
     // Controller deadband in % of stick
     public static double THROTTLE_DEADBAND = 0.05;
@@ -61,8 +61,8 @@ public final class Constants {
     public static final int SHOOTER_POT = 0;
     public static final double SHOOTER_ANGLE_P = 0;
     public static final double SHOOTER_ANGLE_D = 0;
-    public static final int IR_TOP = 0;
-    public static final int IR_BOTTOM = 0;
+    // public static final int IR_TOP = 0;
+    public static final int IR_BOTTOM = 1;
 
     ////
 

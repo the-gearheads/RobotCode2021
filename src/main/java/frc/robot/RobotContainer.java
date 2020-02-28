@@ -32,6 +32,7 @@ import frc.robot.commands.intake.RunIntake;
 import frc.robot.commands.shooter.Elevate;
 import frc.robot.commands.shooter.Shoot;
 import frc.robot.commands.shooter.ShootAndElevate;
+import frc.robot.commands.shooter.ShooterAngle;
 import frc.robot.commands.spinner.SpinColor;
 import frc.robot.commands.spinner.SpinRotations;
 import frc.robot.subsystems.Arms;
@@ -90,11 +91,13 @@ public class RobotContainer {
 
     // Set up joystick binds
     new JoystickButton(controller, XboxController.Button.kA.value).whenPressed(shootGroup);
-    new JoystickButton(controller, XboxController.Button.kX.value).whenPressed(this::routeToOrigin);
+    new JoystickButton(controller, XboxController.Button.kX.value).whenPressed(new TurnToAngle(drive));
+    new JoystickButton(controller, XboxController.Button.kY.value).whenPressed(this::routeToOrigin);
+    new JoystickButton(controller, XboxController.Button.kB.value).whenPressed(new ShooterAngle(shooter));
     JoystickTrigger lTrigger = new JoystickTrigger(controller, XboxController.Axis.kLeftTrigger, 0.9);
-    lTrigger.whileHeld(new Elevate(shooter));
+    lTrigger.whileHeld(new RunIntake(intake, 0.4));
     JoystickTrigger rTrigger = new JoystickTrigger(controller, XboxController.Axis.kRightTrigger, 0.9);
-    rTrigger.whileHeld(new Shoot(shooter));
+    rTrigger.whileHeld(new ShootAndElevate(shooter));
 
     // Set up StreamDeck buttons
     new StreamDeckButton(streamdeck, 0, "arms up").whenPressed(new ExtendArms(arms).withTimeout(5)); // TODO: Set timing
@@ -111,7 +114,7 @@ public class RobotContainer {
     new StreamDeckButton(streamdeck, 11, "intake").whenPressed(new RunIntake(intake, 0.8));
     new StreamDeckButton(streamdeck, 12, "blue").whenPressed(new SpinColor(spinner, "Blue"));
     new StreamDeckButton(streamdeck, 13, "elevator minus"); // TODO: Bind
-    new StreamDeckButton(streamdeck, 14, "aim").whenPressed(this::turnToAngle);
+    // new StreamDeckButton(streamdeck, 14, "aim").whenPressed(new TurnToAngle(drive));
 
   }
 
@@ -148,10 +151,6 @@ public class RobotContainer {
       DriverStation.reportError("Failed to generate routeToOrigin trajectory", e.getStackTrace());
     }
 
-  }
-
-  public void turnToAngle() {
-    (new TurnToAngle(drive, cameraAngle.getDouble(0), 8, true)).schedule();
   }
 
 }

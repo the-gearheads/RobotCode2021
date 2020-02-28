@@ -12,17 +12,23 @@ import java.util.function.Supplier;
 
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANDigitalInput.LimitSwitchPolarity;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.AnalogPotentiometer;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import io.github.oblarg.oblog.Logger;
+import io.github.oblarg.oblog.annotations.Config;
 import io.github.oblarg.oblog.annotations.Log;
 
 public class Shooter extends SubsystemBase {
+  private final double ENCODER_CONSTANT = (1 / (double) Constants.SHOOTER_ENCODER_EPR)
+      * (1 / (double) Constants.GEARING) * Math.PI;
   private final CANSparkMax rShooter;
   private final CANSparkMax lShooter;
   private final CANSparkMax angleMotor;
@@ -35,28 +41,41 @@ public class Shooter extends SubsystemBase {
   private final CANEncoder upperEnc;
   private final CANEncoder lowerEnc;
 
-  private final AnalogInput irTop;
+  // private final AnalogInput irTop;
   private final AnalogInput irBottom;
   private boolean topPrimed;
   private boolean bottomPrimed;
 
   @Log
   public int ballCount;
-  @Log
-  private double shootSpeed;
-  @Log
-  private double upperSpeed;
-  @Log
-  private double lowerSpeed;
+  private double shootSpeed = 0.5;
+  private double upperSpeed = 0.6;
+  private double lowerSpeed = 0.4;
 
   private final Supplier<Double> leftVelocity;
   private final Supplier<Double> rightVelocity;
+
+  @Log
+  private double shooterLeft;
+  @Log
+  private double shooterRight;
 
   public final DoubleSupplier avgVelocity;
 
   private final SimpleMotorFeedforward feedforward;
 
+  @Log
   private final AnalogInput pot;
+  @Log
+  private double volt;
+  @Log
+  private double anglePosition;
+  @Log
+  private double debug1;
+  @Log
+  private double debug2;
+  @Log
+  private double debug3;
 
   /**
    * Creates a new Shooter.
@@ -66,13 +85,15 @@ public class Shooter extends SubsystemBase {
     rShooter = new CANSparkMax(5, MotorType.kBrushless);
     rShooter.setInverted(true);
 
-    angleMotor = new CANSparkMax(0, MotorType.kBrushless);
+    angleMotor = new CANSparkMax(26, MotorType.kBrushless);
+    angleMotor.setInverted(true);
+    angleMotor.setIdleMode(IdleMode.kBrake);
 
     lShooterEncoder = lShooter.getEncoder();
     rShooterEncoder = rShooter.getEncoder();
 
-    leftVelocity = () -> lShooterEncoder.getVelocity() * Constants.SHOOTER_ENCODER_EPR;
-    rightVelocity = () -> rShooterEncoder.getVelocity() * Constants.SHOOTER_ENCODER_EPR;
+    leftVelocity = () -> lShooterEncoder.getVelocity() * ENCODER_CONSTANT;
+    rightVelocity = () -> rShooterEncoder.getVelocity() * ENCODER_CONSTANT;
     avgVelocity = () -> getAvgVelocity();
 
     elevatorUpper = new CANSparkMax(15, MotorType.kBrushless);
@@ -83,6 +104,7 @@ public class Shooter extends SubsystemBase {
 
     feedforward = Constants.shooterFF;
 
+    // pot = new AnalogPotentiometer(Constants.SHOOTER_POT, -131, 127.3);
     pot = new AnalogInput(Constants.SHOOTER_POT);
 
     lShooter.setIdleMode(IdleMode.kBrake);
@@ -91,31 +113,44 @@ public class Shooter extends SubsystemBase {
     elevatorUpper.setIdleMode(IdleMode.kBrake);
     elevatorLower.setIdleMode(IdleMode.kBrake);
 
-    irTop = new AnalogInput(Constants.IR_TOP);
+    // irTop = new AnalogInput(Constants.IR_TOP);
     irBottom = new AnalogInput(Constants.IR_BOTTOM);
 
     Logger.configureLoggingAndConfig(this, false);
   }
 
+  @Config
+  /**
+   * @param ballCount the ballCount to set
+   */
+  public void setBallCount(int ballCount) {
+    this.ballCount = ballCount;
+  }
+
   @Override
   public void periodic() {
-    if (irBottom.getVoltage() == 0) {
+    if (irBottom.getVoltage() < .1) {
       if (bottomPrimed) {
-        ballCount += Math.signum(getElevatorVelocity());
+        ballCount += 1;
         bottomPrimed = false;
       }
     } else {
       bottomPrimed = true;
     }
-
-    if (irTop.getVoltage() == 0) {
-      if (topPrimed) {
-        ballCount += 1;
-        topPrimed = true;
-      }
-    } else {
-      topPrimed = false;
-    }
+    shooterLeft = leftVelocity.get();
+    shooterRight = rightVelocity.get();
+    anglePosition = getAnglePosition();
+    debug1 = lShooter.getOutputCurrent();
+    // debug1 = pot.getVoltage();
+    // debug2 = RobotController.getVoltage5V();
+    // if (irTop.getVoltage() == 0) {
+    // if (topPrimed) {
+    // ballCount += 1;
+    // topPrimed = true;
+    // }
+    // } else {
+    // topPrimed = false;
+    // }
 
   }
 
@@ -124,7 +159,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public void elevate() {
-    elevate(upperSpeed, lowerSpeed);
+    elevate(0.6, 0.4);
   }
 
   public void elevate(double upper, double lower) {
@@ -133,7 +168,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public void shoot() {
-    shoot(shootSpeed);
+    shoot(0.4);
   }
 
   public void shoot(double speed) {
@@ -151,10 +186,18 @@ public class Shooter extends SubsystemBase {
   }
 
   public double getAnglePosition() {
-    return pot.getVoltage();
+    return (-25.57 * pot.getVoltage()) + 119.8;
+  }
+
+  public boolean isLimited(double direction) {
+    if (Math.signum(direction) == 1) {
+      return angleMotor.getForwardLimitSwitch(LimitSwitchPolarity.kNormallyOpen).get();
+    } else {
+      return angleMotor.getReverseLimitSwitch(LimitSwitchPolarity.kNormallyOpen).get();
+    }
   }
 
   public void turnAngle(double speed) {
-    angleMotor.set(speed);
+    angleMotor.setVoltage(speed);
   }
 }

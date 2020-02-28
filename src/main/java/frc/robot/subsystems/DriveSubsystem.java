@@ -216,20 +216,9 @@ public class DriveSubsystem extends SubsystemBase {
       rightSide.setVoltage(voltages.right + rightFF.calculate(speeds.rightMetersPerSecond));
     }
 
-    public void driveVoltageFF(WheelVoltages voltages, DifferentialDriveWheelSpeeds speeds,
-        DifferentialDriveWheelSpeeds prevSpeeds, double dt) {
-      double leftFeedforward = leftFF.calculate(speeds.leftMetersPerSecond,
-          (speeds.leftMetersPerSecond - prevSpeeds.leftMetersPerSecond) / dt);
-      double rightFeedforward = rightFF.calculate(speeds.rightMetersPerSecond,
-          (speeds.rightMetersPerSecond - prevSpeeds.rightMetersPerSecond) / dt);
-
-      leftSide.setVoltage(voltages.left + leftFeedforward);
-      rightSide.setVoltage(voltages.right + rightFeedforward);
-    }
-
     public double angleFeedForward(double input) {
       double degs = Math.toDegrees(input);
-      if (Deadband.get(degs, 1) == 0) {
+      if (Math.abs(degs) < 1) {
         return 0;
       }
       return Math.toRadians(degs + Math.copySign(41.86, input));
@@ -238,7 +227,7 @@ public class DriveSubsystem extends SubsystemBase {
     public ChassisSpeeds gyroLoop(ChassisSpeeds chs) {
       double angVelRads = Math.toRadians(getAngularVelocity());
       double effort = gyroPid.calculate(angVelRads, chs.omegaRadiansPerSecond);
-      if (Deadband.get(angVelRads, Math.toRadians(3)) == 0) {
+      if (Deadband.get(angVelRads, Math.toRadians(3), 0) == 0) {
         effort = 0;
       }
       return new ChassisSpeeds(chs.vxMetersPerSecond, chs.vyMetersPerSecond,
@@ -254,12 +243,6 @@ public class DriveSubsystem extends SubsystemBase {
       WheelVoltages voltages = new WheelVoltages(leftPid.calculate(leftVelocity.get(), speeds.leftMetersPerSecond),
           rightPid.calculate(rightVelocity.get(), speeds.rightMetersPerSecond));
       driveVoltageFF(voltages, speeds);
-    }
-
-    public void tankDrive(DifferentialDriveWheelSpeeds speeds, DifferentialDriveWheelSpeeds prevSpeeds, double dt) {
-      WheelVoltages voltages = new WheelVoltages(leftPid.calculate(leftVelocity.get(), speeds.leftMetersPerSecond),
-          rightPid.calculate(rightVelocity.get(), speeds.rightMetersPerSecond));
-      driveVoltageFF(voltages, speeds, prevSpeeds, dt);
     }
 
   }

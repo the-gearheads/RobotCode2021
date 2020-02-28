@@ -1,8 +1,8 @@
 package frc.robot.util;
 
 public class Deadband {
-    public static double get(double value, double deadband) {
-        if (Math.abs(value) < deadband) {
+    public static double get(double value, double target, double deadband) {
+        if (Math.abs(value-target) < deadband) {
             return 0;
         }
         return value;

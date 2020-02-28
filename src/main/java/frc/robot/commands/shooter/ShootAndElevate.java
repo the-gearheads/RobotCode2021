@@ -28,7 +28,7 @@ public class ShootAndElevate extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    shooter.shoot();  
+    shooter.shoot(1);  
     shooter.elevate();
   }
 

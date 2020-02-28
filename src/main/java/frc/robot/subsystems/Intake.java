@@ -19,12 +19,12 @@ public class Intake extends SubsystemBase {
    * Creates a new Intake.
    */
   private final CANSparkMax extension;
+  private final CANSparkMax intake;
   private final CANEncoder encoder;
-  private final WPI_TalonSRX intake;
 
   public Intake() {
     extension = new CANSparkMax(0, MotorType.kBrushless);
-    intake = new WPI_TalonSRX(0);
+    intake = new CANSparkMax(28, MotorType.kBrushless);
     encoder = extension.getEncoder();
   }
 

@@ -30,8 +30,7 @@ public class Shoot extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double lowerSpeed = SmartDashboard.getNumber("shootSpeed", 0);
-    shooter.shoot(lowerSpeed);
+    shooter.shoot();
   }
 
   // Called once the command ends or is interrupted.
