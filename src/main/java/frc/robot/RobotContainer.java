@@ -35,6 +35,7 @@ import frc.robot.commands.shooter.ShootAndElevate;
 import frc.robot.commands.shooter.ShooterAngle;
 import frc.robot.commands.spinner.SpinColor;
 import frc.robot.commands.spinner.SpinRotations;
+import frc.robot.commands.test.ServoTest;
 import frc.robot.subsystems.Arms;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Intake;
@@ -93,6 +94,7 @@ public class RobotContainer {
     new JoystickButton(controller, XboxController.Button.kA.value).whenPressed(shootGroup);
     new JoystickButton(controller, XboxController.Button.kX.value).whenPressed(new TurnToAngle(drive));
     new JoystickButton(controller, XboxController.Button.kY.value).whenPressed(this::routeToOrigin);
+    // new JoystickButton(controller, XboxController.Button.kY.value).whenPressed(new ServoTest());
     new JoystickButton(controller, XboxController.Button.kB.value).whenPressed(new ShooterAngle(shooter));
     JoystickTrigger lTrigger = new JoystickTrigger(controller, XboxController.Axis.kLeftTrigger, 0.9);
     lTrigger.whileHeld(new RunIntake(intake, 0.4));

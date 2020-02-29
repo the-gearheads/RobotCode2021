@@ -7,20 +7,16 @@
 
 package frc.robot.commands.shooter;
 
-import edu.wpi.first.wpilibj.controller.PIDController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Shooter;
 
-public class Shoot extends CommandBase {
+public class ShooterAngleControl extends CommandBase {
   private Shooter shooter;
-  private PIDController controller;
-  /**
-   * Creates a new elevator.
-   */
-  public Shoot(Shooter shooter) {
+  private DoubleSupplier controller;
+  public ShooterAngleControl(Shooter shooter, DoubleSupplier controller) {
     this.shooter = shooter;
-    // addRequirements(shooter);
   }
 
   // Called when the command is initially scheduled.
@@ -31,13 +27,11 @@ public class Shoot extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    shooter.shoot();
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    shooter.shoot(0);
   }
 
   // Returns true when the command should end.

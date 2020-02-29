@@ -55,6 +55,6 @@ public class ShooterAngle extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (shooter.isLimited(getSpeed()) || (Math.abs(error) < 1));
+    return (shooter.isLimited(getSpeed()) || (Math.abs(error) < 0.25));
   }
 }

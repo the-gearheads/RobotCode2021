@@ -28,7 +28,7 @@ import io.github.oblarg.oblog.annotations.Log;
 
 public class Shooter extends SubsystemBase {
   private final double ENCODER_CONSTANT = (1 / (double) Constants.SHOOTER_ENCODER_EPR)
-      * (1 / (double) Constants.GEARING) * Math.PI;
+      * (1 / (double) Constants.SHOOTER_GEARING) * Math.PI * 60;
   private final CANSparkMax rShooter;
   private final CANSparkMax lShooter;
   private final CANSparkMax angleMotor;
@@ -92,8 +92,8 @@ public class Shooter extends SubsystemBase {
     lShooterEncoder = lShooter.getEncoder();
     rShooterEncoder = rShooter.getEncoder();
 
-    leftVelocity = () -> lShooterEncoder.getVelocity() * ENCODER_CONSTANT;
-    rightVelocity = () -> rShooterEncoder.getVelocity() * ENCODER_CONSTANT;
+    leftVelocity = () -> lShooterEncoder.getVelocity() ;//* ENCODER_CONSTANT;
+    rightVelocity = () -> rShooterEncoder.getVelocity() ;//* ENCODER_CONSTANT;
     avgVelocity = () -> getAvgVelocity();
 
     elevatorUpper = new CANSparkMax(15, MotorType.kBrushless);
@@ -126,6 +126,27 @@ public class Shooter extends SubsystemBase {
   public void setBallCount(int ballCount) {
     this.ballCount = ballCount;
   }
+  /**
+   * @param shootSpeed the shootSpeed to set
+   */
+  @Config
+  public void setShootSpeed(double shootSpeed) {
+    this.shootSpeed = shootSpeed;
+  }
+  /**
+   * @param lowerSpeed the lowerSpeed to set
+   */
+  @Config
+  public void setLowerSpeed(double lowerSpeed) {
+    this.lowerSpeed = lowerSpeed;
+  }
+  /**
+   * @param upperSpeed the upperSpeed to set
+   */
+  @Config
+  public void setUpperSpeed(double upperSpeed) {
+    this.upperSpeed = upperSpeed;
+  }
 
   @Override
   public void periodic() {
@@ -152,6 +173,7 @@ public class Shooter extends SubsystemBase {
     // topPrimed = false;
     // }
 
+    debug1 = getAvgVelocity();
   }
 
   public double getElevatorVelocity() {
@@ -159,7 +181,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public void elevate() {
-    elevate(0.6, 0.4);
+    elevate(upperSpeed, lowerSpeed);
   }
 
   public void elevate(double upper, double lower) {
@@ -168,12 +190,12 @@ public class Shooter extends SubsystemBase {
   }
 
   public void shoot() {
-    shoot(0.4);
+    shoot(shootSpeed);
   }
 
   public void shoot(double speed) {
-    lShooter.set(speed);
-    rShooter.set(speed);
+    lShooter.setVoltage(speed);
+    rShooter.setVoltage(speed);
   }
 
   public void shootVolts(double setpoint, double effort) {
@@ -186,7 +208,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public double getAnglePosition() {
-    return (-25.57 * pot.getVoltage()) + 119.8;
+    return (pot.getVoltage() * -24.31) + 110.3;
   }
 
   public boolean isLimited(double direction) {

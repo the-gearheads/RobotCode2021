@@ -5,24 +5,34 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands.shooter;
+package frc.robot.commands.test;
 
-import edu.wpi.first.wpilibj.controller.PIDController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Shooter;
+import io.github.oblarg.oblog.Logger;
+import io.github.oblarg.oblog.annotations.Config;
+import io.github.oblarg.oblog.annotations.Log;
 
-public class Shoot extends CommandBase {
-  private Shooter shooter;
-  private PIDController controller;
-  /**
-   * Creates a new elevator.
+public class ServoTest extends CommandBase {
+  /**jj
+   * Creates a new ServoTest.
    */
-  public Shoot(Shooter shooter) {
-    this.shooter = shooter;
-    // addRequirements(shooter);
+  private Servo servo;
+  @Log
+  private double servoAngle;
+  public ServoTest() {
+    servo = new Servo(0);
+    // Use addRequirements() here to declare subsystem dependencies.
+    Logger.configureLoggingAndConfig(this, false);
   }
 
+  /**
+   * @param servoAngle the servoAngle to set
+   */
+  @Config
+  public void setServoAngle(double servoAngle) {
+    this.servoAngle = servoAngle;
+  }
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
@@ -31,13 +41,12 @@ public class Shoot extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    shooter.shoot();
+    servo.setAngle(servoAngle);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    shooter.shoot(0);
   }
 
   // Returns true when the command should end.

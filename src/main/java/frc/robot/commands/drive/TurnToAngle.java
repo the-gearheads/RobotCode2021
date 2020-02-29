@@ -30,7 +30,7 @@ public class TurnToAngle extends CommandBase {
 
   public TurnToAngle(DriveSubsystem drive) {
     this.drive = drive;
-    this.controller = new PIDController(10, 0, 0);
+    this.controller = new PIDController(6, 0, 0);
     addRequirements(drive);
     Logger.configureLoggingAndConfig(this, false);
   }

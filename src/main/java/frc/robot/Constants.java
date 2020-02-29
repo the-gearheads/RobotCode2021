@@ -56,13 +56,14 @@ public final class Constants {
 
     //// SHOOTER SETTINGS
 
-    public static final double SHOOTER_ENCODER_EPR = 8192;
+    public static final double SHOOTER_ENCODER_EPR = 4096;
     public static final SimpleMotorFeedforward shooterFF = new SimpleMotorFeedforward(0, 0, 0);
     public static final int SHOOTER_POT = 0;
     public static final double SHOOTER_ANGLE_P = 0;
     public static final double SHOOTER_ANGLE_D = 0;
     // public static final int IR_TOP = 0;
     public static final int IR_BOTTOM = 1;
+    public static final int SHOOTER_GEARING = 1;
 
     ////
 

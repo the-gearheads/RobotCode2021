@@ -7,16 +7,22 @@
 
 package frc.robot.commands.shooter;
 
+import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpiutil.math.MathUtil;
 import frc.robot.subsystems.Shooter;
 
 public class ShootAndElevate extends CommandBase {
   private Shooter shooter; 
+  private PIDController controller;
+  private double rpm;
   /**
    * Creates a new elevator.
    */
-  public ShootAndElevate(Shooter shooter) {
+  public ShootAndElevate(Shooter shooter, double rpm) {
     this.shooter = shooter;
+    controller = new PIDController(1, 0, 0);
+    controller.setSetpoint(rpm);
     addRequirements(shooter);
   }
 
@@ -28,7 +34,9 @@ public class ShootAndElevate extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    shooter.shoot(1);  
+    double effort = controller.calculate(shooter.getAvgVelocity());
+    effort = MathUtil.clamp(effort, -rpm, rpm);
+    shooter.shoot(effort);  
     shooter.elevate();
   }
 
