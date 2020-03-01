@@ -27,8 +27,6 @@ import io.github.oblarg.oblog.annotations.Config;
 import io.github.oblarg.oblog.annotations.Log;
 
 public class Shooter extends SubsystemBase {
-  private final double ENCODER_CONSTANT = (1 / (double) Constants.SHOOTER_ENCODER_EPR)
-      * (1 / (double) Constants.SHOOTER_GEARING) * Math.PI * 60;
   private final CANSparkMax rShooter;
   private final CANSparkMax lShooter;
   private final CANSparkMax angleMotor;
@@ -60,9 +58,8 @@ public class Shooter extends SubsystemBase {
   @Log
   private double shooterRight;
 
-  public final DoubleSupplier avgVelocity;
-
-  private final SimpleMotorFeedforward feedforward;
+  private final SimpleMotorFeedforward leftFF;
+  private final SimpleMotorFeedforward rightFF;
 
   @Log
   private final AnalogInput pot;
@@ -92,9 +89,8 @@ public class Shooter extends SubsystemBase {
     lShooterEncoder = lShooter.getEncoder();
     rShooterEncoder = rShooter.getEncoder();
 
-    leftVelocity = () -> lShooterEncoder.getVelocity() ;//* ENCODER_CONSTANT;
-    rightVelocity = () -> rShooterEncoder.getVelocity() ;//* ENCODER_CONSTANT;
-    avgVelocity = () -> getAvgVelocity();
+    leftVelocity = () -> lShooterEncoder.getVelocity();// * ENCODER_CONSTANT;
+    rightVelocity = () -> rShooterEncoder.getVelocity();// * ENCODER_CONSTANT;
 
     elevatorUpper = new CANSparkMax(15, MotorType.kBrushless);
     elevatorLower = new CANSparkMax(11, MotorType.kBrushless);
@@ -102,7 +98,8 @@ public class Shooter extends SubsystemBase {
     lowerEnc = elevatorLower.getEncoder();
     elevatorLower.setInverted(true);
 
-    feedforward = Constants.shooterFF;
+    leftFF = Constants.SHOOTER_FF_LEFT;
+    rightFF = Constants.SHOOTER_FF_RIGHT;
 
     // pot = new AnalogPotentiometer(Constants.SHOOTER_POT, -131, 127.3);
     pot = new AnalogInput(Constants.SHOOTER_POT);
@@ -126,6 +123,7 @@ public class Shooter extends SubsystemBase {
   public void setBallCount(int ballCount) {
     this.ballCount = ballCount;
   }
+
   /**
    * @param shootSpeed the shootSpeed to set
    */
@@ -133,6 +131,7 @@ public class Shooter extends SubsystemBase {
   public void setShootSpeed(double shootSpeed) {
     this.shootSpeed = shootSpeed;
   }
+
   /**
    * @param lowerSpeed the lowerSpeed to set
    */
@@ -140,6 +139,7 @@ public class Shooter extends SubsystemBase {
   public void setLowerSpeed(double lowerSpeed) {
     this.lowerSpeed = lowerSpeed;
   }
+
   /**
    * @param upperSpeed the upperSpeed to set
    */
@@ -173,7 +173,6 @@ public class Shooter extends SubsystemBase {
     // topPrimed = false;
     // }
 
-    debug1 = getAvgVelocity();
   }
 
   public double getElevatorVelocity() {
@@ -181,7 +180,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public void elevate() {
-    elevate(upperSpeed, lowerSpeed);
+    elevate(0.4, 0.4);
   }
 
   public void elevate(double upper, double lower) {
@@ -198,17 +197,28 @@ public class Shooter extends SubsystemBase {
     rShooter.setVoltage(speed);
   }
 
-  public void shootVolts(double setpoint, double effort) {
-    lShooter.setVoltage(feedforward.calculate(setpoint) + effort);
-    rShooter.setVoltage(feedforward.calculate(setpoint) + effort);
+  // TODO: these are stupid params
+  public void shootVolts(double setpoint, double effortLeft, double effortRight) {
+    lShooter.setVoltage(leftFF.calculate(setpoint / 60) + effortLeft);
+    rShooter.setVoltage(rightFF.calculate(setpoint / 60) + effortRight);
   }
 
-  public double getAvgVelocity() {
-    return (leftVelocity.get() + rightVelocity.get()) / 2;
+  /**
+   * @return the leftVelocity
+   */
+  public double getLeftVelocity() {
+    return leftVelocity.get();
+  }
+
+  /**
+   * @return the rightVelocity
+   */
+  public double getRightVelocity() {
+    return rightVelocity.get();
   }
 
   public double getAnglePosition() {
-    return (pot.getVoltage() * -24.31) + 110.3;
+    return (pot.getVoltage() * -24.98) + 112.6;
   }
 
   public boolean isLimited(double direction) {

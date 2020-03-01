@@ -21,7 +21,7 @@ import io.github.oblarg.oblog.annotations.Log;
 public class TurnToAngle extends CommandBase {
   private final DriveSubsystem drive;
   private final PIDController controller;
-  private double offset = 0;
+  private final double offset;
   @Log
   private double effort;
   
@@ -30,21 +30,22 @@ public class TurnToAngle extends CommandBase {
 
   public TurnToAngle(DriveSubsystem drive) {
     this.drive = drive;
-    this.controller = new PIDController(6, 0, 0);
+    this.controller = new PIDController(8, 0, 0);
+    this.offset = Math.copySign(180, drive.getAngle())-drive.getAngle();
     addRequirements(drive);
     Logger.configureLoggingAndConfig(this, false);
   }
 
   @Override
   public void initialize() {
-    angle = (NetworkTableInstance.getDefault().getTable("OpenSight").getEntry("camera").getDouble(0) + drive.getAngle()) % 360;
+    angle = (NetworkTableInstance.getDefault().getTable("OpenSight").getEntry("camera").getDouble(0) + getAngle());
     controller.enableContinuousInput(0, 360);
     controller.setSetpoint(angle);
   }
 
   @Override
   public void execute() {
-    effort = MathUtil.clamp(controller.calculate((drive.getAngle() % 360)), -Constants.ROT_SPEED, Constants.ROT_SPEED);
+    effort = MathUtil.clamp(controller.calculate(getAngle()), -Constants.ROT_SPEED, Constants.ROT_SPEED);
     drive.controller
         .arcadeDrive(new ChassisSpeeds(0.0, 0.0, Math.toRadians(effort)));
   }
@@ -53,8 +54,12 @@ public class TurnToAngle extends CommandBase {
   public void end(boolean interrupted) {
   }
 
+  private double getAngle() {
+    return (drive.getAngle()+offset) % 360;
+  }
+
   @Override
   public boolean isFinished() {
-    return (Deadband.get(drive.getAngle() % 360, angle, 0.5) == 0);
+    return (Deadband.get(getAngle(), angle, 0.5) == 0);
   }
 }
