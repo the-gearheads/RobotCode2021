@@ -10,32 +10,43 @@ package frc.robot.commands.shooter;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpiutil.math.MathUtil;
 import frc.robot.subsystems.Shooter;
+import frc.robot.util.Voltages;
 
 public class Shoot extends CommandBase {
   private Shooter shooter;
-  private PIDController controller;
-  /**
-   * Creates a new elevator.
-   */
+  private PIDController leftController;
+  private PIDController rightController;
+  private double rpm;
+
   public Shoot(Shooter shooter) {
     this.shooter = shooter;
-    // addRequirements(shooter);
+    this.leftController = new PIDController(.05, 0, 0.008);
+    this.rightController = new PIDController(.05, 0, 0.008);
+
+    addRequirements(shooter);
+
+    SmartDashboard.putNumber("rpm", 4000);
   }
 
-  // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    rpm = SmartDashboard.getNumber("rpm", rpm);
+    leftController.setSetpoint(rpm / 60);
+    rightController.setSetpoint(rpm / 60);
   }
 
-  // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    shooter.shoot();
+    double left = leftController.calculate(shooter.getLeftVelocity() / 60);
+    double right = rightController.calculate(shooter.getRightVelocity() / 60);
+    left = MathUtil.clamp(left, -250, 250);
+    right = MathUtil.clamp(right, -250, 250);
+    shooter.shootVolts(rpm, new Voltages(left, right));
   }
 
   // Called once the command ends or is interrupted.
-  @Override
   public void end(boolean interrupted) {
     shooter.shoot(0);
   }

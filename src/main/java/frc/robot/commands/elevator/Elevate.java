@@ -5,19 +5,20 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands.shooter;
+package frc.robot.commands.elevator;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Elevator;
 
 public class Elevate extends CommandBase {
-  private Shooter shooter; 
+  private Elevator elevator;
+
   /**
    * Creates a new elevator.
    */
-  public Elevate(Shooter shooter) {
-    this.shooter = shooter;
-    // addRequirements(shooter);
+  public Elevate(Elevator elevator) {
+    this.elevator = elevator;
+    // addRequirements(elevator);
   }
 
   // Called when the command is initially scheduled.
@@ -28,13 +29,13 @@ public class Elevate extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    shooter.elevate(0, .4);
+    elevator.elevate();
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    shooter.elevate(0, 0);
+    elevator.elevate(0, 0);
   }
 
   // Returns true when the command should end.
