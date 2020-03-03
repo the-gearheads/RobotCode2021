@@ -26,6 +26,7 @@ import frc.robot.commands.elevator.Elevate;
 import frc.robot.commands.group.BlockedElevate;
 import frc.robot.commands.intake.RunIntake;
 import frc.robot.commands.shooter.Shoot;
+import frc.robot.commands.shooter.ShootAll;
 import frc.robot.subsystems.Arms;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Elevator;
@@ -86,11 +87,14 @@ public class RobotContainer {
     // Set up joystick binds
     new JoystickButton(controller, XboxController.Button.kX.value).whenPressed(new TurnToAngle(drive));
     new JoystickButton(controller, XboxController.Button.kY.value).whenPressed(this::routeToOrigin);
+
     JoystickTrigger rTrigger = new JoystickTrigger(controller, XboxController.Axis.kRightTrigger, 0.9);
-    rTrigger.whileHeld(
-        (new Shoot(shooter).withTimeout(1)).andThen((new Shoot(shooter)).deadlineWith(new Elevate(elevator))));
     JoystickTrigger lTrigger = new JoystickTrigger(controller, XboxController.Axis.kLeftTrigger, 0.9);
-    lTrigger.whileHeld((new BlockedElevate(elevator, shooter).alongWith(new RunIntake(intake))));
+
+    lTrigger.or(rTrigger).whileHeld(new RunIntake(intake));
+    lTrigger.and(rTrigger.negate()).whileHeld(new BlockedElevate(elevator, shooter));
+    rTrigger.whileHeld(
+        (new Shoot(shooter).withTimeout(1)).andThen((new ShootAll(shooter)).deadlineWith(new Elevate(elevator))));
   }
 
   public Command getAutonomousCommand() {

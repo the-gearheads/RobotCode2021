@@ -7,18 +7,31 @@
 
 package frc.robot.commands.shooter;
 
+import edu.wpi.first.wpilibj.Timer;
 import frc.robot.subsystems.Shooter;
 
 public class ShootAll extends Shoot {
-  private Shooter shooter;
+  private final Shooter shooter;
+  private final Timer timer;
 
   public ShootAll(Shooter shooter) {
     super(shooter);
     this.shooter = shooter;
+
+    timer = new Timer();
+  }
+
+  @Override
+  public void initialize() {
+    timer.reset();
+    super.initialize();
   }
 
   @Override
   public boolean isFinished() {
-    return (shooter.ballCount == 0);
+    if (shooter.ballCount == 0) {
+      timer.start();
+    }
+    return timer.hasPeriodPassed(2);
   }
 }

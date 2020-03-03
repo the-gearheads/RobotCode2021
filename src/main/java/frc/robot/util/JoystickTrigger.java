@@ -1,12 +1,14 @@
 package frc.robot.util;
 
+import java.util.function.BooleanSupplier;
+
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.button.Button;
 
 public class JoystickTrigger extends Button {
-    private final XboxController controller;
-    private final XboxController.Axis axis;
-    private final double tolerance;
+    private XboxController controller;
+    private XboxController.Axis axis;
+    private double tolerance;
 
     public JoystickTrigger(XboxController controller, XboxController.Axis axis, double tolerance) {
         this.controller = controller;
@@ -14,14 +16,24 @@ public class JoystickTrigger extends Button {
         this.tolerance = tolerance;
     }
 
+    public JoystickTrigger(BooleanSupplier isPressed) {
+        super(isPressed);
+    }
+
     @Override
     public boolean get() {
         return (controller.getRawAxis(axis.value) >= tolerance);
     }
 
-    public JoystickTrigger and(JoystickTrigger trigger) {
-        and(trigger);
-        return this;
+    public Button and(JoystickTrigger trigger) {
+        return new JoystickTrigger(() -> get() && trigger.get());
     }
 
+    public JoystickTrigger or(JoystickTrigger trigger) {
+        return new JoystickTrigger(() -> get() || trigger.get());
+    }
+
+    public JoystickTrigger negate() {
+        return new JoystickTrigger(() -> !get());
+    }
 }

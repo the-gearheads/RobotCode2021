@@ -32,21 +32,16 @@ public class Elevator extends SubsystemBase {
     upper(upper);
     lower(lower);
   }
-  
+
   public void lower(double speed) {
     elevatorLower.set(speed);
   }
-  
+
   public void upper(double speed) {
     elevatorUpper.set(speed);
   }
 
   public void elevate() {
     elevate(.4, .4);
-  }
-
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
   }
 }
