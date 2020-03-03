@@ -48,9 +48,9 @@ public class Shooter extends SubsystemBase {
 
   @Log
   public int ballCount;
-  private double shootSpeed = 0.5;
-  private double upperSpeed = 0.6;
-  private double lowerSpeed = 0.4;
+  private double shootSpeed;
+  private double upperSpeed;
+  private double lowerSpeed;
 
   private final Supplier<Double> leftVelocity;
   private final Supplier<Double> rightVelocity;
@@ -125,6 +125,27 @@ public class Shooter extends SubsystemBase {
    */
   public void setBallCount(int ballCount) {
     this.ballCount = ballCount;
+  }
+  /**
+   * @param shootSpeed the shootSpeed to set
+   */
+  @Config()
+  public void setShootSpeed(double shootSpeed) {
+    this.shootSpeed = shootSpeed;
+  }
+  /**
+   * @param lowerSpeed the lowerSpeed to set
+   */
+  @Config
+  public void setLowerSpeed(double lowerSpeed) {
+    this.lowerSpeed = lowerSpeed;
+  }
+  /**
+   * @param upperSpeed the upperSpeed to set
+   */
+  @Config
+  public void setUpperSpeed(double upperSpeed) {
+    this.upperSpeed = upperSpeed;
   }
 
   @Override

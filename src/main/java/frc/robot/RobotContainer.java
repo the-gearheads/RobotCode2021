@@ -28,6 +28,8 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.arms.ExtendArms;
 import frc.robot.commands.arms.RetractArms;
 import frc.robot.commands.drive.TurnToAngle;
+import frc.robot.commands.intake.Extend;
+import frc.robot.commands.intake.Retract;
 import frc.robot.commands.intake.RunIntake;
 import frc.robot.commands.shooter.Elevate;
 import frc.robot.commands.shooter.Shoot;
@@ -86,25 +88,26 @@ public class RobotContainer {
 
   private void configureButtonBindings() {
     // Set up command groups
-    SequentialCommandGroup shootGroup = (new Shoot(shooter).withTimeout(1))
-        .andThen(new ShootAndElevate(shooter).withTimeout(2));
+    // SequentialCommandGroup shootGroup = (new Shoot(shooter).withTimeout(1))
+        // .andThen(new ShootAndElevate(shooter).withTimeout(2));
 
     // Set up joystick binds
-    new JoystickButton(controller, XboxController.Button.kA.value).whenPressed(shootGroup);
+    // new JoystickButton(controller, XboxController.Button.kA.value).whenPressed(shootGroup);
+    new JoystickButton(controller, XboxController.Button.kA.value).whenPressed(new Extend(intake));
+    new JoystickButton(controller, XboxController.Button.kB.value).whenPressed(new Retract(intake));
     new JoystickButton(controller, XboxController.Button.kX.value).whenPressed(new TurnToAngle(drive));
     new JoystickButton(controller, XboxController.Button.kY.value).whenPressed(this::routeToOrigin);
-    new JoystickButton(controller, XboxController.Button.kB.value).whenPressed(new ShooterAngle(shooter));
     JoystickTrigger lTrigger = new JoystickTrigger(controller, XboxController.Axis.kLeftTrigger, 0.9);
     lTrigger.whileHeld(new RunIntake(intake, 0.4));
     JoystickTrigger rTrigger = new JoystickTrigger(controller, XboxController.Axis.kRightTrigger, 0.9);
-    rTrigger.whileHeld(new ShootAndElevate(shooter));
+    // rTrigger.whileHeld(new ShootAndElevate(shooter));
 
     // Set up StreamDeck buttons
     new StreamDeckButton(streamdeck, 0, "arms up").whenPressed(new ExtendArms(arms).withTimeout(5)); // TODO: Set timing
     new StreamDeckButton(streamdeck, 1, "intake out").whenPressed(new RunIntake(intake, -0.8)); // TODO: Bind
     new StreamDeckButton(streamdeck, 2, "red").whenPressed(new SpinColor(spinner, "Red"));
     new StreamDeckButton(streamdeck, 3, "elevator plus"); // TODO: Bind
-    new StreamDeckButton(streamdeck, 4, "shoot").whenPressed(shootGroup);
+    // new StreamDeckButton(streamdeck, 4, "shoot").whenPressed(shootGroup);
     new StreamDeckButton(streamdeck, 5, "color wheel"); // TODO: Bind
     new StreamDeckButton(streamdeck, 6, "green").whenPressed(new SpinColor(spinner, "Green"));
     new StreamDeckButton(streamdeck, 7, "rotate").whenPressed(new SpinRotations(spinner, 4));
