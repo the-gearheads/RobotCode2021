@@ -13,7 +13,6 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpiutil.math.MathUtil;
 import frc.robot.util.Deadband;
 import io.github.oblarg.oblog.Logger;
 import io.github.oblarg.oblog.annotations.Log;
@@ -86,7 +85,8 @@ public class Intake extends SubsystemBase {
 
   @Log
   public boolean isJammed() {
-    return (Deadband.get(lExtension.getAppliedOutput(), 0, 1.5) != 0) || (Deadband.get(rExtension.getAppliedOutput(), 0, 1.5) != 0);
+    return (Deadband.get(lExtension.getAppliedOutput(), 0, 1.5) != 0)
+        || (Deadband.get(rExtension.getAppliedOutput(), 0, 1.5) != 0);
   }
 
   public void setCoast() {

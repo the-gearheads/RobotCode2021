@@ -8,14 +8,11 @@
 package frc.robot.commands.intake;
 
 import edu.wpi.first.wpilibj.controller.PIDController;
-import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpiutil.math.MathUtil;
-import frc.robot.RobotContainer;
 import frc.robot.subsystems.Intake;
 import frc.robot.util.Deadband;
 import io.github.oblarg.oblog.Logger;
-import io.github.oblarg.oblog.annotations.Config;
 import io.github.oblarg.oblog.annotations.Log;
 
 public class Extend extends CommandBase {
@@ -24,7 +21,6 @@ public class Extend extends CommandBase {
   private PIDController leftController;
   @Log
   private PIDController rightController;
-  private final double SETPOINT = 32.5;
   @Log
   private boolean debug0;
   @Log

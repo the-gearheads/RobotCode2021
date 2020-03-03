@@ -57,6 +57,10 @@ public class StreamDeck {
         return statuses[index].getBoolean(false);
     }
 
+    public int getButtons() {
+        return buttons;
+    }
+
     public void reset() {
         for (int i = 0; i < buttons; i++) {
             actions[i] = actionTable.getEntry(String.valueOf(i));

@@ -9,7 +9,6 @@ package frc.robot.commands.group;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 
 public class BlockedElevate extends CommandBase {

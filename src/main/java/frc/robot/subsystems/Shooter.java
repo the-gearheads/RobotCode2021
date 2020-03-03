@@ -36,12 +36,6 @@ public class Shooter extends SubsystemBase {
 
   @Log
   public int ballCount;
-<<<<<<< HEAD
-  private double shootSpeed;
-  private double upperSpeed;
-  private double lowerSpeed;
-=======
->>>>>>> feature/shootpid
 
   private final Supplier<Double> leftVelocity;
   private final Supplier<Double> rightVelocity;
@@ -80,66 +74,9 @@ public class Shooter extends SubsystemBase {
     Logger.configureLoggingAndConfig(this, false);
   }
 
-<<<<<<< HEAD
-  @Config
-  /**
-   * @param ballCount the ballCount to set
-   */
-  public void setBallCount(int ballCount) {
-    this.ballCount = ballCount;
-  }
-  /**
-   * @param shootSpeed the shootSpeed to set
-   */
-  @Config()
-  public void setShootSpeed(double shootSpeed) {
-    this.shootSpeed = shootSpeed;
-  }
-  /**
-   * @param lowerSpeed the lowerSpeed to set
-   */
-  @Config
-  public void setLowerSpeed(double lowerSpeed) {
-    this.lowerSpeed = lowerSpeed;
-  }
-  /**
-   * @param upperSpeed the upperSpeed to set
-   */
-  @Config
-  public void setUpperSpeed(double upperSpeed) {
-    this.upperSpeed = upperSpeed;
-  }
-
-  @Override
-  public void periodic() {
-    if (irBottom.getVoltage() < .1) {
-      if (bottomPrimed) {
-        ballCount += 1;
-        bottomPrimed = false;
-      }
-    } else {
-      bottomPrimed = true;
-    }
-    shooterLeft = leftVelocity.get();
-    shooterRight = rightVelocity.get();
-    anglePosition = getAnglePosition();
-    debug1 = lShooter.getOutputCurrent();
-    // debug1 = pot.getVoltage();
-    // debug2 = RobotController.getVoltage5V();
-    // if (irTop.getVoltage() == 0) {
-    // if (topPrimed) {
-    // ballCount += 1;
-    // topPrimed = true;
-    // }
-    // } else {
-    // topPrimed = false;
-    // }
-
-=======
   public void shoot(double speed) {
     lShooter.set(speed);
     rShooter.set(speed);
->>>>>>> feature/shootpid
   }
 
   public void shootVolts(double setpoint, Voltages voltages) {
@@ -154,7 +91,7 @@ public class Shooter extends SubsystemBase {
   public double getRightVelocity() {
     return rightVelocity.get();
   }
-  
+
   public boolean topBlocked() {
     return (irTop.getVoltage() < .1);
   }
@@ -167,7 +104,6 @@ public class Shooter extends SubsystemBase {
   public void periodic() {
     shooterLeft = leftVelocity.get();
     shooterRight = rightVelocity.get();
-
 
     if (bottomBlocked()) {
       if (bottomPrimed) {
