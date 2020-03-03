@@ -27,8 +27,10 @@ import frc.robot.commands.arms.ExtendArms;
 import frc.robot.commands.arms.RetractArms;
 import frc.robot.commands.drive.TurnToAngle;
 import frc.robot.commands.elevator.Elevate;
+import frc.robot.commands.group.BlockedElevate;
 import frc.robot.commands.intake.RunIntake;
 import frc.robot.commands.shooter.Shoot;
+import frc.robot.commands.shooter.ShootAll;
 import frc.robot.subsystems.Arms;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Elevator;
@@ -82,14 +84,14 @@ public class RobotContainer {
     new JoystickButton(controller, XboxController.Button.kX.value).whenPressed(new TurnToAngle(drive));
     new JoystickButton(controller, XboxController.Button.kY.value).whenPressed(this::routeToOrigin);
     // new JoystickButton(controller, XboxController.Button.kY.value).whenPressed(new ServoTest());
-    JoystickTrigger lTrigger = new JoystickTrigger(controller, XboxController.Axis.kLeftTrigger, 0.9);
-    lTrigger.whileHeld(new RunIntake(intake, 0.4));
     JoystickTrigger rTrigger = new JoystickTrigger(controller, XboxController.Axis.kRightTrigger, 0.9);
-    rTrigger.whileHeld((new Shoot(shooter)).alongWith(new Elevate(elevator)));
-
+    rTrigger.whileHeld((new Shoot(shooter).withTimeout(1)).andThen((new Shoot(shooter)).deadlineWith(new Elevate(elevator))));
+    JoystickTrigger lTrigger = new JoystickTrigger(controller, XboxController.Axis.kLeftTrigger, 0.9);
+    lTrigger.whileHeld((new BlockedElevate(elevator, shooter).alongWith(new RunIntake(intake))));
+    // lTrigger.and(rTrigger).whenPres
     // Set up StreamDeck buttons
     new StreamDeckButton(streamdeck, 0, "arms up").whenPressed(new ExtendArms(arms).withTimeout(5)); // TODO: Set timing
-    new StreamDeckButton(streamdeck, 1, "intake out").whenPressed(new RunIntake(intake, -0.8)); // TODO: Bind
+    // new StreamDeckButton(streamdeck, 1, "intake out").whenPressed(new RunIntake(intake, -0.8)); // TODO: Bind
     // new StreamDeckButton(streamdeck, 2, "red").whenPressed(new SpinColor(spinner, "Red"));
     new StreamDeckButton(streamdeck, 3, "elevator plus"); // TODO: Bind
     new StreamDeckButton(streamdeck, 4, "shoot");
@@ -99,7 +101,7 @@ public class RobotContainer {
     // new StreamDeckButton(streamdeck, 8, "yellow").whenPressed(new SpinColor(spinner, "Yellow"));
     new StreamDeckButton(streamdeck, 9, "unjam"); // TODO: Bind
     new StreamDeckButton(streamdeck, 10, "arms down").whenPressed(new RetractArms(arms).withTimeout(5)); // TODO: timing
-    new StreamDeckButton(streamdeck, 11, "intake").whenPressed(new RunIntake(intake, 0.8));
+    new StreamDeckButton(streamdeck, 11, "intake").whenPressed(new RunIntake(intake));
     // new StreamDeckButton(streamdeck, 12, "blue").whenPressed(new SpinColor(spinner, "Blue"));
     new StreamDeckButton(streamdeck, 13, "elevator minus"); // TODO: Bind
     // new StreamDeckButton(streamdeck, 14, "aim").whenPressed(new TurnToAngle(drive));

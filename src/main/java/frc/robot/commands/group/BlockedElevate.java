@@ -5,17 +5,21 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands.intake;
+package frc.robot.commands.group;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter;
 
-public class RunIntake extends CommandBase {
-  private Intake intake;
+public class BlockedElevate extends CommandBase {
+  private final Elevator elevator;
+  private final Shooter shooter;
 
-  public RunIntake(Intake intake) {
-    this.intake = intake;
-    addRequirements(intake);
+  public BlockedElevate(Elevator elevator, Shooter shooter) {
+    this.elevator = elevator;
+    this.shooter = shooter;
+    addRequirements(elevator, shooter);
   }
 
   @Override
@@ -24,12 +28,16 @@ public class RunIntake extends CommandBase {
 
   @Override
   public void execute() {
-    intake.intake(.4);
+    if (shooter.bottomBlocked()) {
+      elevator.lower(0.4);
+    } else {
+      elevator.lower(0);
+    }
   }
 
   @Override
   public void end(boolean interrupted) {
-    intake.intake(0);
+    elevator.lower(0);
   }
 
   @Override

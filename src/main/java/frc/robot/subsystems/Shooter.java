@@ -29,9 +29,9 @@ public class Shooter extends SubsystemBase {
   private final CANEncoder lShooterEncoder;
   private final CANEncoder rShooterEncoder;
 
-  // private final AnalogInput irTop;
-  // private boolean topPrimed;
+  private final AnalogInput irTop;
   private final AnalogInput irBottom;
+  private boolean topPrimed;
   private boolean bottomPrimed;
 
   @Log
@@ -68,7 +68,7 @@ public class Shooter extends SubsystemBase {
     lShooter.setIdleMode(IdleMode.kBrake);
     rShooter.setIdleMode(IdleMode.kBrake);
 
-    // irTop = new AnalogInput(Constants.IR_TOP);
+    irTop = new AnalogInput(Constants.IR_TOP);
     irBottom = new AnalogInput(Constants.IR_BOTTOM);
 
     Logger.configureLoggingAndConfig(this, false);
@@ -91,10 +91,22 @@ public class Shooter extends SubsystemBase {
   public double getRightVelocity() {
     return rightVelocity.get();
   }
+  
+  public boolean topBlocked() {
+    return (irTop.getVoltage() < .1);
+  }
+
+  public boolean bottomBlocked() {
+    return (irBottom.getVoltage() < .1);
+  }
 
   @Override
   public void periodic() {
-    if (irBottom.getVoltage() < .1) {
+    shooterLeft = leftVelocity.get();
+    shooterRight = rightVelocity.get();
+
+
+    if (bottomBlocked()) {
       if (bottomPrimed) {
         ballCount += 1;
         bottomPrimed = false;
@@ -102,17 +114,14 @@ public class Shooter extends SubsystemBase {
     } else {
       bottomPrimed = true;
     }
-    shooterLeft = leftVelocity.get();
-    shooterRight = rightVelocity.get();
 
-    // if (irTop.getVoltage() == 0) {
-    // if (topPrimed) {
-    // ballCount += 1;
-    // topPrimed = true;
-    // }
-    // } else {
-    // topPrimed = false;
-    // }
-
+    if (topBlocked()) {
+      if (topPrimed) {
+        ballCount -= 1;
+        topPrimed = false;
+      }
+    } else {
+      topPrimed = true;
+    }
   }
 }

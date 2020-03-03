@@ -18,7 +18,7 @@ public class Elevate extends CommandBase {
    */
   public Elevate(Elevator elevator) {
     this.elevator = elevator;
-    // addRequirements(elevator);
+    addRequirements(elevator);
   }
 
   // Called when the command is initially scheduled.

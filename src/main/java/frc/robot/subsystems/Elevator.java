@@ -29,8 +29,16 @@ public class Elevator extends SubsystemBase {
   }
 
   public void elevate(double upper, double lower) {
-    elevatorUpper.set(upper);
-    elevatorLower.set(lower);
+    upper(upper);
+    lower(lower);
+  }
+  
+  public void lower(double speed) {
+    elevatorLower.set(speed);
+  }
+  
+  public void upper(double speed) {
+    elevatorUpper.set(speed);
   }
 
   public void elevate() {

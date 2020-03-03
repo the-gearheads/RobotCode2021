@@ -26,7 +26,7 @@ public class ShooterAngle extends SubsystemBase {
   public ShooterAngle() {
 
     angleMotor = new CANSparkMax(26, MotorType.kBrushless);
-    angleMotor.setInverted(true);
+    // angleMotor.setInverted(true);
     angleMotor.setIdleMode(IdleMode.kBrake);
 
     // pot = new AnalogPotentiometer(Constants.SHOOTER_POT, -131, 127.3);

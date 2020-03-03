@@ -5,35 +5,20 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands.intake;
+package frc.robot.commands.shooter;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter;
 
-public class RunIntake extends CommandBase {
-  private Intake intake;
+public class ShootAll extends Shoot {
+  private Shooter shooter;
 
-  public RunIntake(Intake intake) {
-    this.intake = intake;
-    addRequirements(intake);
-  }
-
-  @Override
-  public void initialize() {
-  }
-
-  @Override
-  public void execute() {
-    intake.intake(.4);
-  }
-
-  @Override
-  public void end(boolean interrupted) {
-    intake.intake(0);
+  public ShootAll(Shooter shooter) {
+    super(shooter);
+    this.shooter = shooter;
   }
 
   @Override
   public boolean isFinished() {
-    return false;
+    return (shooter.ballCount == 0);
   }
 }
