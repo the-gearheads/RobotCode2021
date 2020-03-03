@@ -30,7 +30,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.commands.drive.ArcadeDrive;
 import frc.robot.util.Deadband;
-import frc.robot.util.WheelVoltages;
+import frc.robot.util.Voltages;
 import io.github.oblarg.oblog.Logger;
 import io.github.oblarg.oblog.annotations.Log;
 
@@ -211,7 +211,7 @@ public class DriveSubsystem extends SubsystemBase {
       rightSide.setVoltage(right);
     }
 
-    public void driveVoltageFF(WheelVoltages voltages, DifferentialDriveWheelSpeeds speeds) {
+    public void driveVoltageFF(Voltages voltages, DifferentialDriveWheelSpeeds speeds) {
       leftSide.setVoltage(voltages.left + leftFF.calculate(speeds.leftMetersPerSecond));
       rightSide.setVoltage(voltages.right + rightFF.calculate(speeds.rightMetersPerSecond));
     }
@@ -240,7 +240,7 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     public void tankDrive(DifferentialDriveWheelSpeeds speeds) {
-      WheelVoltages voltages = new WheelVoltages(leftPid.calculate(leftVelocity.get(), speeds.leftMetersPerSecond),
+      Voltages voltages = new Voltages(leftPid.calculate(leftVelocity.get(), speeds.leftMetersPerSecond),
           rightPid.calculate(rightVelocity.get(), speeds.rightMetersPerSecond));
       driveVoltageFF(voltages, speeds);
     }

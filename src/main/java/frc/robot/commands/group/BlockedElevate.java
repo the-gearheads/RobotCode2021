@@ -5,39 +5,41 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands.shooter;
+package frc.robot.commands.group;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 
-public class Elevate extends CommandBase {
-  private Shooter shooter; 
-  /**
-   * Creates a new elevator.
-   */
-  public Elevate(Shooter shooter) {
+public class BlockedElevate extends CommandBase {
+  private final Elevator elevator;
+  private final Shooter shooter;
+
+  public BlockedElevate(Elevator elevator, Shooter shooter) {
+    this.elevator = elevator;
     this.shooter = shooter;
-    // addRequirements(shooter);
+    addRequirements(elevator, shooter);
   }
 
-  // Called when the command is initially scheduled.
   @Override
   public void initialize() {
   }
 
-  // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    shooter.elevate(0, .4);
+    if (shooter.bottomBlocked()) {
+      elevator.lower(0.4);
+    } else {
+      elevator.lower(0);
+    }
   }
 
-  // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    shooter.elevate(0, 0);
+    elevator.lower(0);
   }
 
-  // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     return false;
