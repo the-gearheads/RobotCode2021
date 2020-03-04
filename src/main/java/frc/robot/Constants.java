@@ -65,6 +65,10 @@ public final class Constants {
 
     ////
 
+    //// ELEVATOR SETTINGS
+    public static final double SINGLE_BALL_COUNTS = 100;    
+    ////
+
     //// GYRO SETTINGS
     public static final Port GYRO_PORT = Port.kMXP;
     public static final double GYRO_P = 1;
@@ -72,7 +76,6 @@ public final class Constants {
     //// MISC
 
     public static final int CONTROLLER_PORT = 0;
-
     ////
 
 }

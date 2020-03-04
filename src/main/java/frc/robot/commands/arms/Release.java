@@ -10,39 +10,32 @@ package frc.robot.commands.arms;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Arms;
 
-public class RetractArms extends CommandBase {
-  private Arms arms;
+public class Release extends CommandBase {
+  private final Arms arms;
+  private double target;
 
-  /**
-   * Creates a new Extender.
-   */
-  public RetractArms(Arms arms) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(arms);
+  public Release(Arms arms) {
     this.arms = arms;
-
+    addRequirements(arms);
   }
 
-  // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    target = arms.getPosition() + 2048;
   }
 
-  // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    arms.retract();
+    arms.run(0.1);
   }
 
-  // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    arms.zero();
+    arms.run(0);
   }
 
-  // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return (arms.getPosition() > target);
   }
 }

@@ -7,40 +7,40 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import io.github.oblarg.oblog.annotations.Log;
 
 public class Arms extends SubsystemBase {
   /**
    * Creates a new Extender.
    */
-  private final CANSparkMax leftArm;
-  private final CANSparkMax rightArm;
+  private final CANSparkMax arm;
+  private final CANEncoder encoder;
+
+  @Log
+  private double position;
 
   public Arms() {
-    leftArm = new CANSparkMax(0, MotorType.kBrushless);
-    rightArm = new CANSparkMax(0, MotorType.kBrushless);
+    arm = new CANSparkMax(0, MotorType.kBrushless);
+    encoder = arm.getEncoder();
   }
 
-  public void extend() {
-    leftArm.set(0.5);
-    rightArm.set(0.5);
+  public double getPosition() {
+    return position;
   }
 
-  public void retract() {
-    leftArm.set(-0.5);
-    rightArm.set(-0.5);
-  }
-
-  public void zero() {
-    leftArm.set(0);
-    rightArm.set(0);
+  public void run(double speed) {
+    // NEVER RUN BACKWARD
+    speed = Math.abs(speed);
+    arm.set(speed);
   }
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    position = encoder.getPosition();
   }
 }

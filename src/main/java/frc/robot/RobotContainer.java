@@ -21,6 +21,8 @@ import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.commands.arms.Climb;
+import frc.robot.commands.arms.Release;
 import frc.robot.commands.drive.TurnToAngle;
 import frc.robot.commands.elevator.Elevate;
 import frc.robot.commands.group.BlockedElevate;
@@ -87,6 +89,8 @@ public class RobotContainer {
     // Set up joystick binds
     new JoystickButton(controller, XboxController.Button.kX.value).whenPressed(new TurnToAngle(drive));
     new JoystickButton(controller, XboxController.Button.kY.value).whenPressed(this::routeToOrigin);
+    new JoystickButton(controller, XboxController.Button.kA.value).whenPressed(new Release(arms));
+    new JoystickButton(controller, XboxController.Button.kB.value).whenPressed(new Climb(arms));
 
     JoystickTrigger rTrigger = new JoystickTrigger(controller, XboxController.Axis.kRightTrigger, 0.9);
     JoystickTrigger lTrigger = new JoystickTrigger(controller, XboxController.Axis.kLeftTrigger, 0.9);

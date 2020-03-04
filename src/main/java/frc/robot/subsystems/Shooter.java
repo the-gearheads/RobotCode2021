@@ -44,6 +44,7 @@ public class Shooter extends SubsystemBase {
   private double shooterLeft;
   @Log
   private double shooterRight;
+  private boolean newBall;
 
   private final SimpleMotorFeedforward leftFF;
   private final SimpleMotorFeedforward rightFF;
@@ -100,6 +101,10 @@ public class Shooter extends SubsystemBase {
     return (irBottom.getVoltage() < .1);
   }
 
+  public boolean getNewBall() {
+    return newBall;
+  }
+
   @Override
   public void periodic() {
     shooterLeft = leftVelocity.get();
@@ -109,6 +114,7 @@ public class Shooter extends SubsystemBase {
       if (bottomPrimed) {
         ballCount += 1;
         bottomPrimed = false;
+        newBall = true;
       }
     } else {
       bottomPrimed = true;

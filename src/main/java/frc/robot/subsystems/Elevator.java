@@ -7,6 +7,7 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -17,10 +18,17 @@ public class Elevator extends SubsystemBase {
 
   private final CANSparkMax elevatorUpper;
   private final CANSparkMax elevatorLower;
+  private final CANEncoder upperEncoder;
+  private final CANEncoder lowerEncoder;
+
+  private double lowerPosition;
+  private double upperPosition;
 
   public Elevator() {
     elevatorUpper = new CANSparkMax(15, MotorType.kBrushless);
     elevatorLower = new CANSparkMax(11, MotorType.kBrushless);
+    upperEncoder = elevatorUpper.getEncoder();
+    lowerEncoder = elevatorLower.getEncoder();
 
     elevatorLower.setInverted(true);
 
@@ -40,8 +48,23 @@ public class Elevator extends SubsystemBase {
   public void upper(double speed) {
     elevatorUpper.set(speed);
   }
+  
 
   public void elevate() {
-    elevate(.4, .4);
+    elevate(.4, .5);
+  }
+
+  public double getUpperPosition() {
+    return upperPosition;
+  }
+
+  public double getLowerPosition() {
+    return lowerPosition;
+  }
+
+  @Override
+  public void periodic() {
+    upperPosition = upperEncoder.getPosition();
+    lowerPosition = lowerEncoder.getPosition();
   }
 }
