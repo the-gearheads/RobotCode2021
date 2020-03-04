@@ -37,7 +37,7 @@ public class BlockedElevate extends CommandBase {
     if (shooter.getNewBall()) {
       setpoint += Constants.SINGLE_BALL_COUNTS;
     }
-    if (!(Deadband.get(elevator.getLowerPosition(), setpoint, 2) == 0)) {
+    if (elevator.getLowerPosition() < setpoint) {
       elevator.lower(0.4);
     }
   }
