@@ -25,7 +25,8 @@ public class Arms extends SubsystemBase {
   private double position;
 
   public Arms() {
-    arm = new CANSparkMax(0, MotorType.kBrushless);
+    arm = new CANSparkMax(25, MotorType.kBrushless);
+    arm.setInverted(true);
     encoder = arm.getEncoder();
   }
 
@@ -35,7 +36,7 @@ public class Arms extends SubsystemBase {
 
   public void run(double speed) {
     // NEVER RUN BACKWARD
-    speed = Math.abs(speed);
+    // speed = Math.abs(speed);
     arm.set(speed);
   }
 

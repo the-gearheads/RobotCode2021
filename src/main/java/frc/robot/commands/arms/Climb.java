@@ -11,14 +11,16 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Arms;
 
 public class Climb extends CommandBase {
-  private Arms arms;
+  private final Arms arms;
+  private final double direction;
 
   /**
    * Creates a new Extender.
    */
-  public Climb(Arms arms) {
+  public Climb(Arms arms, double direction) {
     addRequirements(arms);
     this.arms = arms;
+    this.direction = Math.signum(direction);
   }
 
   @Override
@@ -27,7 +29,7 @@ public class Climb extends CommandBase {
 
   @Override
   public void execute() {
-    arms.run(0.5);
+    arms.run(direction);
   }
 
   // Called once the command ends or is interrupted.

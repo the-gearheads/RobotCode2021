@@ -21,12 +21,12 @@ public class Release extends CommandBase {
 
   @Override
   public void initialize() {
-    target = arms.getPosition() + 2048;
+    target = arms.getPosition() + 40;
   }
 
   @Override
   public void execute() {
-    arms.run(0.1);
+    arms.run(1);
   }
 
   @Override

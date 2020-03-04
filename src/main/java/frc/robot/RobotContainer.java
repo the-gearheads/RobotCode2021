@@ -80,25 +80,26 @@ public class RobotContainer {
   private void setupStreamDeck() {
     int count = streamdeck.getButtons();
     buttons = new StreamDeckButton[count];
-    for (int i = 0; i <= count; i++) {
+    for (int i = 0; i <= (count-1); i++) {
       buttons[i] = new StreamDeckButton(streamdeck, i);
     }
   }
 
   private void configureButtonBindings() {
     // Set up joystick binds
-    new JoystickButton(controller, XboxController.Button.kX.value).whenPressed(new TurnToAngle(drive));
-    new JoystickButton(controller, XboxController.Button.kY.value).whenPressed(this::routeToOrigin);
+    // new JoystickButton(controller, XboxController.Button.kX.value).whenPressed(new TurnToAngle(drive));
+    // new JoystickButton(controller, XboxController.Button.kY.value).whenPressed(this::routeToOrigin);
     new JoystickButton(controller, XboxController.Button.kA.value).whenPressed(new Release(arms));
-    new JoystickButton(controller, XboxController.Button.kB.value).whenPressed(new Climb(arms));
+    new JoystickButton(controller, XboxController.Button.kB.value).whenPressed(new Climb(arms, 1));
+    new JoystickButton(controller, XboxController.Button.kX.value).whenPressed(new Climb(arms, -1));
 
     JoystickTrigger rTrigger = new JoystickTrigger(controller, XboxController.Axis.kRightTrigger, 0.9);
     JoystickTrigger lTrigger = new JoystickTrigger(controller, XboxController.Axis.kLeftTrigger, 0.9);
 
-    lTrigger.or(rTrigger).whileHeld(new RunIntake(intake));
-    lTrigger.and(rTrigger.negate()).whileHeld(new BlockedElevate(elevator, shooter));
-    rTrigger.whileHeld(
-        (new Shoot(shooter).withTimeout(1)).andThen((new ShootAll(shooter)).deadlineWith(new Elevate(elevator))));
+    // lTrigger.whileHeld(new RunIntake(intake));
+    // lTrigger.and(rTrigger.negate()).whileHeld(new BlockedElevate(elevator, shooter));
+    // rTrigger.whileHeld(
+        // (new Shoot(shooter).withTimeout(1)).andThen((new ShootAll(shooter)).deadlineWith(new Elevate(elevator))));
   }
 
   public Command getAutonomousCommand() {
