@@ -12,24 +12,39 @@ import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 
 public final class Constants {
 
-    // MOTOR CONTROLLER IDs
+    //// MOTOR CONTROLLER IDs
     public static final int FL_ID = 3;
     public static final int FR_ID = 5;
     public static final int BL_ID = 2;
     public static final int BR_ID = 6;
 
-    //// DRIVING CONFIG
+    ////
+
+    //// DRIVER CONFIG
 
     // Meters per second
     public static double THROTTLE_SPEED = 1;
     // Degrees per second
-    public static double ROT_SPEED = 200;
+    public static double ROT_SPEED = 90;
 
     // Controller deadband in % of stick
     public static double THROTTLE_DEADBAND = 0.05;
     public static double ROT_DEADBAND = 0.3;
 
+    public static double SLOW_MULTIPLIER = 0.5;
+    public static double FAST_MULTIPLIER = 2;
+
     ////
+
+    //// OPERATOR CONFIG
+
+    // degrees per second
+    public static double ANGLE_DRIVE_SPEED = 5;
+    public static double RPM_MIN = 4000;
+    public static double RPM_MAX = 7500;
+
+    ////
+
 
     //// DRIVETRAIN SETTINGS
 
@@ -66,16 +81,23 @@ public final class Constants {
     ////
 
     //// ELEVATOR SETTINGS
+
     public static final double SINGLE_BALL_COUNTS = 100;    
+
     ////
 
     //// GYRO SETTINGS
+
     public static final Port GYRO_PORT = Port.kMXP;
     public static final double GYRO_P = 1;
+
+    ////
 
     //// MISC
 
     public static final int CONTROLLER_PORT = 0;
+    public static final int JOYSTICK_PORT = 1;
+
     ////
 
 }

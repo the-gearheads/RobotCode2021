@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpiutil.math.MathUtil;
+import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.Shooter;
 import frc.robot.util.Voltages;
 
@@ -24,15 +26,13 @@ public class Shoot extends CommandBase {
     this.shooter = shooter;
     this.leftController = new PIDController(.05, 0, 0.008);
     this.rightController = new PIDController(.05, 0, 0.008);
-
     addRequirements(shooter);
-
-    SmartDashboard.putNumber("rpm", 4000);
   }
 
   @Override
   public void initialize() {
-    rpm = SmartDashboard.getNumber("rpm", rpm);
+    double range = Constants.RPM_MAX - Constants.RPM_MIN;
+    rpm = (RobotContainer.joystick.getRawAxis(2) * range) + Constants.RPM_MIN;
     leftController.setSetpoint(rpm / 60);
     rightController.setSetpoint(rpm / 60);
   }

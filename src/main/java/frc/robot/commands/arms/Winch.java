@@ -10,23 +10,27 @@ package frc.robot.commands.arms;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Arms;
 
-public class Release extends CommandBase {
+public class Winch extends CommandBase {
   private final Arms arms;
+  private final double rotations;
+  private final double direction;
   private double target;
 
-  public Release(Arms arms) {
+  public Winch(Arms arms, double rotations, double direction) {
     this.arms = arms;
+    this.rotations = rotations;
+    this.direction = direction;
     addRequirements(arms);
   }
 
   @Override
   public void initialize() {
-    target = arms.getPosition() + 40;
+    target = arms.getPosition() * (rotations*direction);
   }
 
   @Override
   public void execute() {
-    arms.run(1);
+    arms.run(direction);
   }
 
   @Override

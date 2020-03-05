@@ -26,7 +26,6 @@ public class Arms extends SubsystemBase {
 
   public Arms() {
     arm = new CANSparkMax(25, MotorType.kBrushless);
-    arm.setInverted(true);
     encoder = arm.getEncoder();
   }
 

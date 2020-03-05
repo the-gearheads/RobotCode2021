@@ -17,6 +17,7 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
+import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -30,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.commands.drive.ArcadeDrive;
 import frc.robot.util.Deadband;
+import frc.robot.util.Lidar;
 import frc.robot.util.Voltages;
 import io.github.oblarg.oblog.Logger;
 import io.github.oblarg.oblog.annotations.Log;
@@ -58,32 +60,25 @@ public class DriveSubsystem extends SubsystemBase {
 
   public final Control controller = new Control();
 
-  // Log vars
-  @Log
-  double angle;
-  @Log
-  double angularVelocity;
-  @Log
-  double x;
-  @Log
-  double y;
-  double initAngle;
+  private Lidar lidar;
 
   @Log
-  double debug1;
+  private double lidarDistance;
   @Log
-  double debug2;
+  private double angle;
   @Log
-  double debug3;
+  private double angularVelocity;
   @Log
-  double debug4;
+  private double x;
   @Log
-  double debug5;
-  @Log
-  double debug6;
+  private double y;
+  private double initAngle;
+  private double speedMultiplier = 1;
+
 
   public DriveSubsystem() {
     Logger.configureLoggingAndConfig(this, false);
+    lidar = new Lidar(Port.kMXP);
 
     // Setup motors
     flMotor = new WPI_TalonFX(Constants.FL_ID);
@@ -157,23 +152,13 @@ public class DriveSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    NetworkTable table = NetworkTableInstance.getDefault().getTable("Live_Dashboard");
     angularVelocity = getAngularVelocity();
     angle = getAngle();
     Rotation2d gyroAngle = Rotation2d.fromDegrees(angle);
     Pose2d pose = odometry.update(gyroAngle, -leftPosition.get(), -rightPosition.get());
     x = pose.getTranslation().getX();
     y = pose.getTranslation().getY();
-
-    debug1 = leftVelocity.get();
-    debug2 = rightVelocity.get();
-    table.getEntry("robotX").setNumber(x);
-    table.getEntry("robotY").setNumber(y);
-    table.getEntry("robotHeading").setNumber(Math.toRadians(angle));
-  }
-
-  public void tankDriveVolts(Double left, Double right) {
-    controller.rawDriveVoltage(left, right);
+    lidarDistance = lidar.getDistance(false);
   }
 
   public class Control {
@@ -191,6 +176,10 @@ public class DriveSubsystem extends SubsystemBase {
 
       leftFF = Constants.leftFF;
       rightFF = Constants.rightFF;
+    }
+
+    public void setMultiplier(double multiplier) {
+      speedMultiplier = multiplier;
     }
 
     public void rawDrive(double left, double right) {
@@ -212,8 +201,8 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     public void driveVoltageFF(Voltages voltages, DifferentialDriveWheelSpeeds speeds) {
-      leftSide.setVoltage(voltages.left + leftFF.calculate(speeds.leftMetersPerSecond));
-      rightSide.setVoltage(voltages.right + rightFF.calculate(speeds.rightMetersPerSecond));
+      leftSide.setVoltage(voltages.left + leftFF.calculate(speeds.leftMetersPerSecond * speedMultiplier));
+      rightSide.setVoltage(voltages.right + rightFF.calculate(speeds.rightMetersPerSecond * speedMultiplier));
     }
 
     public double angleFeedForward(double input) {

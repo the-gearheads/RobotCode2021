@@ -5,17 +5,19 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands.intake;
+package frc.robot.commands.arms;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Arms;
 
-public class RunIntake extends CommandBase {
-  private Intake intake;
+public class WinchHold extends CommandBase {
+  private final Arms arms;
+  private final double direction;
 
-  public RunIntake(Intake intake) {
-    this.intake = intake;
-    addRequirements(intake);
+  public WinchHold(Arms arms, double direction) {
+    this.arms = arms;
+    this.direction = direction;
+    addRequirements(arms);
   }
 
   @Override
@@ -24,12 +26,12 @@ public class RunIntake extends CommandBase {
 
   @Override
   public void execute() {
-    intake.intake(.4);
+    arms.run(0.3*direction);
   }
 
   @Override
   public void end(boolean interrupted) {
-    intake.intake(0);
+    arms.run(0);
   }
 
   @Override

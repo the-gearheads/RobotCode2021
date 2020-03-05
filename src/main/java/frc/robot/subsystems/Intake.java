@@ -7,6 +7,7 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
@@ -23,27 +24,25 @@ public class Intake extends SubsystemBase {
    */
   private final CANSparkMax lExtension;
   private final CANSparkMax rExtension;
-  private final CANSparkMax intake;
+  private final CANSparkMax pft;
+
+  private final WPI_TalonSRX intake;
 
   private final CANEncoder lEncoder;
   private final CANEncoder rEncoder;
-
   @Log
-  private double debug0;
+  private double left;
   @Log
-  private double debug1;
-  @Log
-  private double debug2;
-  @Log
-  private double debug3;
+  private double right;
 
   public Intake() {
-    lExtension = new CANSparkMax(6, MotorType.kBrushless);
-    rExtension = new CANSparkMax(27, MotorType.kBrushless);
+    lExtension = new CANSparkMax(27, MotorType.kBrushless);
+    rExtension = new CANSparkMax(6, MotorType.kBrushless);
     lExtension.setInverted(true);
     rExtension.setInverted(true);
 
-    intake = new CANSparkMax(28, MotorType.kBrushless);
+    pft = new CANSparkMax(28, MotorType.kBrushless);
+    intake = new WPI_TalonSRX(35);
     lEncoder = lExtension.getEncoder();
     rEncoder = rExtension.getEncoder();
     lEncoder.setPosition(0);
@@ -60,10 +59,12 @@ public class Intake extends SubsystemBase {
 
   @Override
   public void periodic() {
-    debug0 = lExtension.getOutputCurrent();
-    debug1 = rExtension.getAppliedOutput();
-    debug2 = lEncoder.getPosition();
-    debug3 = rEncoder.getPosition();
+    left = lEncoder.getPosition();
+    right = rEncoder.getPosition();
+  }
+
+  public void pft(double speed) {
+    pft.set(speed);
   }
 
   public void intake(double speed) {

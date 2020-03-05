@@ -8,8 +8,12 @@
 package frc.robot;
 
 import java.util.Collections;
+import java.util.function.Supplier;
 
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
@@ -21,13 +25,17 @@ import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.commands.arms.Climb;
-import frc.robot.commands.arms.Release;
+import frc.robot.commands.angle.DriveAngle;
+import frc.robot.commands.angle.SetAngle;
+import frc.robot.commands.arms.Winch;
+import frc.robot.commands.arms.WinchHold;
+import frc.robot.commands.drive.SpeedModifier;
 import frc.robot.commands.drive.TurnToAngle;
-import frc.robot.commands.elevator.Elevate;
-import frc.robot.commands.group.BlockedElevate;
-import frc.robot.commands.intake.RunIntake;
-import frc.robot.commands.shooter.Shoot;
+import frc.robot.commands.group.Unjam;
+import frc.robot.commands.intake.Extend;
+import frc.robot.commands.intake.FullIntake;
+import frc.robot.commands.intake.Pft;
+import frc.robot.commands.intake.Retract;
 import frc.robot.commands.shooter.ShootAll;
 import frc.robot.subsystems.Arms;
 import frc.robot.subsystems.DriveSubsystem;
@@ -43,6 +51,7 @@ import frc.robot.util.StreamDeckButton;
 public class RobotContainer {
   // OI
   public static XboxController controller;
+  public static Joystick joystick;
   private static StreamDeck streamdeck;
   private static StreamDeckButton[] buttons;
 
@@ -63,6 +72,7 @@ public class RobotContainer {
     arms = new Arms();
 
     controller = new XboxController(Constants.CONTROLLER_PORT);
+    joystick = new Joystick(Constants.JOYSTICK_PORT);
     streamdeck = new StreamDeck(0, 15);
     setupStreamDeck();
     configureButtonBindings();
@@ -71,6 +81,11 @@ public class RobotContainer {
   // run on any mode init
   public void init() {
     streamdeck.reset();
+    NetworkTableInstance.getDefault().getTable("OpenSight").getEntry("led").setBoolean(true);
+  }
+
+  public void disable() {
+    NetworkTableInstance.getDefault().getTable("OpenSight").getEntry("led").setBoolean(false);
   }
 
   public static StreamDeckButton getButton(int index) {
@@ -80,26 +95,37 @@ public class RobotContainer {
   private void setupStreamDeck() {
     int count = streamdeck.getButtons();
     buttons = new StreamDeckButton[count];
-    for (int i = 0; i <= (count-1); i++) {
+    for (int i = 0; i <= (count - 1); i++) {
       buttons[i] = new StreamDeckButton(streamdeck, i);
     }
   }
 
   private void configureButtonBindings() {
-    // Set up joystick binds
-    // new JoystickButton(controller, XboxController.Button.kX.value).whenPressed(new TurnToAngle(drive));
-    // new JoystickButton(controller, XboxController.Button.kY.value).whenPressed(this::routeToOrigin);
-    new JoystickButton(controller, XboxController.Button.kA.value).whenPressed(new Release(arms));
-    new JoystickButton(controller, XboxController.Button.kB.value).whenPressed(new Climb(arms, 1));
-    new JoystickButton(controller, XboxController.Button.kX.value).whenPressed(new Climb(arms, -1));
+    Supplier<Boolean> thirtySeconds = () -> ((DriverStation.getInstance().getMatchTime() <= 30) && DriverStation.getInstance().isOperatorControl());
 
-    JoystickTrigger rTrigger = new JoystickTrigger(controller, XboxController.Axis.kRightTrigger, 0.9);
-    JoystickTrigger lTrigger = new JoystickTrigger(controller, XboxController.Axis.kLeftTrigger, 0.9);
+    new JoystickTrigger(controller, XboxController.Axis.kRightTrigger, 0.9)
+        .whileHeld(new SpeedModifier(drive, Constants.SLOW_MULTIPLIER));
+    new JoystickTrigger(controller, XboxController.Axis.kLeftTrigger, 0.9)
+        .whileHeld(new SpeedModifier(drive, Constants.FAST_MULTIPLIER));
 
-    // lTrigger.whileHeld(new RunIntake(intake));
-    // lTrigger.and(rTrigger.negate()).whileHeld(new BlockedElevate(elevator, shooter));
-    // rTrigger.whileHeld(
-        // (new Shoot(shooter).withTimeout(1)).andThen((new ShootAll(shooter)).deadlineWith(new Elevate(elevator))));
+    new JoystickButton(joystick, 1).whenPressed(new ShootAll(shooter));
+    new JoystickButton(joystick, 2).whenPressed(new DriveAngle(angle));
+    new JoystickButton(joystick, 7).whenPressed(new SetAngle(angle, 45));
+    new JoystickButton(joystick, 9).whenPressed(new SetAngle(angle, 70));
+    new JoystickButton(joystick, 11).whenPressed(new SetAngle(angle, 0));
+
+    buttons[0].setIcon("arms up").addAutoStatus(thirtySeconds).whenPressed(new Winch(arms, 40, 1));
+    buttons[1].setIcon("arms up").addAutoStatus(thirtySeconds).setMode("hold").whileHeld(new WinchHold(arms, 1));
+    buttons[2].setIcon("arms down").setMode("hold").whenPressed(new WinchHold(arms, -1));
+    buttons[3].setIcon("aim").whenPressed(new TurnToAngle(drive));
+    buttons[4].setIcon("intake").setMode("hold").whileHeld((new FullIntake(intake)).alongWith(new Extend(intake))).whenReleased(new Retract(intake));
+    buttons[5].setIcon("yellow");
+    buttons[6].setIcon("green");
+    buttons[9].setIcon("unjam").setMode("hold").whileHeld(new Unjam(angle, elevator, shooter));
+    buttons[10].setIcon("blue");
+    buttons[11].setIcon("red");
+    buttons[12].setIcon("rotate");
+    buttons[14].setIcon("down").whenPressed(new SetAngle(angle, 0));
   }
 
   public Command getAutonomousCommand() {

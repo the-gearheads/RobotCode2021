@@ -1,5 +1,8 @@
 package frc.robot.util;
 
+import java.util.function.BooleanSupplier;
+import java.util.function.Supplier;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -9,6 +12,7 @@ public class StreamDeckButton extends Trigger {
   private final StreamDeck streamdeck;
   private final int button;
   private String icon;
+  private String mode;
   private Command currentCommand;
 
   public StreamDeckButton(StreamDeck streamdeck, int button) {
@@ -22,32 +26,58 @@ public class StreamDeckButton extends Trigger {
     this.button = button;
     setIcon(icon);
     CommandScheduler.getInstance().onCommandFinish(command -> handleFinished(command));
+    CommandScheduler.getInstance().onCommandInterrupt(command -> handleFinished(command));
+  }
+
+  public StreamDeckButton addAutoStatus(Supplier<Boolean> supplier) {
+    StreamDeckButton thisButton = this;
+    CommandScheduler.getInstance().addButton(new Runnable() {
+      private StreamDeckButton button = thisButton;
+
+      @Override
+      public void run() {
+        button.setStatus(get());
+      }
+    });
+    return this;
+  }
+
+  public StreamDeckButton setMode(String mode) {
+    this.mode = mode;
+    streamdeck.setMode(button, mode);
+    return this;
+  }
+
+  public String getMode() {
+    return this.mode;
   }
 
   public String getIcon() {
     return this.icon;
   }
 
-  public void setIcon(String icon) {
+  public StreamDeckButton setIcon(String icon) {
     this.icon = icon;
-    this.streamdeck.setIcon(button, icon);
+    streamdeck.setIcon(button, icon);
+    return this;
   }
 
   public void setAction(boolean action) {
-    this.streamdeck.setAction(button, action);
+    streamdeck.setAction(button, action);
   }
 
   @Override
   public boolean get() {
-    return this.streamdeck.getAction(this.button);
+    return streamdeck.getAction(this.button);
   }
 
-  public void setStatus(boolean status) {
-    this.streamdeck.setStatus(button, status);
+  public StreamDeckButton setStatus(boolean status) {
+    streamdeck.setStatus(button, status);
+    return this;
   }
 
   public boolean getStatus() {
-    return this.streamdeck.getStatus(button);
+    return streamdeck.getStatus(button);
   }
 
   private void handleFinished(Command command) {

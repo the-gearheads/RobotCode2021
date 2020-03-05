@@ -5,22 +5,17 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands.arms;
+package frc.robot.commands.intake;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Arms;
+import frc.robot.subsystems.Intake;
 
-public class Climb extends CommandBase {
-  private final Arms arms;
-  private final double direction;
+public class Pft extends CommandBase {
+  private Intake intake;
 
-  /**
-   * Creates a new Extender.
-   */
-  public Climb(Arms arms, double direction) {
-    addRequirements(arms);
-    this.arms = arms;
-    this.direction = Math.signum(direction);
+  public Pft(Intake intake) {
+    this.intake = intake;
+    addRequirements(intake);
   }
 
   @Override
@@ -29,16 +24,14 @@ public class Climb extends CommandBase {
 
   @Override
   public void execute() {
-    arms.run(direction);
+    intake.pft(.4);
   }
 
-  // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    arms.run(0);
+    intake.pft(0);
   }
 
-  // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     return false;

@@ -13,7 +13,6 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.commands.angle.HoldAngle;
@@ -22,6 +21,7 @@ public class ShooterAngle extends SubsystemBase {
 
   private final CANSparkMax angleMotor;
   private final AnalogInput pot;
+  private double angle; 
 
   public ShooterAngle() {
 
@@ -29,9 +29,7 @@ public class ShooterAngle extends SubsystemBase {
     angleMotor.setIdleMode(IdleMode.kBrake);
 
     pot = new AnalogInput(Constants.SHOOTER_POT);
-
-    SmartDashboard.putNumber("shooterAngle", getPosition());
-    SmartDashboard.putBoolean("gotoAngle", false);
+    angle = getPosition();
 
     setDefaultCommand(new HoldAngle(this));
   }
@@ -40,6 +38,14 @@ public class ShooterAngle extends SubsystemBase {
     return (pot.getVoltage() * -24.98) + 112.6;
   }
 
+  public void setAngle(double angle) {
+    this.angle = angle;
+  }
+
+  public double getAngle() {
+    return angle;
+  }
+  
   public boolean isLimited(double direction) {
     double sign = Math.signum(direction);
     if (sign == 1) {

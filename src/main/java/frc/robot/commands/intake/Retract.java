@@ -28,10 +28,9 @@ public class Retract extends CommandBase {
    */
   public Retract(Intake intake) {
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(intake);
     this.intake = intake;
-    leftController = new PIDController(.85, 0, 0);
-    rightController = new PIDController(.88, 0, 0);
+    leftController = new PIDController(.95, 0, 0);
+    rightController = new PIDController(.98, 0, 0);
     leftController.setSetpoint(SETPOINT);
     rightController.setSetpoint(SETPOINT);
     Logger.configureLoggingAndConfig(this, false);

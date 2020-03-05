@@ -7,54 +7,37 @@
 
 package frc.robot.commands.angle;
 
-import edu.wpi.first.wpilibj.controller.PIDController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpiutil.math.MathUtil;
+import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.ShooterAngle;
 
-public class HoldAngle extends CommandBase {
+public class DriveAngle extends CommandBase {
   private final ShooterAngle angle;
-  private final PIDController controller;
 
-  private double target;
-
-  public HoldAngle(ShooterAngle angle) {
+  public DriveAngle(ShooterAngle angle) {
     this.angle = angle;
-
-    controller = new PIDController(0.1, 0, 0);
-    controller.setTolerance(999);
-
-    addRequirements(angle);
   }
 
+  // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    target = angle.getPosition();
-    controller.setSetpoint(target);
   }
 
+  // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    controller.setSetpoint(angle.getAngle());
-    if (controller.atSetpoint()) {
-      return;
-    }
-
-    double effort = controller.calculate(angle.getPosition());
-    if (angle.isLimited(effort)) {
-      return;
-    }
-
-    effort = MathUtil.clamp(effort, -1, 1);
-    angle.turnAngle(effort);
+    double speed = -RobotContainer.joystick.getRawAxis(1);
+    speed = speed * Constants.ANGLE_DRIVE_SPEED / 5;
+    angle.setAngle(speed);
   }
 
+  // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    angle.turnAngle(0);
   }
 
+  // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     return false;

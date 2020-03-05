@@ -33,12 +33,11 @@ public class Extend extends CommandBase {
    */
   public Extend(Intake intake) {
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(intake);
     this.intake = intake;
     leftController = new PIDController(.75, 0, 0);
     rightController = new PIDController(.75, 0, 0);
-    leftController.setSetpoint(33);
-    rightController.setSetpoint(33.2);
+    leftController.setSetpoint(28);
+    rightController.setSetpoint(28.2);
     Logger.configureLoggingAndConfig(this, false);
   }
 
@@ -87,8 +86,8 @@ public class Extend extends CommandBase {
       intake.setCoast();
     }
     return (intake.isJammed())
-        || (Deadband.get(intake.getLPosition(), 32.6, 0.2) == 0)
-            && (Deadband.get(intake.getRPosition(), 32.8, 0.2) == 0)
+        || (Deadband.get(intake.getLPosition(), 28.2, 0.2) == 0)
+            && (Deadband.get(intake.getRPosition(), 28.8, 0.2) == 0)
         || ((intake.getLPosition() >= 32.85) || (intake.getRPosition() >= 33.09));
   }
 }
