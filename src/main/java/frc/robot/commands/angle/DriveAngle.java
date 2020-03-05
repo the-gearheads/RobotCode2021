@@ -29,7 +29,7 @@ public class DriveAngle extends CommandBase {
   public void execute() {
     double speed = -RobotContainer.joystick.getRawAxis(1);
     speed = speed * Constants.ANGLE_DRIVE_SPEED / 5;
-    angle.setAngle(speed);
+    angle.setAngle(speed+angle.getAngle());
   }
 
   // Called once the command ends or is interrupted.

@@ -29,13 +29,13 @@ public class Shooter extends SubsystemBase {
   private final CANEncoder lShooterEncoder;
   private final CANEncoder rShooterEncoder;
 
-  private final AnalogInput irTop;
-  private final AnalogInput irBottom;
+  private static AnalogInput irTop;
+  private static AnalogInput irBottom;
   private boolean topPrimed;
   private boolean bottomPrimed;
 
   @Log
-  public int ballCount;
+  public static int ballCount;
 
   private final Supplier<Double> leftVelocity;
   private final Supplier<Double> rightVelocity;
@@ -44,8 +44,6 @@ public class Shooter extends SubsystemBase {
   private double shooterLeft;
   @Log
   private double shooterRight;
-  private boolean newBall;
-
   private final SimpleMotorFeedforward leftFF;
   private final SimpleMotorFeedforward rightFF;
 
@@ -85,6 +83,10 @@ public class Shooter extends SubsystemBase {
     rShooter.setVoltage(rightFF.calculate(setpoint / 60) + voltages.right);
   }
 
+  public static int getBallCount() {
+    return ballCount;
+  }
+  
   public double getLeftVelocity() {
     return leftVelocity.get();
   }
@@ -93,16 +95,12 @@ public class Shooter extends SubsystemBase {
     return rightVelocity.get();
   }
 
-  public boolean topBlocked() {
+  public static boolean topBlocked() {
     return (irTop.getVoltage() < .1);
   }
 
-  public boolean bottomBlocked() {
+  public static boolean bottomBlocked() {
     return (irBottom.getVoltage() < .1);
-  }
-
-  public boolean getNewBall() {
-    return newBall;
   }
 
   @Override
@@ -114,7 +112,6 @@ public class Shooter extends SubsystemBase {
       if (bottomPrimed) {
         ballCount += 1;
         bottomPrimed = false;
-        newBall = true;
       }
     } else {
       bottomPrimed = true;
@@ -122,7 +119,9 @@ public class Shooter extends SubsystemBase {
 
     if (topBlocked()) {
       if (topPrimed) {
-        ballCount -= 1;
+        if (ballCount > 0) {
+          ballCount -= 1;
+        }
         topPrimed = false;
       }
     } else {

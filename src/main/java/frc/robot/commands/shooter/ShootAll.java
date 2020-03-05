@@ -29,7 +29,7 @@ public class ShootAll extends Shoot {
 
   @Override
   public boolean isFinished() {
-    if (shooter.ballCount == 0) {
+    if (Shooter.getBallCount() == 0) {
       timer.start();
     }
     return timer.hasPeriodPassed(2);

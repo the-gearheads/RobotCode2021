@@ -26,7 +26,7 @@ public class WinchHold extends CommandBase {
 
   @Override
   public void execute() {
-    arms.run(0.3*direction);
+    arms.run(1*direction);
   }
 
   @Override

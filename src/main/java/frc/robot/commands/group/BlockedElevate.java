@@ -10,36 +10,63 @@ package frc.robot.commands.group;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import frc.robot.util.Deadband;
+import io.github.oblarg.oblog.Logger;
+import io.github.oblarg.oblog.annotations.Log;
 
 public class BlockedElevate extends CommandBase {
   private final Elevator elevator;
-  private final Shooter shooter;
+  private final Intake intake;
+  @Log
   private double setpoint;
+  private int ballCount;
+  @Log
+  private double debug;
+  private boolean last;
 
-  public BlockedElevate(Elevator elevator, Shooter shooter) {
+  public BlockedElevate(Elevator elevator, Intake intake) {
     this.elevator = elevator;
-    this.shooter = shooter;
+    this.intake = intake;
     this.setpoint = elevator.getLowerPosition();
-    addRequirements(elevator, shooter);
+    Logger.configureLoggingAndConfig(this, false);
+    addRequirements(elevator);
   }
 
   @Override
   public void initialize() {
-    if (shooter.bottomBlocked()) {
-      setpoint += Constants.SINGLE_BALL_COUNTS;
-    }
+    ballCount = Shooter.getBallCount();
+    elevator.zero();
   }
 
   @Override
   public void execute() {
-    if (shooter.getNewBall()) {
-      setpoint += Constants.SINGLE_BALL_COUNTS;
+    if (Shooter.topBlocked()) {
+      elevator.lower(0);
+      elevator.upper(0);
+      intake.pft(0);
+      return;
     }
-    if (elevator.getLowerPosition() < setpoint) {
-      elevator.lower(0.4);
+    if (Shooter.bottomBlocked()) {
+      elevator.lower(0.3);
+      elevator.upper(0.25);
+      intake.pft(0.4);
+    } else {
+      if (last) {
+        setpoint = elevator.getLowerPosition() + Constants.SINGLE_BALL_ROTS;
+      }
+      if (elevator.getLowerPosition() < setpoint) {
+        elevator.lower(0.3);
+        elevator.upper(0.1);
+        intake.pft(0.4);
+      } else {
+        elevator.lower(0);
+        elevator.upper(0);
+        intake.pft(0);
+      }
     }
+    last = Shooter.bottomBlocked();
   }
 
   @Override

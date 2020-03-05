@@ -31,11 +31,14 @@ import frc.robot.commands.arms.Winch;
 import frc.robot.commands.arms.WinchHold;
 import frc.robot.commands.drive.SpeedModifier;
 import frc.robot.commands.drive.TurnToAngle;
+import frc.robot.commands.elevator.Elevate;
+import frc.robot.commands.group.BlockedElevate;
 import frc.robot.commands.group.Unjam;
 import frc.robot.commands.intake.Extend;
 import frc.robot.commands.intake.FullIntake;
 import frc.robot.commands.intake.Pft;
 import frc.robot.commands.intake.Retract;
+import frc.robot.commands.shooter.Shoot;
 import frc.robot.commands.shooter.ShootAll;
 import frc.robot.subsystems.Arms;
 import frc.robot.subsystems.DriveSubsystem;
@@ -103,22 +106,22 @@ public class RobotContainer {
   private void configureButtonBindings() {
     Supplier<Boolean> thirtySeconds = () -> ((DriverStation.getInstance().getMatchTime() <= 30) && DriverStation.getInstance().isOperatorControl());
 
-    new JoystickTrigger(controller, XboxController.Axis.kRightTrigger, 0.9)
-        .whileHeld(new SpeedModifier(drive, Constants.SLOW_MULTIPLIER));
     new JoystickTrigger(controller, XboxController.Axis.kLeftTrigger, 0.9)
+        .whileHeld(new SpeedModifier(drive, Constants.SLOW_MULTIPLIER));
+    new JoystickTrigger(controller, XboxController.Axis.kRightTrigger, 0.9)
         .whileHeld(new SpeedModifier(drive, Constants.FAST_MULTIPLIER));
 
-    new JoystickButton(joystick, 1).whenPressed(new ShootAll(shooter));
-    new JoystickButton(joystick, 2).whenPressed(new DriveAngle(angle));
+    new JoystickButton(joystick, 1).whileHeld((new Shoot(shooter).withTimeout(1)).andThen((new ShootAll(shooter)).deadlineWith(new Elevate(elevator))));
+    new JoystickButton(joystick, 2).whileHeld(new DriveAngle(angle));
     new JoystickButton(joystick, 7).whenPressed(new SetAngle(angle, 45));
-    new JoystickButton(joystick, 9).whenPressed(new SetAngle(angle, 70));
+    new JoystickButton(joystick, 9).whenPressed(new SetAngle(angle, 20));
     new JoystickButton(joystick, 11).whenPressed(new SetAngle(angle, 0));
 
     buttons[0].setIcon("arms up").addAutoStatus(thirtySeconds).whenPressed(new Winch(arms, 40, 1));
     buttons[1].setIcon("arms up").addAutoStatus(thirtySeconds).setMode("hold").whileHeld(new WinchHold(arms, 1));
-    buttons[2].setIcon("arms down").setMode("hold").whenPressed(new WinchHold(arms, -1));
+    buttons[2].setIcon("arms down").setMode("hold").whileHeld(new WinchHold(arms, -1));
     buttons[3].setIcon("aim").whenPressed(new TurnToAngle(drive));
-    buttons[4].setIcon("intake").setMode("hold").whileHeld((new FullIntake(intake)).alongWith(new Extend(intake))).whenReleased(new Retract(intake));
+    buttons[4].setIcon("intake").setMode("hold").whileHeld((new FullIntake(intake)).alongWith(new Extend(intake))).whenReleased((new Retract(intake)).alongWith((new Pft(intake)).withTimeout(5)));
     buttons[5].setIcon("yellow");
     buttons[6].setIcon("green");
     buttons[9].setIcon("unjam").setMode("hold").whileHeld(new Unjam(angle, elevator, shooter));
@@ -126,6 +129,14 @@ public class RobotContainer {
     buttons[11].setIcon("red");
     buttons[12].setIcon("rotate");
     buttons[14].setIcon("down").whenPressed(new SetAngle(angle, 0));
+  }
+
+  public static Shooter getShooter() {
+    return shooter;
+  }
+
+  public static Intake getIntake() {
+    return intake;
   }
 
   public Command getAutonomousCommand() {

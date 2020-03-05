@@ -32,7 +32,7 @@ public class Shoot extends CommandBase {
   @Override
   public void initialize() {
     double range = Constants.RPM_MAX - Constants.RPM_MIN;
-    rpm = (RobotContainer.joystick.getRawAxis(2) * range) + Constants.RPM_MIN;
+    rpm = (-RobotContainer.joystick.getRawAxis(2) * range) + Constants.RPM_MIN;
     leftController.setSetpoint(rpm / 60);
     rightController.setSetpoint(rpm / 60);
   }

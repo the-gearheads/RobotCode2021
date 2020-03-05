@@ -16,6 +16,8 @@ import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.commands.angle.HoldAngle;
+import io.github.oblarg.oblog.Logger;
+import io.github.oblarg.oblog.annotations.Log;
 
 public class ShooterAngle extends SubsystemBase {
 
@@ -27,11 +29,13 @@ public class ShooterAngle extends SubsystemBase {
 
     angleMotor = new CANSparkMax(26, MotorType.kBrushless);
     angleMotor.setIdleMode(IdleMode.kBrake);
+    angleMotor.setInverted(true);
 
     pot = new AnalogInput(Constants.SHOOTER_POT);
     angle = getPosition();
 
     setDefaultCommand(new HoldAngle(this));
+    Logger.configureLoggingAndConfig(this, false);
   }
 
   public double getPosition() {
@@ -42,6 +46,7 @@ public class ShooterAngle extends SubsystemBase {
     this.angle = angle;
   }
 
+  @Log
   public double getAngle() {
     return angle;
   }

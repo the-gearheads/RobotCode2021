@@ -23,7 +23,7 @@ public final class Constants {
     //// DRIVER CONFIG
 
     // Meters per second
-    public static double THROTTLE_SPEED = 1;
+    public static double THROTTLE_SPEED = 6;
     // Degrees per second
     public static double ROT_SPEED = 90;
 
@@ -40,8 +40,8 @@ public final class Constants {
 
     // degrees per second
     public static double ANGLE_DRIVE_SPEED = 5;
-    public static double RPM_MIN = 4000;
-    public static double RPM_MAX = 7500;
+    public static double RPM_MIN = 5000;
+    public static double RPM_MAX = 8500;
 
     ////
 
@@ -74,15 +74,15 @@ public final class Constants {
     public static final SimpleMotorFeedforward SHOOTER_FF_LEFT = new SimpleMotorFeedforward(0.186, 0.0633, 0.00681);
     public static final SimpleMotorFeedforward SHOOTER_FF_RIGHT = new SimpleMotorFeedforward(0.252, 0.0632, 0.00639);
     public static final int SHOOTER_POT = 0;
-    public static final int IR_TOP = 1;
-    public static final int IR_BOTTOM = 2;
+    public static final int IR_TOP = 2;
+    public static final int IR_BOTTOM = 1;
     public static final int SHOOTER_GEARING = 1;
 
     ////
 
     //// ELEVATOR SETTINGS
 
-    public static final double SINGLE_BALL_COUNTS = 100;    
+    public static final double SINGLE_BALL_ROTS = 3;
 
     ////
 

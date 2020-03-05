@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpiutil.math.MathUtil;
 import frc.robot.subsystems.ShooterAngle;
+import frc.robot.util.Deadband;
 
 public class HoldAngle extends CommandBase {
   private final ShooterAngle angle;
@@ -22,8 +23,8 @@ public class HoldAngle extends CommandBase {
   public HoldAngle(ShooterAngle angle) {
     this.angle = angle;
 
-    controller = new PIDController(0.1, 0, 0);
-    controller.setTolerance(999);
+    controller = new PIDController(0.075, 0, 0);
+    // controller.setTolerance(0);
 
     addRequirements(angle);
   }
@@ -37,16 +38,20 @@ public class HoldAngle extends CommandBase {
   @Override
   public void execute() {
     controller.setSetpoint(angle.getAngle());
-    if (controller.atSetpoint()) {
+    if (Deadband.get(angle.getPosition(), angle.getAngle(), 5) == 0) {
+      SmartDashboard.putBoolean("atsetpoint", true);
       return;
     }
+    SmartDashboard.putBoolean("atsetpoint", false);
 
     double effort = controller.calculate(angle.getPosition());
     if (angle.isLimited(effort)) {
+      SmartDashboard.putBoolean("islimited", true);
       return;
     }
+    SmartDashboard.putBoolean("islimited", false);
 
-    effort = MathUtil.clamp(effort, -1, 1);
+    effort = MathUtil.clamp(effort, -10, 10);
     angle.turnAngle(effort);
   }
 
