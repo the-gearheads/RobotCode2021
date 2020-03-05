@@ -24,12 +24,15 @@ import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.angle.DriveAngle;
 import frc.robot.commands.angle.SetAngle;
 import frc.robot.commands.arms.Winch;
 import frc.robot.commands.arms.WinchHold;
+import frc.robot.commands.drive.ArcadeDrive;
 import frc.robot.commands.drive.SpeedModifier;
+import frc.robot.commands.drive.DriveToWall;
 import frc.robot.commands.drive.TurnToAngle;
 import frc.robot.commands.elevator.Elevate;
 import frc.robot.commands.group.BlockedElevate;
@@ -140,7 +143,7 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    final DifferentialDriveVoltageConstraint autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
+    /*final DifferentialDriveVoltageConstraint autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
         Constants.leftFF, drive.getKinematics(), 10);
     final TrajectoryConfig config = new TrajectoryConfig(Constants.MAX_VELOCITY, Constants.MAX_ACCEL)
         .setKinematics(drive.getKinematics()).addConstraint(autoVoltageConstraint);
@@ -153,7 +156,12 @@ public class RobotContainer {
     Ramsete ramseteCommand = new Ramsete(transformed,
         new RamseteController(Constants.RAMSETE_B, Constants.RAMSETE_ZETA), drive);
     ramseteCommand.schedule();
-    return ramseteCommand;
+    return ramseteCommand;*/
+    return new SequentialCommandGroup (
+      new DriveToWall(drive),
+      new SetAngle(angle, 20),
+      new ShootAll(shooter)
+    );
   }
 
   public void routeToOrigin() {
