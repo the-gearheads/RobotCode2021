@@ -43,6 +43,7 @@ import frc.robot.commands.intake.Pft;
 import frc.robot.commands.intake.Retract;
 import frc.robot.commands.shooter.Shoot;
 import frc.robot.commands.shooter.ShootAll;
+import frc.robot.commands.shooter.ShootAt;
 import frc.robot.subsystems.Arms;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Elevator;
@@ -157,10 +158,13 @@ public class RobotContainer {
         new RamseteController(Constants.RAMSETE_B, Constants.RAMSETE_ZETA), drive);
     ramseteCommand.schedule();
     return ramseteCommand;*/
+    Shooter.ballCount = 3;
     return new SequentialCommandGroup (
       new DriveToWall(drive),
       new SetAngle(angle, 20),
-      new ShootAll(shooter)
+      new ShootAt(shooter, 4000).withTimeout(1),
+      new ShootAt(shooter, 4000).withTimeout(1),
+      new ShootAt(shooter, 4000).withTimeout(1)
     );
   }
 

@@ -150,6 +150,10 @@ public class DriveSubsystem extends SubsystemBase {
     return new DifferentialDriveWheelSpeeds(leftVelocity.get(), rightVelocity.get());
   }
 
+  public double getLidarDistance() {
+    return lidarDistance;
+  }
+
   @Override
   public void periodic() {
     angularVelocity = getAngularVelocity();

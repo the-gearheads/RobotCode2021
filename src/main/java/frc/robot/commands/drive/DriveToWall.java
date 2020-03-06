@@ -8,13 +8,16 @@
 package frc.robot.commands.drive;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants;
+import frc.robot.subsystems.DriveSubsystem;
 
-public class DriveStraight extends CommandBase {
-  /**
-   * Creates a new DriveStraight.
-   */
-  public DriveStraight() {
-    // Use addRequirements() here to declare subsystem dependencies.
+public class DriveToWall extends CommandBase {
+  private DriveSubsystem drive;
+  private boolean isAtWall;
+
+  public DriveToWall(DriveSubsystem drive) {
+    this.drive = drive;
+    this.isAtWall = false;
   }
 
   // Called when the command is initially scheduled.
@@ -25,16 +28,18 @@ public class DriveStraight extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    drive.controller.rawTankDrive(1 * Constants.SLOW_MULTIPLIER, 1 * Constants.SLOW_MULTIPLIER);
+    if(drive.getLidarDistance() <= 10) {
+      isAtWall = true;
+    }
   }
 
-  // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
   }
 
-  // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return isAtWall;
   }
 }
