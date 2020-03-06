@@ -12,7 +12,6 @@ import frc.robot.Constants;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
-import frc.robot.util.Deadband;
 import io.github.oblarg.oblog.Logger;
 import io.github.oblarg.oblog.annotations.Log;
 
@@ -42,11 +41,12 @@ public class BlockedElevate extends CommandBase {
 
   @Override
   public void execute() {
+    //TODO: if ball count is < 2, don't run top elavator motors.
     if (Shooter.topBlocked()) {
-      elevator.lower(0);
-      elevator.upper(0);
-      intake.pft(0);
-      return;
+       elevator.lower(0);
+       elevator.upper(0);
+       intake.pft(0);
+       return;
     }
     if (Shooter.bottomBlocked()) {
       elevator.lower(0.3);

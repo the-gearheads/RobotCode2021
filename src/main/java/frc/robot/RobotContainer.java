@@ -10,7 +10,6 @@ package frc.robot;
 import java.util.Collections;
 import java.util.function.Supplier;
 
-import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
@@ -24,25 +23,22 @@ import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpiutil.net.PortForwarder;
+import frc.robot.commands.NOP;
 import frc.robot.commands.angle.DriveAngle;
 import frc.robot.commands.angle.SetAngle;
-import frc.robot.commands.arms.Winch;
 import frc.robot.commands.arms.WinchHold;
-import frc.robot.commands.drive.ArcadeDrive;
-import frc.robot.commands.drive.SpeedModifier;
 import frc.robot.commands.drive.DriveToWall;
+import frc.robot.commands.drive.SpeedModifier;
 import frc.robot.commands.drive.TurnToAngle;
 import frc.robot.commands.elevator.Elevate;
-import frc.robot.commands.group.BlockedElevate;
 import frc.robot.commands.group.Unjam;
 import frc.robot.commands.intake.Extend;
 import frc.robot.commands.intake.FullIntake;
 import frc.robot.commands.intake.Pft;
 import frc.robot.commands.intake.Retract;
 import frc.robot.commands.shooter.Shoot;
-import frc.robot.commands.shooter.ShootAll;
 import frc.robot.commands.shooter.ShootAt;
 import frc.robot.subsystems.Arms;
 import frc.robot.subsystems.DriveSubsystem;
@@ -83,6 +79,10 @@ public class RobotContainer {
     streamdeck = new StreamDeck(0, 15);
     setupStreamDeck();
     configureButtonBindings();
+
+    PortForwarder.add(8000, "10.11.89.100", 80);
+    PortForwarder.add(2200, "10.11.89.100", 22);
+    PortForwarder.add(5800, "10.11.89.100", 5800);
   }
 
   // run on any mode init
@@ -108,28 +108,34 @@ public class RobotContainer {
   }
 
   private void configureButtonBindings() {
-    Supplier<Boolean> thirtySeconds = () -> ((DriverStation.getInstance().getMatchTime() <= 30) && DriverStation.getInstance().isOperatorControl());
+    Supplier<Boolean> thirtySeconds = () -> ((DriverStation.getInstance().getMatchTime() <= 30)
+        && DriverStation.getInstance().isOperatorControl());
 
     new JoystickTrigger(controller, XboxController.Axis.kLeftTrigger, 0.9)
         .whileHeld(new SpeedModifier(drive, Constants.SLOW_MULTIPLIER));
     new JoystickTrigger(controller, XboxController.Axis.kRightTrigger, 0.9)
         .whileHeld(new SpeedModifier(drive, Constants.FAST_MULTIPLIER));
+    new JoystickButton(controller, XboxController.Button.kA.value).whenPressed(new DriveToWall(drive).withTimeout(0.6));
 
-    new JoystickButton(joystick, 1).whileHeld((new Shoot(shooter).withTimeout(1)).andThen((new ShootAll(shooter)).deadlineWith(new Elevate(elevator))));
+    new JoystickButton(joystick, 1).whileHeld(
+        (new Shoot(shooter).withTimeout(1)).andThen((new Shoot(shooter)).deadlineWith(new Elevate(elevator))));
     new JoystickButton(joystick, 2).whileHeld(new DriveAngle(angle));
     new JoystickButton(joystick, 7).whenPressed(new SetAngle(angle, 45));
-    new JoystickButton(joystick, 9).whenPressed(new SetAngle(angle, 20));
+    new JoystickButton(joystick, 9).whenPressed(new SetAngle(angle, 31));
     new JoystickButton(joystick, 11).whenPressed(new SetAngle(angle, 0));
 
-    buttons[0].setIcon("arms up").addAutoStatus(thirtySeconds).whenPressed(new Winch(arms, 40, 1));
+    // buttons[0].setIcon("arms up").addAutoStatus(thirtySeconds)
+    // .whenPressed(new Winch(arms, Constants.WINCH_ROTATIONS, 1));
     buttons[1].setIcon("arms up").addAutoStatus(thirtySeconds).setMode("hold").whileHeld(new WinchHold(arms, 1));
     buttons[2].setIcon("arms down").setMode("hold").whileHeld(new WinchHold(arms, -1));
     buttons[3].setIcon("aim").whenPressed(new TurnToAngle(drive));
-    buttons[4].setIcon("intake").setMode("hold").whileHeld((new FullIntake(intake)).alongWith(new Extend(intake))).whenReleased((new Retract(intake)).alongWith((new Pft(intake)).withTimeout(5)));
+    buttons[4].setIcon("intake").setMode("hold").whileHeld((new FullIntake(intake)).alongWith(new Extend(intake)))
+        .whenReleased((new Retract(intake)).alongWith((new Pft(intake, true)).withTimeout(5)));
     buttons[5].setIcon("yellow");
     buttons[6].setIcon("green");
     buttons[9].setIcon("unjam").setMode("hold").whileHeld(new Unjam(angle, elevator, shooter));
-    buttons[10].setIcon("blue");
+    buttons[10].setIcon("blue").setMode("hold").whileHeld(new Pft(intake, true).alongWith(new Extend(intake)))
+        .whenReleased(new Retract(intake));
     buttons[11].setIcon("red");
     buttons[12].setIcon("rotate");
     buttons[14].setIcon("down").whenPressed(new SetAngle(angle, 0));
@@ -144,28 +150,26 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    /*final DifferentialDriveVoltageConstraint autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
-        Constants.leftFF, drive.getKinematics(), 10);
-    final TrajectoryConfig config = new TrajectoryConfig(Constants.MAX_VELOCITY, Constants.MAX_ACCEL)
-        .setKinematics(drive.getKinematics()).addConstraint(autoVoltageConstraint);
-    // An example trajectory to follow. All units in meters.
-    Trajectory trajectory = TrajectoryGenerator.generateTrajectory(new Pose2d(0, 0, new Rotation2d()),
-        Collections.emptyList(), new Pose2d(1, 0, new Rotation2d()), config);
-
-    Trajectory transformed = trajectory.transformBy(drive.getPose().minus(new Pose2d()));
-    System.out.println(transformed.getTotalTimeSeconds());
-    Ramsete ramseteCommand = new Ramsete(transformed,
-        new RamseteController(Constants.RAMSETE_B, Constants.RAMSETE_ZETA), drive);
-    ramseteCommand.schedule();
-    return ramseteCommand;*/
-    Shooter.ballCount = 3;
-    return new SequentialCommandGroup (
-      new DriveToWall(drive),
-      new SetAngle(angle, 20),
-      new ShootAt(shooter, 4000).withTimeout(1),
-      new ShootAt(shooter, 4000).withTimeout(1),
-      new ShootAt(shooter, 4000).withTimeout(1)
-    );
+    /*
+     * final DifferentialDriveVoltageConstraint autoVoltageConstraint = new
+     * DifferentialDriveVoltageConstraint( Constants.leftFF, drive.getKinematics(),
+     * 10); final TrajectoryConfig config = new
+     * TrajectoryConfig(Constants.MAX_VELOCITY, Constants.MAX_ACCEL)
+     * .setKinematics(drive.getKinematics()).addConstraint(autoVoltageConstraint);
+     * // An example trajectory to follow. All units in meters. Trajectory
+     * trajectory = TrajectoryGenerator.generateTrajectory(new Pose2d(0, 0, new
+     * Rotation2d()), Collections.emptyList(), new Pose2d(1, 0, new Rotation2d()),
+     * config);
+     * 
+     * Trajectory transformed = trajectory.transformBy(drive.getPose().minus(new
+     * Pose2d())); System.out.println(transformed.getTotalTimeSeconds()); Ramsete
+     * ramseteCommand = new Ramsete(transformed, new
+     * RamseteController(Constants.RAMSETE_B, Constants.RAMSETE_ZETA), drive);
+     * ramseteCommand.schedule(); return ramseteCommand;
+     */
+    return (new SetAngle(angle, 28)).andThen(new NOP().withTimeout(3))
+        .andThen((new ShootAt(shooter, 5500).alongWith(new Elevate(elevator))).withTimeout(3))
+        .andThen(new NOP().withTimeout(2)).andThen(new DriveToWall(drive));
   }
 
   public void routeToOrigin() {

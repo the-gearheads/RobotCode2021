@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.util.Voltages;
 import io.github.oblarg.oblog.Logger;
 import io.github.oblarg.oblog.annotations.Log;
@@ -29,7 +30,9 @@ public class Shooter extends SubsystemBase {
   private final CANEncoder lShooterEncoder;
   private final CANEncoder rShooterEncoder;
 
+  @Log
   private static AnalogInput irTop;
+  @Log
   private static AnalogInput irBottom;
   private boolean topPrimed;
   private boolean bottomPrimed;
@@ -46,6 +49,8 @@ public class Shooter extends SubsystemBase {
   private double shooterRight;
   private final SimpleMotorFeedforward leftFF;
   private final SimpleMotorFeedforward rightFF;
+  @Log
+  private double rpm;
 
   /**
    * Creates a new Shooter.
@@ -107,6 +112,8 @@ public class Shooter extends SubsystemBase {
   public void periodic() {
     shooterLeft = leftVelocity.get();
     shooterRight = rightVelocity.get();
+    double range = Constants.RPM_MAX - Constants.RPM_MIN;
+    rpm = (-RobotContainer.joystick.getRawAxis(2) * range) + Constants.RPM_MIN;
 
     if (bottomBlocked()) {
       if (bottomPrimed) {

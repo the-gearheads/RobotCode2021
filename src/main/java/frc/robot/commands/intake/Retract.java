@@ -33,7 +33,6 @@ public class Retract extends CommandBase {
     rightController = new PIDController(.98, 0, 0);
     leftController.setSetpoint(SETPOINT);
     rightController.setSetpoint(SETPOINT);
-    Logger.configureLoggingAndConfig(this, false);
   }
 
   // Called when the command is initially scheduled.

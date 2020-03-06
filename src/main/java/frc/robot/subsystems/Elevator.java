@@ -59,7 +59,7 @@ public class Elevator extends SubsystemBase {
   
 
   public void elevate() {
-    elevate(.4, .5);
+    elevate(.6, .35);
   }
 
   public double getUpperPosition() {

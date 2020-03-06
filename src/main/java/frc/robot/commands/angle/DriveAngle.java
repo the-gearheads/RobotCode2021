@@ -29,12 +29,13 @@ public class DriveAngle extends CommandBase {
   public void execute() {
     double speed = -RobotContainer.joystick.getRawAxis(1);
     speed = speed * Constants.ANGLE_DRIVE_SPEED / 5;
-    angle.setAngle(speed+angle.getAngle());
+    angle.turnAngle(speed);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    angle.setAngle(angle.getPosition());
   }
 
   // Returns true when the command should end.

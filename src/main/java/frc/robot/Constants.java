@@ -23,7 +23,7 @@ public final class Constants {
     //// DRIVER CONFIG
 
     // Meters per second
-    public static double THROTTLE_SPEED = 6;
+    public static double THROTTLE_SPEED = 4;
     // Degrees per second
     public static double ROT_SPEED = 90;
 
@@ -31,8 +31,8 @@ public final class Constants {
     public static double THROTTLE_DEADBAND = 0.05;
     public static double ROT_DEADBAND = 0.3;
 
-    public static double SLOW_MULTIPLIER = 0.5;
-    public static double FAST_MULTIPLIER = 2;
+    public static double SLOW_MULTIPLIER = (1/(double) 6);
+    public static double FAST_MULTIPLIER = 1.5;
 
     ////
 
@@ -82,7 +82,7 @@ public final class Constants {
 
     //// ELEVATOR SETTINGS
 
-    public static final double SINGLE_BALL_ROTS = 3;
+    public static final double SINGLE_BALL_ROTS = 1.5;
 
     ////
 
@@ -91,6 +91,9 @@ public final class Constants {
     public static final Port GYRO_PORT = Port.kMXP;
     public static final double GYRO_P = 1;
 
+
+    //// WINCH SETTINGS
+    public static final int WINCH_ROTATIONS = 10;
     ////
 
     //// MISC

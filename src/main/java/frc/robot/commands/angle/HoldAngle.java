@@ -16,14 +16,16 @@ import frc.robot.util.Deadband;
 
 public class HoldAngle extends CommandBase {
   private final ShooterAngle angle;
-  private final PIDController controller;
+  private final PIDController up;
+  private final PIDController down;
 
   private double target;
 
   public HoldAngle(ShooterAngle angle) {
     this.angle = angle;
 
-    controller = new PIDController(0.075, 0, 0);
+    up = new PIDController(0.09, 0, 0);
+    down = new PIDController(0.08, 0, 0);
     // controller.setTolerance(0);
 
     addRequirements(angle);
@@ -32,19 +34,27 @@ public class HoldAngle extends CommandBase {
   @Override
   public void initialize() {
     target = angle.getPosition();
-    controller.setSetpoint(target);
+    up.setSetpoint(target);
+    down.setSetpoint(target);
   }
 
   @Override
   public void execute() {
-    controller.setSetpoint(angle.getAngle());
+    up.setSetpoint(angle.getAngle());
+    down.setSetpoint(angle.getAngle());
     if (Deadband.get(angle.getPosition(), angle.getAngle(), 5) == 0) {
       SmartDashboard.putBoolean("atsetpoint", true);
       return;
     }
     SmartDashboard.putBoolean("atsetpoint", false);
 
-    double effort = controller.calculate(angle.getPosition());
+    double error = angle.getAngle()-angle.getPosition();
+    double effort;
+    if (Math.signum(error) == 1) {
+      effort = up.calculate(angle.getPosition());
+    } else {
+      effort = down.calculate(angle.getPosition());
+    }
     if (angle.isLimited(effort)) {
       SmartDashboard.putBoolean("islimited", true);
       return;

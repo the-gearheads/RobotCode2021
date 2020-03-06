@@ -7,17 +7,17 @@
 
 package frc.robot.commands.drive;
 
+import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants;
 import frc.robot.subsystems.DriveSubsystem;
 
 public class DriveToWall extends CommandBase {
   private DriveSubsystem drive;
-  private boolean isAtWall;
-
+  //private boolean isAtWall;
   public DriveToWall(DriveSubsystem drive) {
     this.drive = drive;
-    this.isAtWall = false;
+    //this.isAtWall = false;
+    addRequirements(drive);
   }
 
   // Called when the command is initially scheduled.
@@ -28,10 +28,7 @@ public class DriveToWall extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    drive.controller.rawTankDrive(1 * Constants.SLOW_MULTIPLIER, 1 * Constants.SLOW_MULTIPLIER);
-    if(drive.getLidarDistance() <= 10) {
-      isAtWall = true;
-    }
+    drive.controller.arcadeDrive(new ChassisSpeeds(2, 0, 0));
   }
 
   @Override
@@ -40,6 +37,6 @@ public class DriveToWall extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    return isAtWall;
+    return false;
   }
 }

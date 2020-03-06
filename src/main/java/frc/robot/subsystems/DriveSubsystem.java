@@ -123,7 +123,7 @@ public class DriveSubsystem extends SubsystemBase {
     rightSide = new SpeedControllerGroup(frMotor, brMotor);
     rightSide.setInverted(true);
 
-    drive = new DifferentialDrive(blMotor, brMotor);
+    drive = new DifferentialDrive(leftSide, rightSide);
     drive.setSafetyEnabled(false); // disable auto-shutoff of motors... wpilib why??????
     drive.setDeadband(0);
 

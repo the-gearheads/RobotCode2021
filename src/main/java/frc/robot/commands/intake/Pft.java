@@ -9,13 +9,14 @@ package frc.robot.commands.intake;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Shooter;
 
 public class Pft extends CommandBase {
   private Intake intake;
+  private boolean reverse;
 
-  public Pft(Intake intake) {
+  public Pft(Intake intake, boolean reverse) {
     this.intake = intake;
+    this.reverse = reverse;
     addRequirements(intake);
   }
 
@@ -25,7 +26,12 @@ public class Pft extends CommandBase {
 
   @Override
   public void execute() {
-    intake.pft(.4);
+    if (reverse) {
+      intake.pft(-.5);
+    }
+    else {
+      intake.pft(.5);
+    }
   }
 
   @Override

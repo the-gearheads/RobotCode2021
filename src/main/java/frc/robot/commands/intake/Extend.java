@@ -27,6 +27,7 @@ public class Extend extends CommandBase {
   private boolean debug1;
   @Log
   private boolean debug2;
+  private double SETPOINT = 26;
 
   /**
    * Creates a new Intake.
@@ -36,9 +37,8 @@ public class Extend extends CommandBase {
     this.intake = intake;
     leftController = new PIDController(.75, 0, 0);
     rightController = new PIDController(.75, 0, 0);
-    leftController.setSetpoint(28);
-    rightController.setSetpoint(28.2);
-    Logger.configureLoggingAndConfig(this, false);
+    leftController.setSetpoint(SETPOINT);
+    rightController.setSetpoint(SETPOINT+.2);
   }
 
   // Called when the command is initially scheduled.
@@ -86,8 +86,8 @@ public class Extend extends CommandBase {
       intake.setCoast();
     }
     return (intake.isJammed())
-        || (Deadband.get(intake.getLPosition(), 28.2, 0.2) == 0)
-            && (Deadband.get(intake.getRPosition(), 28.8, 0.2) == 0)
+        || (Deadband.get(intake.getLPosition(), SETPOINT+.2, 0.2) == 0)
+            && (Deadband.get(intake.getRPosition(), SETPOINT+.8, 0.2) == 0)
         || ((intake.getLPosition() >= 32.85) || (intake.getRPosition() >= 33.09));
   }
 }
