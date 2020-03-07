@@ -24,8 +24,8 @@ public class HoldAngle extends CommandBase {
   public HoldAngle(ShooterAngle angle) {
     this.angle = angle;
 
-    up = new PIDController(0.09, 0, 0);
-    down = new PIDController(0.08, 0, 0);
+    up = new PIDController(0.05, 0, 0);
+    down = new PIDController(0.05, 0, 0);
     // controller.setTolerance(0);
 
     addRequirements(angle);

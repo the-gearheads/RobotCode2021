@@ -74,6 +74,7 @@ public class DriveSubsystem extends SubsystemBase {
   private double y;
   private double initAngle;
   private double speedMultiplier = 1;
+  private double rotMultiplier = 1;
 
 
   public DriveSubsystem() {
@@ -100,6 +101,11 @@ public class DriveSubsystem extends SubsystemBase {
     frMotor.setNeutralMode(NeutralMode.Brake);
     blMotor.setNeutralMode(NeutralMode.Brake);
     brMotor.setNeutralMode(NeutralMode.Brake);
+    flMotor.setSafetyEnabled(false);
+    frMotor.setSafetyEnabled(false);
+    blMotor.setSafetyEnabled(false);
+    brMotor.setSafetyEnabled(false);
+    
 
     gyro = new AHRS(Constants.GYRO_PORT);
     while (gyro.isCalibrating()) {
@@ -182,8 +188,9 @@ public class DriveSubsystem extends SubsystemBase {
       rightFF = Constants.rightFF;
     }
 
-    public void setMultiplier(double multiplier) {
-      speedMultiplier = multiplier;
+    public void setMultipliers(double drive, double rot) {
+      speedMultiplier = drive;
+      rotMultiplier = rot;
     }
 
     public void rawDrive(double left, double right) {
@@ -205,8 +212,8 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     public void driveVoltageFF(Voltages voltages, DifferentialDriveWheelSpeeds speeds) {
-      leftSide.setVoltage(voltages.left + leftFF.calculate(speeds.leftMetersPerSecond * speedMultiplier));
-      rightSide.setVoltage(voltages.right + rightFF.calculate(speeds.rightMetersPerSecond * speedMultiplier));
+      leftSide.setVoltage(voltages.left + leftFF.calculate(speeds.leftMetersPerSecond));
+      rightSide.setVoltage(voltages.right + rightFF.calculate(speeds.rightMetersPerSecond));
     }
 
     public double angleFeedForward(double input) {
@@ -228,7 +235,8 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     public void arcadeDrive(ChassisSpeeds chs) {
-      DifferentialDriveWheelSpeeds speeds = kinematics.toWheelSpeeds(gyroLoop(chs));
+      ChassisSpeeds chs2 = new ChassisSpeeds(chs.vxMetersPerSecond*speedMultiplier, chs.vyMetersPerSecond*speedMultiplier, Math.toRadians(Math.toDegrees(chs.omegaRadiansPerSecond)*rotMultiplier));
+      DifferentialDriveWheelSpeeds speeds = kinematics.toWheelSpeeds(gyroLoop(chs2));
       tankDrive(speeds);
     }
 

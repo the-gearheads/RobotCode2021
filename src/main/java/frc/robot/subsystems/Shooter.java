@@ -91,7 +91,7 @@ public class Shooter extends SubsystemBase {
   public static int getBallCount() {
     return ballCount;
   }
-  
+
   public double getLeftVelocity() {
     return leftVelocity.get();
   }
@@ -113,7 +113,7 @@ public class Shooter extends SubsystemBase {
     shooterLeft = leftVelocity.get();
     shooterRight = rightVelocity.get();
     double range = Constants.RPM_MAX - Constants.RPM_MIN;
-    rpm = (-RobotContainer.joystick.getRawAxis(2) * range) + Constants.RPM_MIN;
+    rpm = (Math.abs(((RobotContainer.joystick.getRawAxis(2) - 1)) / 2)) * range + Constants.RPM_MIN;
 
     if (bottomBlocked()) {
       if (bottomPrimed) {

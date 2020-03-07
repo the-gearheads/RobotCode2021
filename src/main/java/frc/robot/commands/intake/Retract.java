@@ -44,9 +44,9 @@ public class Retract extends CommandBase {
   @Override
   public void execute() {
     double left = leftController.calculate(intake.getLPosition());
-    left = MathUtil.clamp(left, -9.5, 0);
+    left = MathUtil.clamp(left, -10.6, 0);
     double right = rightController.calculate(intake.getRPosition());
-    right = MathUtil.clamp(right, -9.5, 0);
+    right = MathUtil.clamp(right, -10.6, 0);
 
     intake.extend(left, right);
   }

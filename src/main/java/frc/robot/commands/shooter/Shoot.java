@@ -23,15 +23,15 @@ public class Shoot extends CommandBase {
 
   public Shoot(Shooter shooter) {
     this.shooter = shooter;
-    this.leftController = new PIDController(.05, 0, 0.008);
-    this.rightController = new PIDController(.05, 0, 0.008);
+    this.leftController = new PIDController(.02, 0, 0.005);
+    this.rightController = new PIDController(.02, 0, 0.005);
     addRequirements(shooter);
   }
 
   @Override
   public void initialize() {
     double range = Constants.RPM_MAX - Constants.RPM_MIN;
-    rpm = (-RobotContainer.joystick.getRawAxis(2) * range) + Constants.RPM_MIN;
+    rpm = (Math.abs(((RobotContainer.joystick.getRawAxis(2) - 1)) / 2)) * range + Constants.RPM_MIN;
     leftController.setSetpoint(rpm / 60);
     rightController.setSetpoint(rpm / 60);
   }

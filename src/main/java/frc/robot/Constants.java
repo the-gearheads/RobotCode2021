@@ -39,9 +39,9 @@ public final class Constants {
     //// OPERATOR CONFIG
 
     // degrees per second
-    public static double ANGLE_DRIVE_SPEED = 5;
+    public static double ANGLE_DRIVE_SPEED = 15;
     public static double RPM_MIN = 5000;
-    public static double RPM_MAX = 8500;
+    public static double RPM_MAX = 8000;
 
     ////
 
@@ -71,8 +71,8 @@ public final class Constants {
 
     //// SHOOTER SETTINGS
 
-    public static final SimpleMotorFeedforward SHOOTER_FF_LEFT = new SimpleMotorFeedforward(0.186, 0.0633, 0.00681);
-    public static final SimpleMotorFeedforward SHOOTER_FF_RIGHT = new SimpleMotorFeedforward(0.252, 0.0632, 0.00639);
+    public static final SimpleMotorFeedforward SHOOTER_FF_LEFT = new SimpleMotorFeedforward(0.113, 0.0622, 0.00721);
+    public static final SimpleMotorFeedforward SHOOTER_FF_RIGHT = new SimpleMotorFeedforward(0.124, 0.063, 0.00566);
     public static final int SHOOTER_POT = 0;
     public static final int IR_TOP = 2;
     public static final int IR_BOTTOM = 1;

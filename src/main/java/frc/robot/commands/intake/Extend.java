@@ -52,9 +52,9 @@ public class Extend extends CommandBase {
     // double axis = RobotContainer.controller.getRawAxis(1) * 0.5;
     // intake.extend(axis);
     double left = leftController.calculate(intake.getLPosition());
-    left = MathUtil.clamp(left, 0, 9.5);
+    left = MathUtil.clamp(left, 0, 10.8);
     double right = rightController.calculate(intake.getRPosition());
-    right = MathUtil.clamp(right, 0, 9.5);
+    right = MathUtil.clamp(right, 0, 10.8);
 
     intake.extend(left, right);
     // intake.setCoast();
