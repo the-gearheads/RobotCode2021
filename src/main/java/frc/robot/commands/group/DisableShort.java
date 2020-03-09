@@ -5,37 +5,43 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands.intake;
+package frc.robot.commands.group;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Shooter;
 
-public class FullIntake extends CommandBase {
-  private Intake intake;
-  private double speed;
-
-  public FullIntake(Intake intake, double speed) {
-    this.intake = intake;
-    this.speed = speed;
-    addRequirements(intake);
+public class DisableShort extends CommandBase {
+  /**
+   * Creates a new DisableShort.
+   */
+  private final Elevator elevator;
+  private final Shooter shooter;
+  public DisableShort(Elevator elevator, Shooter shooter) {
+    this.elevator = elevator;
+    this.shooter = shooter;
   }
 
+  // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    elevator.setCoast();
+    shooter.setCoast();
   }
 
+  // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    intake.intake(-speed);
   }
 
+  // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    intake.intake(0);
   }
 
+  // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
 }

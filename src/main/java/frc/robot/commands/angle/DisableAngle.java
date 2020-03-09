@@ -5,37 +5,29 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands.intake;
+package frc.robot.commands.angle;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.ShooterAngle;
 
-public class FullIntake extends CommandBase {
-  private Intake intake;
-  private double speed;
-
-  public FullIntake(Intake intake, double speed) {
-    this.intake = intake;
-    this.speed = speed;
-    addRequirements(intake);
+public class DisableAngle extends CommandBase {
+  private final ShooterAngle angle;
+  public DisableAngle(ShooterAngle angle) {
+    this.angle = angle;
   }
 
+  // Called when the command is initially scheduled.
   @Override
   public void initialize() {
   }
 
   @Override
-  public void execute() {
-    intake.intake(-speed);
-  }
-
-  @Override
   public void end(boolean interrupted) {
-    intake.intake(0);
   }
 
+  // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
 }

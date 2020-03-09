@@ -34,7 +34,6 @@ public class ShooterAngle extends SubsystemBase {
     pot = new AnalogInput(Constants.SHOOTER_POT);
     angle = getPosition();
 
-    setDefaultCommand(new HoldAngle(this));
     Logger.configureLoggingAndConfig(this, false);
   }
 
