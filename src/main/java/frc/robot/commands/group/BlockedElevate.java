@@ -20,7 +20,6 @@ public class BlockedElevate extends CommandBase {
   private final Intake intake;
   @Log
   private double setpoint;
-  private int ballCount;
   @Log
   private double debug;
   private boolean last;
@@ -35,7 +34,6 @@ public class BlockedElevate extends CommandBase {
 
   @Override
   public void initialize() {
-    ballCount = Shooter.getBallCount();
     elevator.zero();
   }
 
@@ -43,10 +41,10 @@ public class BlockedElevate extends CommandBase {
   public void execute() {
     //TODO: if ball count is < 2, don't run top elavator motors.
     if (Shooter.topBlocked()) {
-       elevator.lower(0);
-       elevator.upper(0);
-       intake.pft(0);
-       return;
+      elevator.lower(0);
+      elevator.upper(0);
+      intake.pft(0);
+      return;
     }
     if (Shooter.bottomBlocked()) {
       elevator.lower(0.3);

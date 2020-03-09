@@ -8,39 +8,50 @@
 package frc.robot.commands.angle;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants;
-import frc.robot.RobotContainer;
 import frc.robot.subsystems.ShooterAngle;
 
-public class DriveAngle extends CommandBase {
-  private final ShooterAngle angle;
+public class AngleCalibrate extends CommandBase {
 
-  public DriveAngle(ShooterAngle angle) {
+  private final ShooterAngle angle;
+  private int state;
+  private double topVoltage;
+  private double bottomVoltage;
+
+  public AngleCalibrate(ShooterAngle angle) {
     this.angle = angle;
   }
 
-  // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    state = 0;
   }
 
-  // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double speed = -RobotContainer.joystick.getRawAxis(1);
-    speed = speed * Constants.ANGLE_DRIVE_SPEED / 5;
-    angle.turnAngle(speed);
+    if (state == 0) {
+      if (angle.isLimited(1)) {
+        state = 1;
+        topVoltage = angle.getVoltage();
+      } else {
+        angle.turnAngle(1);
+      }
+    } else if (state == 1) {
+      if (angle.isLimited(-1)) {
+        state = 2;
+        bottomVoltage = angle.getVoltage();
+      } else {
+        angle.turnAngle(-1);
+      }
+    }
   }
 
-  // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    angle.setSetpoint(angle.getPosition());
+    angle.setVolts(topVoltage, bottomVoltage);
   }
 
-  // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return (state == 2);
   }
 }

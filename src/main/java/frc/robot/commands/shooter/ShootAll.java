@@ -11,12 +11,10 @@ import edu.wpi.first.wpilibj.Timer;
 import frc.robot.subsystems.Shooter;
 
 public class ShootAll extends Shoot {
-  private final Shooter shooter;
   private final Timer timer;
 
   public ShootAll(Shooter shooter) {
     super(shooter);
-    this.shooter = shooter;
 
     timer = new Timer();
   }

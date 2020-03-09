@@ -31,7 +31,7 @@ public final class Constants {
     public static double THROTTLE_DEADBAND = 0.05;
     public static double ROT_DEADBAND = 0.3;
 
-    public static double SLOW_MULTIPLIER = (2/(double) 6);
+    public static double SLOW_MULTIPLIER = (2 / (double) 6);
     public static double FAST_MULTIPLIER = 1.5;
 
     ////
@@ -44,7 +44,6 @@ public final class Constants {
     public static double RPM_MAX = 8000;
 
     ////
-
 
     //// DRIVETRAIN SETTINGS
 
@@ -71,12 +70,16 @@ public final class Constants {
 
     //// SHOOTER SETTINGS
 
+    // Main shooter
     public static final SimpleMotorFeedforward SHOOTER_FF_LEFT = new SimpleMotorFeedforward(0.113, 0.0622, 0.00721);
     public static final SimpleMotorFeedforward SHOOTER_FF_RIGHT = new SimpleMotorFeedforward(0.124, 0.063, 0.00566);
     public static final int SHOOTER_POT = 0;
     public static final int IR_TOP = 2;
     public static final int IR_BOTTOM = 1;
     public static final int SHOOTER_GEARING = 1;
+
+    // Shooter angle
+    public static final double SHOOTER_ANGLE_RANGE = 63;
 
     ////
 
@@ -90,7 +93,6 @@ public final class Constants {
 
     public static final Port GYRO_PORT = Port.kMXP;
     public static final double GYRO_P = 1;
-
 
     //// WINCH SETTINGS
     public static final int WINCH_ROTATIONS = 10;

@@ -8,7 +8,6 @@
 package frc.robot.commands.angle;
 
 import edu.wpi.first.wpilibj.controller.PIDController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpiutil.math.MathUtil;
 import frc.robot.subsystems.ShooterAngle;
@@ -46,7 +45,7 @@ public class HoldAngle extends CommandBase {
       return;
     }
 
-    double error = angle.getAngle()-angle.getPosition();
+    double error = angle.getAngle() - angle.getPosition();
     double effort;
     if (Math.signum(error) == 1) {
       effort = up.calculate(angle.getPosition());

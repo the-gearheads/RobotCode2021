@@ -27,7 +27,7 @@ public class Unjam extends ParallelDeadlineGroup {
     super(new InstantCommand(new Runnable() {
       @Override
       public void run() {
-        angle.setAngle(0);
+        angle.setSetpoint(0);
       }
     }), new Elevate(elevator), new Shoot(shooter));
   }

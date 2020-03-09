@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpiutil.math.MathUtil;
 import frc.robot.subsystems.Intake;
 import frc.robot.util.Deadband;
-import io.github.oblarg.oblog.Logger;
 import io.github.oblarg.oblog.annotations.Log;
 
 public class Extend extends CommandBase {
@@ -38,7 +37,7 @@ public class Extend extends CommandBase {
     leftController = new PIDController(.75, 0, 0);
     rightController = new PIDController(.75, 0, 0);
     leftController.setSetpoint(SETPOINT);
-    rightController.setSetpoint(SETPOINT+.2);
+    rightController.setSetpoint(SETPOINT + .2);
   }
 
   // Called when the command is initially scheduled.
@@ -86,8 +85,8 @@ public class Extend extends CommandBase {
       intake.setCoast();
     }
     return (intake.isJammed())
-        || (Deadband.get(intake.getLPosition(), SETPOINT+.2, 0.2) == 0)
-            && (Deadband.get(intake.getRPosition(), SETPOINT+.8, 0.2) == 0)
+        || (Deadband.get(intake.getLPosition(), SETPOINT + .2, 0.2) == 0)
+            && (Deadband.get(intake.getRPosition(), SETPOINT + .8, 0.2) == 0)
         || ((intake.getLPosition() >= 32.85) || (intake.getRPosition() >= 33.09));
   }
 }

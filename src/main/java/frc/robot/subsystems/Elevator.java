@@ -13,8 +13,6 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.RobotContainer;
-import frc.robot.commands.group.BlockedElevate;
 
 public class Elevator extends SubsystemBase {
 
@@ -53,7 +51,6 @@ public class Elevator extends SubsystemBase {
   public void upper(double speed) {
     elevatorUpper.set(speed);
   }
-  
 
   public void elevate() {
     elevate(.6, .35);

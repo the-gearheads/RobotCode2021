@@ -12,6 +12,8 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -21,9 +23,15 @@ import io.github.oblarg.oblog.annotations.Log;
 
 public class ShooterAngle extends SubsystemBase {
 
+  private final NetworkTableEntry top;
+  private final NetworkTableEntry bottom;
+
+  private double topVolts;
+  private double bottomVolts;
+
   private final CANSparkMax angleMotor;
   private final AnalogInput pot;
-  private double angle; 
+  private double setpoint;
 
   public ShooterAngle() {
 
@@ -32,25 +40,47 @@ public class ShooterAngle extends SubsystemBase {
     angleMotor.setInverted(true);
 
     pot = new AnalogInput(Constants.SHOOTER_POT);
-    angle = getPosition();
+    setpoint = getPosition();
+
+    top = NetworkTableInstance.getDefault().getTable("Config/ShooterAngle").getEntry("Slope");
+    bottom = NetworkTableInstance.getDefault().getTable("Config/ShooterAngle").getEntry("Offset");
+    top.setPersistent();
+    bottom.setPersistent();
+    updateVolts();
 
     setDefaultCommand(new HoldAngle(this));
     Logger.configureLoggingAndConfig(this, false);
   }
 
   public double getPosition() {
-    return (pot.getVoltage() * -24.98) + 112.6;
+    return bottomVolts + (pot.getVoltage() / 5) * (topVolts - bottomVolts);
   }
 
-  public void setAngle(double angle) {
-    this.angle = angle;
+  public void updateVolts() {
+    topVolts = top.getDouble(0);
+    bottomVolts = bottom.getDouble(5);
+  }
+
+  public void setVolts(double top, double bottom) {
+    this.top.setDouble(top);
+    this.bottom.setDouble(bottom);
+    topVolts = top;
+    bottomVolts = bottom;
+  }
+
+  public double getVoltage() {
+    return pot.getVoltage();
+  }
+
+  public void setSetpoint(double angle) {
+    this.setpoint = angle;
   }
 
   @Log
   public double getAngle() {
-    return angle;
+    return setpoint;
   }
-  
+
   public boolean isLimited(double direction) {
     double sign = Math.signum(direction);
     if (sign == 1) {

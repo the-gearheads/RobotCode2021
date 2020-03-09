@@ -26,7 +26,7 @@ public class MilfordAuton extends SequentialCommandGroup {
   /**
    * Creates a new MilfordAuton.
    */
-  public MilfordAuton(DriveSubsystem drive, Shooter shooter, ShooterAngle angle, Elevator elevator) {
+  public MilfordAuton(DriveSubsystem drive, Shooter shooter, ShooterAngle angle, Elevator elevator, double direction) {
     /*
     1. Set angle to 45
     2. Tune angle for 1 second
@@ -35,8 +35,8 @@ public class MilfordAuton extends SequentialCommandGroup {
     5. Wait for 0.5 seconds
     6. Drive forward for 3 seconds
     */
-    super(new SetAngle(angle, 45), new HoldAngle(angle).withTimeout(1), new ShootAt(shooter, 5750).withTimeout(1),
-        (new ShootAt(shooter, 5750).alongWith((new Elevate(elevator)))).withTimeout(4),
-        (new NOP().withTimeout(0.5)).andThen(new DriveToWall(drive).withTimeout(3)));
+    super(new SetAngle(angle, 45), new HoldAngle(angle).withTimeout(1), new ShootAt(shooter).withTimeout(1),
+        (new ShootAt(shooter).alongWith((new Elevate(elevator)))).withTimeout(4),
+        (new NOP().withTimeout(0.5)).andThen(new DriveToWall(drive, direction).withTimeout(3)));
   }
 }

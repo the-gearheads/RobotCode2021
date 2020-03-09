@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpiutil.math.MathUtil;
 import frc.robot.subsystems.Intake;
 import frc.robot.util.Deadband;
-import io.github.oblarg.oblog.Logger;
 import io.github.oblarg.oblog.annotations.Log;
 
 public class Retract extends CommandBase {

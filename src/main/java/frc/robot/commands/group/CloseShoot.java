@@ -24,7 +24,7 @@ public class CloseShoot extends SequentialCommandGroup {
    * Creates a new CloseShoot.
    */
   public CloseShoot(Shooter shooter, ShooterAngle angle, Elevator elevator) {
-    super(new SetAngle(angle, 28), new HoldAngle(angle).withTimeout(0.5), new ShootAt(shooter, 5000).withTimeout(1),
-        (new ShootAt(shooter, 5000).alongWith(new Elevate(elevator))));
+    super(new SetAngle(angle, 28), new HoldAngle(angle).withTimeout(0.5), new ShootAt(shooter).withTimeout(1),
+        (new ShootAt(shooter).alongWith(new Elevate(elevator))));
   }
 }

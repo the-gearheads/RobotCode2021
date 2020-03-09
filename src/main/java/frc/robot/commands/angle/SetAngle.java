@@ -36,6 +36,6 @@ public class SetAngle extends InstantCommand {
     if (!target_set) {
       target = SmartDashboard.getNumber("autoAngle", 70);
     }
-    angle.setAngle(target);
+    angle.setSetpoint(target);
   }
 }

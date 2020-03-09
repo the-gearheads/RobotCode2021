@@ -15,7 +15,6 @@ import edu.wpi.first.wpiutil.math.MathUtil;
 import frc.robot.Constants;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.util.Deadband;
-import io.github.oblarg.oblog.Logger;
 import io.github.oblarg.oblog.annotations.Log;
 
 public class TurnToAngle extends CommandBase {
@@ -36,7 +35,7 @@ public class TurnToAngle extends CommandBase {
     addRequirements(drive);
   }
 
-  public TurnToAngle (DriveSubsystem drive, double angle) {
+  public TurnToAngle(DriveSubsystem drive, double angle) {
     this(drive);
     this.angle = angle;
     angle_set = true;
