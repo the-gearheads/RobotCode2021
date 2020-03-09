@@ -144,9 +144,6 @@ public class RobotContainer {
     new JoystickButton(joystick, 11).whenPressed(new SetAngle(angle, 0));
     new JoystickButton(joystick, 4).whileHeld(new WinchHold(arms, -1).withTimeout(10));
     new JoystickButton(joystick, 6).whileHeld(new WinchHold(arms, 1).withTimeout(8));
-    // new JoystickButton(joystick, 7).whenPressed(new SetAngle(angle, 45));
-    // new JoystickButton(joystick, 9).whenPressed(new SetAngle(angle, 31));
-    // new JoystickButton(joystick, 11).whenPressed(new SetAngle(angle, 0));
 
     // buttons[0].setIcon("arms up").addAutoStatus(thirtySeconds)
     // .whenPressed(new Winch(arms, Constants.WINCH_ROTATIONS, 1));
@@ -157,19 +154,18 @@ public class RobotContainer {
         .whenReleased((new Retract(intake)));
     buttons[5].setIcon("yellow").setMode("hold").whileHeld(new CloseShoot(drive, shooter, angle, elevator));
     buttons[6].setIcon("green");
-    // buttons[9].setIcon("unjam").setMode("hold").whileHeld(new Unjam(angle,
-    // elevator, shooter));
-    // buttons[10].setIcon("blue").setMode("hold").whileHeld(new Pft(intake,
-    // true).alongWith(new Extend(intake)))
-    // .whenReleased(new Retract(intake));
+    buttons[9].setIcon("unjam").setMode("hold").whileHeld(new Unjam(angle, elevator, shooter));
+    buttons[10].setIcon("blue").setMode("hold").whileHeld(new Pft(intake, true).alongWith(new Extend(intake)))
+        .whenReleased(new Retract(intake));
     buttons[11].setIcon("red");
     buttons[12].setIcon("rotate");
-    // buttons[14].setIcon("down").whenPressed(new SetAngle(angle, 0));
+    buttons[14].setIcon("down").whenPressed(new SetAngle(angle, 0));
   }
 
-  // public static Intake getIntake() {
-  // return intake;
-  // }
+
+  public static Intake getIntake() {
+    return intake;
+  }
 
   public Command getAutonomousCommand() {
     return chooser.getSelected();

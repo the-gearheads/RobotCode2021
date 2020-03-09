@@ -12,11 +12,9 @@ import frc.robot.subsystems.Intake;
 
 public class FullIntake extends CommandBase {
   private Intake intake;
-  private double speed;
 
-  public FullIntake(Intake intake, double speed) {
+  public FullIntake(Intake intake) {
     this.intake = intake;
-    this.speed = speed;
     addRequirements(intake);
   }
 
@@ -26,11 +24,13 @@ public class FullIntake extends CommandBase {
 
   @Override
   public void execute() {
-    intake.intake(-speed);
+    intake.pft(.5);
+    intake.intake(.5);
   }
 
   @Override
   public void end(boolean interrupted) {
+    intake.pft(0);
     intake.intake(0);
   }
 

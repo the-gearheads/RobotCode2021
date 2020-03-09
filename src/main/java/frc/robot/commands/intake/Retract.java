@@ -67,9 +67,9 @@ public class Retract extends CommandBase {
         || (Deadband.get(intake.getLPosition(), SETPOINT, .2) == 0)
             && (Deadband.get(intake.getRPosition(), SETPOINT, .2) == 0)
         || ((intake.getLPosition() < 0) || (intake.getRPosition() < 0));
-    // if (exit && (!intake.isJammed())) {
-      // intake.setBrake();
-    // }
+    if (exit && (!intake.isJammed())) {
+      intake.setBrake();
+    }
     return exit;
   }
 }

@@ -10,10 +10,8 @@ package frc.robot.commands.group;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.angle.HoldAngle;
 import frc.robot.commands.angle.SetAngle;
-import frc.robot.commands.drive.TurnToAngle;
 import frc.robot.commands.elevator.Elevate;
 import frc.robot.commands.shooter.ShootAt;
-import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.ShooterAngle;
@@ -25,8 +23,8 @@ public class CloseShoot extends SequentialCommandGroup {
   /**
    * Creates a new CloseShoot.
    */
-  public CloseShoot(DriveSubsystem drive, Shooter shooter, ShooterAngle angle, Elevator elevator) {
-    // super(new SetAngle(angle, 28), (new HoldAngle(angle)).withTimeout(1),
-        // new ShootAt(shooter, 5000).withTimeout(.5), (new ShootAt(shooter, 5000).alongWith(new Elevate(elevator))));
+  public CloseShoot(Shooter shooter, ShooterAngle angle, Elevator elevator) {
+    super(new SetAngle(angle, 28), new HoldAngle(angle).withTimeout(0.5), new ShootAt(shooter, 5000).withTimeout(1),
+        (new ShootAt(shooter, 5000).alongWith(new Elevate(elevator))));
   }
 }
