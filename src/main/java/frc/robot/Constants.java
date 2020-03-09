@@ -25,13 +25,13 @@ public final class Constants {
     // Meters per second
     public static double THROTTLE_SPEED = 4;
     // Degrees per second
-    public static double ROT_SPEED = 90;
+    public static double ROT_SPEED = 180;
 
     // Controller deadband in % of stick
     public static double THROTTLE_DEADBAND = 0.05;
     public static double ROT_DEADBAND = 0.3;
 
-    public static double SLOW_MULTIPLIER = (1/(double) 6);
+    public static double SLOW_MULTIPLIER = (2/(double) 6);
     public static double FAST_MULTIPLIER = 1.5;
 
     ////

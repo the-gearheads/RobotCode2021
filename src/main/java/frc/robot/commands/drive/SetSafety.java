@@ -7,36 +7,30 @@
 
 package frc.robot.commands.drive;
 
-import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DriveSubsystem;
 
-public class DriveToWall extends CommandBase {
+public class SetSafety extends CommandBase {
   private final DriveSubsystem drive;
-  private final double direction;
-  public DriveToWall(DriveSubsystem drive, double direction) {
+  private final boolean state;
+  public SetSafety(DriveSubsystem drive, boolean state) {
     this.drive = drive;
-    this.direction = Math.signum(direction);
-    addRequirements(drive);
+    this.state = state;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-  }
-
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {
-    drive.controller.arcadeDrive(new ChassisSpeeds(2*direction, 0, 0));
+    drive.setSafety(state);
   }
 
   @Override
   public void end(boolean interrupted) {
   }
 
+  // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
 }

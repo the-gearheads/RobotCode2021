@@ -14,6 +14,7 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.commands.intake.RunIntake;
 import frc.robot.util.Deadband;
 import io.github.oblarg.oblog.Logger;
 import io.github.oblarg.oblog.annotations.Log;
@@ -40,6 +41,7 @@ public class Intake extends SubsystemBase {
     rExtension = new CANSparkMax(6, MotorType.kBrushless);
     lExtension.setInverted(true);
     rExtension.setInverted(true);
+    rExtension.setIdleMode(IdleMode.kCoast);
 
     pft = new CANSparkMax(28, MotorType.kBrushless);
     intake = new WPI_TalonSRX(35);
@@ -48,7 +50,6 @@ public class Intake extends SubsystemBase {
     lEncoder.setPosition(0);
     rEncoder.setPosition(0);
 
-    setBrake();
     Logger.configureLoggingAndConfig(this, false);
   }
 

@@ -8,6 +8,7 @@
 package frc.robot.commands.shooter;
 
 import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpiutil.math.MathUtil;
 import frc.robot.subsystems.Shooter;
@@ -19,16 +20,17 @@ public class ShootAt extends CommandBase {
   private PIDController rightController;
   private double rpm;
 
-  public ShootAt(Shooter shooter, double rpm) {
+  public ShootAt(Shooter shooter) {
     this.shooter = shooter;
     this.leftController = new PIDController(.05, 0, 0.008);
     this.rightController = new PIDController(.05, 0, 0.008);
-    this.rpm = rpm;
+    SmartDashboard.putNumber("autoRPM", 5750);
     addRequirements(shooter);
   }
 
   @Override
   public void initialize() {
+    rpm = SmartDashboard.getNumber("autoRPM", 5750);
     leftController.setSetpoint(rpm / 60);
     rightController.setSetpoint(rpm / 60);
   }

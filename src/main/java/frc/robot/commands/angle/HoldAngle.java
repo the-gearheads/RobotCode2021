@@ -43,10 +43,8 @@ public class HoldAngle extends CommandBase {
     up.setSetpoint(angle.getAngle());
     down.setSetpoint(angle.getAngle());
     if (Deadband.get(angle.getPosition(), angle.getAngle(), 5) == 0) {
-      SmartDashboard.putBoolean("atsetpoint", true);
       return;
     }
-    SmartDashboard.putBoolean("atsetpoint", false);
 
     double error = angle.getAngle()-angle.getPosition();
     double effort;
@@ -56,10 +54,8 @@ public class HoldAngle extends CommandBase {
       effort = down.calculate(angle.getPosition());
     }
     if (angle.isLimited(effort)) {
-      SmartDashboard.putBoolean("islimited", true);
       return;
     }
-    SmartDashboard.putBoolean("islimited", false);
 
     effort = MathUtil.clamp(effort, -10, 10);
     angle.turnAngle(effort);

@@ -75,6 +75,7 @@ public class Shooter extends SubsystemBase {
     irTop = new AnalogInput(Constants.IR_TOP);
     irBottom = new AnalogInput(Constants.IR_BOTTOM);
 
+    setBrake();
     Logger.configureLoggingAndConfig(this, false);
   }
 
@@ -106,6 +107,16 @@ public class Shooter extends SubsystemBase {
 
   public static boolean bottomBlocked() {
     return (irBottom.getVoltage() < .1);
+  }
+
+  public void setBrake() {
+    lShooter.setIdleMode(IdleMode.kBrake);
+    rShooter.setIdleMode(IdleMode.kBrake);
+  }
+
+  public void setCoast() {
+    lShooter.setIdleMode(IdleMode.kCoast);
+    rShooter.setIdleMode(IdleMode.kCoast);
   }
 
   @Override

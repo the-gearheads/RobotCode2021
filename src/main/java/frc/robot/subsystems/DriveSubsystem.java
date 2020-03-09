@@ -14,10 +14,8 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.kauailabs.navx.frc.AHRS;
 
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.I2C.Port;
+import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -101,10 +99,6 @@ public class DriveSubsystem extends SubsystemBase {
     frMotor.setNeutralMode(NeutralMode.Brake);
     blMotor.setNeutralMode(NeutralMode.Brake);
     brMotor.setNeutralMode(NeutralMode.Brake);
-    flMotor.setSafetyEnabled(false);
-    frMotor.setSafetyEnabled(false);
-    blMotor.setSafetyEnabled(false);
-    brMotor.setSafetyEnabled(false);
     
 
     gyro = new AHRS(Constants.GYRO_PORT);
@@ -132,6 +126,7 @@ public class DriveSubsystem extends SubsystemBase {
     drive = new DifferentialDrive(leftSide, rightSide);
     drive.setSafetyEnabled(false); // disable auto-shutoff of motors... wpilib why??????
     drive.setDeadband(0);
+    setSafety(true);
 
     setDefaultCommand(new ArcadeDrive(this));
   }
@@ -140,6 +135,12 @@ public class DriveSubsystem extends SubsystemBase {
     return gyro.getRawGyroZ();
   }
 
+  public void setSafety(boolean state) {
+    flMotor.setSafetyEnabled(state);
+    frMotor.setSafetyEnabled(state);
+    blMotor.setSafetyEnabled(state);
+    brMotor.setSafetyEnabled(state);
+  }
   public double getAngle() {
     return (-gyro.getAngle()) - initAngle;
   }

@@ -34,9 +34,6 @@ public class Elevator extends SubsystemBase {
 
     elevatorLower.setInverted(true);
 
-    elevatorUpper.setIdleMode(IdleMode.kBrake);
-    elevatorLower.setIdleMode(IdleMode.kBrake);
-    setDefaultCommand(new BlockedElevate(this, RobotContainer.getIntake()));
   }
 
   public void zero() {
@@ -68,6 +65,16 @@ public class Elevator extends SubsystemBase {
 
   public double getLowerPosition() {
     return lowerPosition;
+  }
+
+  public void setBrake() {
+    elevatorUpper.setIdleMode(IdleMode.kBrake);
+    elevatorLower.setIdleMode(IdleMode.kBrake);
+  }
+
+  public void setCoast() {
+    elevatorUpper.setIdleMode(IdleMode.kCoast);
+    elevatorLower.setIdleMode(IdleMode.kCoast);
   }
 
   @Override

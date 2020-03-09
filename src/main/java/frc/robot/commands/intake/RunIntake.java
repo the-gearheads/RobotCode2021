@@ -5,19 +5,19 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands.drive;
+package frc.robot.commands.intake;
 
-import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.Intake;
 
-public class DriveToWall extends CommandBase {
-  private final DriveSubsystem drive;
-  private final double direction;
-  public DriveToWall(DriveSubsystem drive, double direction) {
-    this.drive = drive;
-    this.direction = Math.signum(direction);
-    addRequirements(drive);
+public class RunIntake extends CommandBase {
+  /**
+   * Creates a new RunIntake.
+   */
+  private final Intake intake;
+  public RunIntake(Intake intake) {
+    this.intake = intake;
+    addRequirements(intake);
   }
 
   // Called when the command is initially scheduled.
@@ -28,13 +28,15 @@ public class DriveToWall extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    drive.controller.arcadeDrive(new ChassisSpeeds(2*direction, 0, 0));
+    intake.intake(-0.5);
   }
 
+  // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
   }
 
+  // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     return false;

@@ -27,18 +27,26 @@ public class TurnToAngle extends CommandBase {
 
   @Log
   private double angle;
+  private boolean angle_set;
 
   public TurnToAngle(DriveSubsystem drive) {
     this.drive = drive;
     this.controller = new PIDController(8, 0, 0);
     this.offset = Math.copySign(180, drive.getAngle()) - drive.getAngle();
     addRequirements(drive);
-    Logger.configureLoggingAndConfig(this, false);
+  }
+
+  public TurnToAngle (DriveSubsystem drive, double angle) {
+    this(drive);
+    this.angle = angle;
+    angle_set = true;
   }
 
   @Override
   public void initialize() {
-    angle = (NetworkTableInstance.getDefault().getTable("OpenSight").getEntry("camera").getDouble(0) + getAngle());
+    if (!angle_set) {
+      angle = (NetworkTableInstance.getDefault().getTable("OpenSight").getEntry("camera").getDouble(0) + getAngle());
+    }
     controller.enableContinuousInput(0, 360);
     controller.setSetpoint(angle);
   }

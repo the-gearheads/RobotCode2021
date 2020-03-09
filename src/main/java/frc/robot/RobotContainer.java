@@ -10,6 +10,7 @@ package frc.robot;
 import java.util.Collections;
 import java.util.function.Supplier;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
@@ -17,32 +18,31 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.spline.SplineParameterizer.MalformedSplineException;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpiutil.net.PortForwarder;
-import frc.robot.commands.NOP;
 import frc.robot.commands.angle.DriveAngle;
-import frc.robot.commands.angle.HoldAngle;
 import frc.robot.commands.angle.SetAngle;
 import frc.robot.commands.arms.WinchHold;
 import frc.robot.commands.drive.DriveToWall;
+import frc.robot.commands.drive.SetSafety;
 import frc.robot.commands.drive.SpeedModifier;
 import frc.robot.commands.drive.TurnToAngle;
 import frc.robot.commands.elevator.Elevate;
 import frc.robot.commands.group.CloseShoot;
 import frc.robot.commands.group.MilfordAuton;
-import frc.robot.commands.group.Unjam;
 import frc.robot.commands.intake.Extend;
 import frc.robot.commands.intake.FullIntake;
-import frc.robot.commands.intake.Pft;
 import frc.robot.commands.intake.Retract;
 import frc.robot.commands.shooter.Shoot;
-import frc.robot.commands.shooter.ShootAt;
 import frc.robot.subsystems.Arms;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Elevator;
@@ -69,6 +69,9 @@ public class RobotContainer {
   private static Intake intake;
   private static Arms arms;
 
+  // Dashboard
+  private SendableChooser<Command> chooser = new SendableChooser<>();
+
   public RobotContainer() {
     drive = new DriveSubsystem();
     shooter = new Shooter();
@@ -83,10 +86,15 @@ public class RobotContainer {
     setupStreamDeck();
     configureButtonBindings();
 
+    chooser.setDefaultOption("On Line (Backward)", new MilfordAuton(drive, shooter, angle, elevator, -1));
+    chooser.addOption("On Line (Forward)", new MilfordAuton(drive, shooter, angle, elevator, 1));
+    SmartDashboard.putData("Auton Selector", chooser);
+
     PortForwarder.add(8000, "10.11.89.100", 80);
     PortForwarder.add(2200, "10.11.89.100", 22);
     PortForwarder.add(5800, "10.11.89.100", 5800);
     PortForwarder.add(554, "10.11.89.100", 554);
+    CameraServer.getInstance().startAutomaticCapture(0);
   }
 
   // run on any mode init
@@ -116,10 +124,17 @@ public class RobotContainer {
         && DriverStation.getInstance().isOperatorControl());
 
     new JoystickTrigger(controller, XboxController.Axis.kLeftTrigger, 0.9)
-        .whileHeld(new SpeedModifier(drive, Constants.SLOW_MULTIPLIER, 1));
+        .whileHeld(new SpeedModifier(drive, Constants.SLOW_MULTIPLIER, (1 / (double) 2)));
     new JoystickTrigger(controller, XboxController.Axis.kRightTrigger, 0.9)
-        .whileHeld(new SpeedModifier(drive, Constants.FAST_MULTIPLIER, 1.5));
-    new JoystickButton(controller, XboxController.Button.kA.value).whenPressed(new DriveToWall(drive).withTimeout(0.6));
+        .whileHeld(new SpeedModifier(drive, Constants.FAST_MULTIPLIER, 1.5)).whenPressed(new SetSafety(drive, false))
+        .whenReleased(new SetSafety(drive, true));
+    new JoystickButton(controller, XboxController.Button.kA.value)
+        .whenPressed(new DriveToWall(drive, 1).withTimeout(0.6));
+    new JoystickButton(controller, XboxController.Button.kBumperRight.value)
+        .whenPressed(CommandScheduler.getInstance()::cancelAll);
+    new JoystickButton(controller, XboxController.Button.kBumperRight.value)
+        .whenPressed((new FullIntake(intake, 0)).alongWith(new Retract(intake)));
+    new JoystickButton(controller, XboxController.Button.kBumperRight.value).whenPressed(this::init);
 
     new JoystickButton(joystick, 1).whileHeld(
         (new Shoot(shooter).withTimeout(1)).andThen((new Shoot(shooter)).deadlineWith(new Elevate(elevator))));
@@ -127,15 +142,17 @@ public class RobotContainer {
     new JoystickButton(joystick, 7).whenPressed(new SetAngle(angle, 45));
     new JoystickButton(joystick, 9).whenPressed(new SetAngle(angle, 28));
     new JoystickButton(joystick, 11).whenPressed(new SetAngle(angle, 0));
+    new JoystickButton(joystick, 4).whileHeld(new WinchHold(arms, -1).withTimeout(10));
+    new JoystickButton(joystick, 6).whileHeld(new WinchHold(arms, 1).withTimeout(8));
 
     // buttons[0].setIcon("arms up").addAutoStatus(thirtySeconds)
     // .whenPressed(new Winch(arms, Constants.WINCH_ROTATIONS, 1));
-    buttons[1].setIcon("arms up").addAutoStatus(thirtySeconds).setMode("hold").whileHeld(new WinchHold(arms, 1));
+    buttons[1].setIcon("arms up").setMode("hold").whileHeld(new WinchHold(arms, 1));
     buttons[2].setIcon("arms down").setMode("hold").whileHeld(new WinchHold(arms, -1));
     buttons[3].setIcon("aim").whenPressed(new TurnToAngle(drive));
-    buttons[4].setIcon("intake").setMode("hold").whileHeld((new FullIntake(intake)).alongWith(new Extend(intake)))
-        .whenReleased((new Retract(intake)).alongWith((new Pft(intake, true)).withTimeout(5)));
-    buttons[5].setIcon("yellow").setMode("hold").whileHeld(new CloseShoot(shooter, angle, elevator));
+    buttons[4].setIcon("intake").setMode("hold").whileHeld((new FullIntake(intake, .5)).alongWith(new Extend(intake)))
+        .whenReleased((new Retract(intake)));
+    buttons[5].setIcon("yellow").setMode("hold").whileHeld(new CloseShoot(drive, shooter, angle, elevator));
     buttons[6].setIcon("green");
     buttons[9].setIcon("unjam").setMode("hold").whileHeld(new Unjam(angle, elevator, shooter));
     buttons[10].setIcon("blue").setMode("hold").whileHeld(new Pft(intake, true).alongWith(new Extend(intake)))
@@ -151,7 +168,7 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    return new MilfordAuton(drive, shooter, angle, elevator);
+    return chooser.getSelected();
   }
 
   public void routeToOrigin() {
