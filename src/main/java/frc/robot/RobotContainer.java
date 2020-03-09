@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpiutil.net.PortForwarder;
+import frc.robot.commands.angle.AngleCalibrate;
 import frc.robot.commands.angle.DriveAngle;
 import frc.robot.commands.angle.SetAngle;
 import frc.robot.commands.arms.WinchHold;
@@ -89,6 +90,7 @@ public class RobotContainer {
 
     chooser.setDefaultOption("On Line (Backward)", new MilfordAuton(drive, shooter, angle, elevator, -1));
     chooser.addOption("On Line (Forward)", new MilfordAuton(drive, shooter, angle, elevator, 1));
+    chooser.addOption("Calibrate Shooter Angle", new AngleCalibrate(angle));
     SmartDashboard.putData("Auton Selector", chooser);
 
     PortForwarder.add(8000, "10.11.89.100", 80);
