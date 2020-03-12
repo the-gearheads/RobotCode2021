@@ -138,6 +138,7 @@ public class RobotContainer {
         .whenPressed((new FullIntake(intake)).alongWith(new Retract(intake))).whenPressed(this::init);
     new JoystickButton(joystick, 1).whileHeld(
         (new Shoot(shooter).withTimeout(1)).andThen((new Shoot(shooter)).deadlineWith(new Elevate(elevator))));
+
     new JoystickButton(joystick, 2).whileHeld(new DriveAngle(angle));
     new JoystickButton(joystick, 7).whenPressed(new SetAngle(angle, 45));
     new JoystickButton(joystick, 9).whenPressed(new SetAngle(angle, 28));
@@ -155,8 +156,8 @@ public class RobotContainer {
     buttons[5].setIcon("yellow").setMode("hold").whileHeld(new CloseShoot(shooter, angle, elevator));
     buttons[6].setIcon("green");
     buttons[9].setIcon("unjam").setMode("hold").whileHeld(new Unjam(angle, elevator, shooter));
-    buttons[10].setIcon("blue").setMode("hold").whileHeld(new Pft(intake, true).alongWith(new Extend(intake)))
-        .whenReleased(new Retract(intake));
+    // buttons[10].setIcon("blue").setMode("hold").whileHeld(new Pft(intake, true).alongWith(new Extend(intake)))
+        // .whenReleased(new Retract(intake));
     buttons[11].setIcon("red");
     buttons[12].setIcon("rotate");
     buttons[14].setIcon("down").whenPressed(new SetAngle(angle, 0));

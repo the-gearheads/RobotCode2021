@@ -26,10 +26,11 @@ public class Intake extends SubsystemBase {
   private final CANSparkMax rExtension;
   private final CANSparkMax pft;
 
-  private final WPI_TalonSRX intake;
+  private final CANSparkMax intake;
 
   private final CANEncoder lEncoder;
   private final CANEncoder rEncoder;
+  private final CANEncoder intakeEncoder;
   @Log
   private double left;
   @Log
@@ -40,10 +41,16 @@ public class Intake extends SubsystemBase {
     rExtension = new CANSparkMax(6, MotorType.kBrushless);
     lExtension.setInverted(true);
     rExtension.setInverted(true);
+    lExtension.setIdleMode(IdleMode.kCoast);
     rExtension.setIdleMode(IdleMode.kCoast);
 
     pft = new CANSparkMax(28, MotorType.kBrushless);
-    intake = new WPI_TalonSRX(35);
+    pft.setIdleMode(IdleMode.kCoast);
+
+    intake = new CANSparkMax(35, MotorType.kBrushless);
+    intake.setIdleMode(IdleMode.kCoast);
+    intakeEncoder = intake.getEncoder();
+
     lEncoder = lExtension.getEncoder();
     rEncoder = rExtension.getEncoder();
     lEncoder.setPosition(0);
@@ -85,6 +92,11 @@ public class Intake extends SubsystemBase {
   }
 
   @Log
+  public double getIntakeVelocity() {
+    return intakeEncoder.getVelocity();
+  }
+
+  @Log
   public boolean isJammed() {
     return (Deadband.get(lExtension.getAppliedOutput(), 0, 1.5) != 0)
         || (Deadband.get(rExtension.getAppliedOutput(), 0, 1.5) != 0);
@@ -96,7 +108,7 @@ public class Intake extends SubsystemBase {
   }
 
   public void setBrake() {
-    lExtension.setIdleMode(IdleMode.kBrake);
-    rExtension.setIdleMode(IdleMode.kBrake);
+    // lExtension.setIdleMode(IdleMode.kBrake);
+    // rExtension.setIdleMode(IdleMode.kBrake);
   }
 }

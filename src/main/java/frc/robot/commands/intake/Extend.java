@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpiutil.math.MathUtil;
 import frc.robot.subsystems.Intake;
 import frc.robot.util.Deadband;
+import io.github.oblarg.oblog.Logger;
 import io.github.oblarg.oblog.annotations.Log;
 
 public class Extend extends CommandBase {
@@ -21,9 +22,9 @@ public class Extend extends CommandBase {
   @Log
   private PIDController rightController;
   @Log
-  private boolean debug0;
+  private double debug0;
   @Log
-  private boolean debug1;
+  private double debug1;
   @Log
   private boolean debug2;
   private double SETPOINT = 26;
@@ -34,10 +35,11 @@ public class Extend extends CommandBase {
   public Extend(Intake intake) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.intake = intake;
-    leftController = new PIDController(.75, 0, 0);
-    rightController = new PIDController(.75, 0, 0);
+    leftController = new PIDController(.8, 0, 0);
+    rightController = new PIDController(.8, 0, 0);
     leftController.setSetpoint(SETPOINT);
-    rightController.setSetpoint(SETPOINT + .2);
+    rightController.setSetpoint(SETPOINT);
+    Logger.configureLoggingAndConfig(this, false);
   }
 
   // Called when the command is initially scheduled.
@@ -51,10 +53,12 @@ public class Extend extends CommandBase {
     // double axis = RobotContainer.controller.getRawAxis(1) * 0.5;
     // intake.extend(axis);
     double left = leftController.calculate(intake.getLPosition());
-    left = MathUtil.clamp(left, 0, 10.8);
+    left = MathUtil.clamp(left, 0, 8);
     double right = rightController.calculate(intake.getRPosition());
-    right = MathUtil.clamp(right, 0, 10.8);
+    right = MathUtil.clamp(right, 0, 8);
 
+    debug0 = left;
+    debug1 = right;
     intake.extend(left, right);
     // intake.setCoast();
   }

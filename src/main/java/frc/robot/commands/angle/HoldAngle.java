@@ -22,10 +22,8 @@ public class HoldAngle extends CommandBase {
 
   public HoldAngle(ShooterAngle angle) {
     this.angle = angle;
-
-    up = new PIDController(0.05, 0, 0);
-    down = new PIDController(0.05, 0, 0);
-    // controller.setTolerance(0);
+    up = new PIDController(0.5, 0, 0);
+    down = new PIDController(0.2, 0, 0);
 
     addRequirements(angle);
   }
@@ -41,7 +39,8 @@ public class HoldAngle extends CommandBase {
   public void execute() {
     up.setSetpoint(angle.getAngle());
     down.setSetpoint(angle.getAngle());
-    if (Deadband.get(angle.getPosition(), angle.getAngle(), 5) == 0) {
+    if (Deadband.get(angle.getPosition(), angle.getAngle(), 0.25) == 0) {
+      angle.turnAngle(0);
       return;
     }
 
@@ -53,16 +52,17 @@ public class HoldAngle extends CommandBase {
       effort = down.calculate(angle.getPosition());
     }
     if (angle.isLimited(effort)) {
+      angle.turnAngle(0);
       return;
     }
 
-    effort = MathUtil.clamp(effort, -10, 10);
-    angle.turnAngle(effort);
+    effort = MathUtil.clamp(effort, -2, 2);
+    angle.turnAngleVolts(effort);
   }
 
   @Override
   public void end(boolean interrupted) {
-    angle.turnAngle(0);
+    angle.turnAngleVolts(0);
   }
 
   @Override

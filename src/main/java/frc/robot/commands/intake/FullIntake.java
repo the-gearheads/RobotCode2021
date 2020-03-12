@@ -7,25 +7,37 @@
 
 package frc.robot.commands.intake;
 
+import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpiutil.math.MathUtil;
 import frc.robot.subsystems.Intake;
 
 public class FullIntake extends CommandBase {
-  private Intake intake;
+  private final Intake intake;
+  private final PIDController controller;
+  private final SimpleMotorFeedforward feedforward;
 
   public FullIntake(Intake intake) {
     this.intake = intake;
+    this.controller = new PIDController(1, 0, 0);
+    feedforward = new SimpleMotorFeedforward(0.18, 0.0626, 0.00475);
+
     addRequirements(intake);
   }
 
   @Override
   public void initialize() {
+    this.controller.setSetpoint(9000);
   }
 
   @Override
   public void execute() {
-    intake.pft(.5);
-    intake.intake(.5);
+    // intake.pft(.5);
+    double ff = feedforward.calculate(controller.getSetpoint());
+    double effort = controller.calculate(intake.getIntakeVelocity());
+    effort = MathUtil.clamp(effort, -2, 2);
+    // intake.intake(ff + effort);
   }
 
   @Override

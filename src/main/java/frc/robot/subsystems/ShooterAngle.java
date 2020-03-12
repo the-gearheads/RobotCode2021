@@ -26,7 +26,9 @@ public class ShooterAngle extends SubsystemBase {
   private final NetworkTableEntry top;
   private final NetworkTableEntry bottom;
 
+  @Log
   private double topVolts;
+  @Log
   private double bottomVolts;
 
   private final CANSparkMax angleMotor;
@@ -40,20 +42,23 @@ public class ShooterAngle extends SubsystemBase {
     angleMotor.setInverted(true);
 
     pot = new AnalogInput(Constants.SHOOTER_POT);
-    setpoint = getPosition();
 
-    top = NetworkTableInstance.getDefault().getTable("Config/ShooterAngle").getEntry("Slope");
-    bottom = NetworkTableInstance.getDefault().getTable("Config/ShooterAngle").getEntry("Offset");
+    top = NetworkTableInstance.getDefault().getTable("Config/ShooterAngle").getEntry("Top");
+    bottom = NetworkTableInstance.getDefault().getTable("Config/ShooterAngle").getEntry("Bottom");
     top.setPersistent();
     bottom.setPersistent();
+
     updateVolts();
+    setpoint = getPosition();
 
     setDefaultCommand(new HoldAngle(this));
     Logger.configureLoggingAndConfig(this, false);
   }
 
+  @Log
   public double getPosition() {
-    return bottomVolts + (pot.getVoltage() / 5) * (topVolts - bottomVolts);
+    double p = (getVoltage() - bottomVolts) / (topVolts - bottomVolts);
+    return Constants.SHOOTER_ANGLE_MIN + (p * (Constants.SHOOTER_ANGLE_MAX-Constants.SHOOTER_ANGLE_MIN));
   }
 
   public void updateVolts() {
@@ -91,6 +96,10 @@ public class ShooterAngle extends SubsystemBase {
   }
 
   public void turnAngle(double speed) {
+    angleMotor.set(speed);
+  }
+
+  public void turnAngleVolts(double speed) {
     angleMotor.setVoltage(speed);
   }
 }

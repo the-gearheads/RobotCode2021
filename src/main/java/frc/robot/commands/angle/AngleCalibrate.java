@@ -7,6 +7,8 @@
 
 package frc.robot.commands.angle;
 
+import java.util.concurrent.TimeUnit;
+
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ShooterAngle;
 
@@ -30,28 +32,48 @@ public class AngleCalibrate extends CommandBase {
   public void execute() {
     if (state == 0) {
       if (angle.isLimited(1)) {
+        angle.turnAngle(0);
+        try {
+          TimeUnit.MILLISECONDS.sleep(500);
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
         state = 1;
         topVoltage = angle.getVoltage();
       } else {
-        angle.turnAngle(1);
+        angle.turnAngle(.18);
       }
     } else if (state == 1) {
       if (angle.isLimited(-1)) {
         state = 2;
+      } else {
+        angle.turnAngle(-.18);
+      }
+    } else if (state == 2) {
+      if (!(angle.isLimited(-1))) {
+        angle.turnAngle(0);
+        try {
+          TimeUnit.MILLISECONDS.sleep(500);
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
+        state = 3;
         bottomVoltage = angle.getVoltage();
       } else {
-        angle.turnAngle(-1);
+        angle.turnAngle(.1);
       }
     }
   }
 
   @Override
   public void end(boolean interrupted) {
-    angle.setVolts(topVoltage, bottomVoltage);
+    if (topVoltage != 0 && bottomVoltage != 0) {
+      angle.setVolts(topVoltage, bottomVoltage);
+    }
   }
 
   @Override
   public boolean isFinished() {
-    return (state == 2);
+    return (state == 3);
   }
 }
