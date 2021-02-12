@@ -20,7 +20,7 @@ public class Retract extends CommandBase {
   private PIDController leftController;
   @Log
   private PIDController rightController;
-  private final double SETPOINT = .8;
+  private final double SETPOINT = .3;
 
   /**
    * Creates a new Intake.

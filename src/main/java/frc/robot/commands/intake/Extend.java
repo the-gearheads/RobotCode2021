@@ -91,6 +91,6 @@ public class Extend extends CommandBase {
     return (intake.isJammed())
         || (Deadband.get(intake.getLPosition(), SETPOINT + .2, 0.2) == 0)
             && (Deadband.get(intake.getRPosition(), SETPOINT + .8, 0.2) == 0)
-        || ((intake.getLPosition() >= 32.85) || (intake.getRPosition() >= 33.09));
+        || ((intake.getLPosition() >= 30.21) || (intake.getRPosition() >= 31.5));
   }
 }

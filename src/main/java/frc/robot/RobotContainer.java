@@ -37,6 +37,7 @@ import frc.robot.commands.drive.SetSafety;
 import frc.robot.commands.drive.SpeedModifier;
 import frc.robot.commands.drive.TurnToAngle;
 import frc.robot.commands.elevator.Elevate;
+import frc.robot.commands.group.CancelAll;
 import frc.robot.commands.group.CloseShoot;
 import frc.robot.commands.group.MilfordAuton;
 import frc.robot.commands.group.Unjam;
@@ -44,6 +45,7 @@ import frc.robot.commands.intake.Extend;
 import frc.robot.commands.intake.FullIntake;
 import frc.robot.commands.intake.Pft;
 import frc.robot.commands.intake.Retract;
+import frc.robot.commands.intake.RunIntake;
 import frc.robot.commands.shooter.Shoot;
 import frc.robot.subsystems.Arms;
 import frc.robot.subsystems.DriveSubsystem;
@@ -123,21 +125,33 @@ public class RobotContainer {
   }
 
   private void configureButtonBindings() {
-    // Supplier<Boolean> thirtySeconds = () -> ((DriverStation.getInstance().getMatchTime() <= 30)
+    // Supplier<Boolean> thirtySeconds = () ->
+    // ((DriverStation.getInstance().getMatchTime() <= 30)
     // && DriverStation.getInstance().isOperatorControl());
 
-    new JoystickTrigger(controller, XboxController.Axis.kLeftTrigger, 0.9)
-        .whileHeld(new SpeedModifier(drive, Constants.SLOW_MULTIPLIER, (1 / (double) 2)));
-    new JoystickTrigger(controller, XboxController.Axis.kRightTrigger, 0.9)
-        .whileHeld(new SpeedModifier(drive, Constants.FAST_MULTIPLIER, 1.5)).whenPressed(new SetSafety(drive, false))
-        .whenReleased(new SetSafety(drive, true));
-    new JoystickButton(controller, XboxController.Button.kA.value)
-        .whenPressed(new DriveToWall(drive, 1).withTimeout(0.6));
-    new JoystickButton(controller, XboxController.Button.kBumperRight.value)
-        .whenPressed(CommandScheduler.getInstance()::cancelAll)
-        .whenPressed((new FullIntake(intake)).alongWith(new Retract(intake))).whenPressed(this::init);
-    new JoystickButton(joystick, 1).whileHeld(
-        (new Shoot(shooter).withTimeout(1)).andThen((new Shoot(shooter)).deadlineWith(new Elevate(elevator))));
+    // new JoystickTrigger(controller, XboxController.Axis.kLeftTrigger, 0.9)
+    // .whileHeld(new SpeedModifier(drive, Constants.SLOW_MULTIPLIER, (1 / (double)
+    // 2)));
+    // new JoystickTrigger(controller, XboxController.Axis.kRightTrigger, 0.9)
+    // .whileHeld(new SpeedModifier(drive, Constants.FAST_MULTIPLIER,
+    // 1.5)).whenPressed(new SetSafety(drive, false))
+    // .whenReleased(new SetSafety(drive, true));
+    // new JoystickButton(controller, XboxController.Button.kA.value)
+    // .whenPressed(new DriveToWall(drive, 1).withTimeout(0.6));
+    // new JoystickButton(controller, XboxController.Button.kBumperRight.value)
+    // .whenPressed(CommandScheduler.getInstance().cancelAll())
+    // .whenPressed((new FullIntake(intake)).alongWith(new
+    // Retract(intake))).whenPressed(this::init);
+    // new JoystickButton(joystick, 1).whileHeld(
+    // (new Shoot(shooter).withTimeout(1)).andThen((new
+    // Shoot(shooter)).deadlineWith(new Elevate(elevator))));
+    // new JoystickButton(controller,
+    // XboxController.Button.kY.value).whenPressed(new Extend(intake));
+    // new JoystickButton(controller,
+    // XboxController.Button.kA.value).whenPressed(new Retract(intake));
+    // new JoystickButton(controller, XboxController.Button.kX.value).whileHeld(new
+    // FullIntake(intake));
+    new JoystickButton(controller, XboxController.Button.kB.value).whenPressed(new CancelAll());
 
     new JoystickButton(joystick, 2).whileHeld(new DriveAngle(angle));
     new JoystickButton(joystick, 7).whenPressed(new SetAngle(angle, 45));
@@ -148,19 +162,24 @@ public class RobotContainer {
 
     // buttons[0].setIcon("arms up").addAutoStatus(thirtySeconds)
     // .whenPressed(new Winch(arms, Constants.WINCH_ROTATIONS, 1));
-    buttons[1].setIcon("arms up").setMode("hold").whileHeld(new WinchHold(arms, 1));
-    buttons[2].setIcon("arms down").setMode("hold").whileHeld(new WinchHold(arms, -1));
-    buttons[3].setIcon("aim").whenPressed(new TurnToAngle(drive));
-    buttons[4].setIcon("intake").setMode("hold").whileHeld((new FullIntake(intake)).alongWith(new Extend(intake)))
+    // buttons[1].setIcon("arms up").setMode("hold").whileHeld(new WinchHold(arms,
+    // 1));
+    // buttons[2].setIcon("arms down").setMode("hold").whileHeld(new WinchHold(arms,
+    // -1));
+    // buttons[3].setIcon("aim").whenPressed(new TurnToAngle(drive));
+    buttons[4].setIcon("blue").setMode("hold").whileHeld((new FullIntake(intake)).alongWith(new Extend(intake)))
         .whenReleased((new Retract(intake)));
-    buttons[5].setIcon("yellow").setMode("hold").whileHeld(new CloseShoot(shooter, angle, elevator));
-    buttons[6].setIcon("green");
-    buttons[9].setIcon("unjam").setMode("hold").whileHeld(new Unjam(angle, elevator, shooter));
-    // buttons[10].setIcon("blue").setMode("hold").whileHeld(new Pft(intake, true).alongWith(new Extend(intake)))
-        // .whenReleased(new Retract(intake));
-    buttons[11].setIcon("red");
-    buttons[12].setIcon("rotate");
-    buttons[14].setIcon("down").whenPressed(new SetAngle(angle, 0));
+    // buttons[5].setIcon("yellow").setMode("hold").whileHeld(new
+    // CloseShoot(shooter, angle, elevator));
+    // buttons[6].setIcon("green");
+    // buttons[9].setIcon("unjam").setMode("hold").whileHeld(new Unjam(angle,
+    // elevator, shooter));
+    // buttons[10].setIcon("blue").setMode("hold").whileHeld(new Pft(intake,
+    // true).alongWith(new Extend(intake)))
+    // .whenReleased(new Retract(intake));
+    // buttons[11].setIcon("red");
+    // buttons[12].setIcon("rotate");
+    // buttons[14].setIcon("down").whenPressed(new SetAngle(angle, 0));
   }
 
   public static Intake getIntake() {

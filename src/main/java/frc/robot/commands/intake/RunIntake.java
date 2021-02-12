@@ -15,6 +15,7 @@ public class RunIntake extends CommandBase {
    * Creates a new RunIntake.
    */
   private final Intake intake;
+
   public RunIntake(Intake intake) {
     this.intake = intake;
     addRequirements(intake);
@@ -23,17 +24,18 @@ public class RunIntake extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    intake.intake(0.5);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    intake.intake(-0.5);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    intake.intake(0);
   }
 
   // Returns true when the command should end.
