@@ -27,7 +27,7 @@ public class Retract extends CommandBase {
   private double MAX_VOLTS = 2;
 
   @Log
-  private double SETPOINT = -100; // RPM(?)
+  private double SETPOINT = -0.1; // m/s
 
   public Retract(Intake intake) {
     this.intake = intake;
@@ -50,8 +50,8 @@ public class Retract extends CommandBase {
     double left = leftController.calculate(velocity.left);
     double right = rightController.calculate(velocity.right);
 
-    left = MathUtil.clamp(left, 0, MAX_VOLTS);
-    right = MathUtil.clamp(right, 0, MAX_VOLTS);
+    left = MathUtil.clamp(left, -MAX_VOLTS, 0);
+    right = MathUtil.clamp(right, -MAX_VOLTS, 0);
 
     intake.extend(left, right);
   }

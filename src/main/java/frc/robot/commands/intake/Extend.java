@@ -26,11 +26,12 @@ public class Extend extends CommandBase {
   @Log
   private double MAX_VOLTS = 2;
 
-  private final double LEFT_DISTANCE = 26.2;
-  private final double RIGHT_DISTANCE = 26.8;
+  // TODO: replace with proper measurements
+  private final double LEFT_DISTANCE = 0.75;
+  private final double RIGHT_DISTANCE = 0.75;
 
   @Log
-  private double SETPOINT = 100; // RPM(?)
+  private double SETPOINT = 0.1; // m/s
 
   public Extend(Intake intake) {
     this.intake = intake;
@@ -53,6 +54,8 @@ public class Extend extends CommandBase {
     double left = leftController.calculate(velocity.left);
     double right = rightController.calculate(velocity.right);
 
+    // REMINDER: with 0 as the second parameter, it will only correct forward, not
+    // backward!
     left = MathUtil.clamp(left, 0, MAX_VOLTS);
     right = MathUtil.clamp(right, 0, MAX_VOLTS);
 

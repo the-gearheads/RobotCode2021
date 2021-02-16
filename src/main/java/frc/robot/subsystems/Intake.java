@@ -7,7 +7,6 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
@@ -20,9 +19,10 @@ import io.github.oblarg.oblog.Logger;
 import io.github.oblarg.oblog.annotations.Log;
 
 public class Intake extends SubsystemBase {
-  /**
-   * Creates a new Intake.
-   */
+
+  private final double ENCODER_CONSTANT = (1 / (double) Constants.INTAKE_EPR) * (1 / (double) Constants.INTAKE_GEARING)
+      * (1 / (double) Constants.LEAD_SCREW) * Math.PI;
+
   private final CANSparkMax lExtension;
   private final CANSparkMax rExtension;
   private final CANSparkMax pft;
@@ -38,9 +38,6 @@ public class Intake extends SubsystemBase {
     rExtension = new CANSparkMax(6, MotorType.kBrushless);
     lExtension.setInverted(true);
     rExtension.setInverted(true);
-
-    // lExtension.setIdleMode(IdleMode.kCoast);
-    // rExtension.setIdleMode(IdleMode.kCoast);
 
     pft = new CANSparkMax(28, MotorType.kBrushless);
     pft.setIdleMode(IdleMode.kCoast);
@@ -76,11 +73,15 @@ public class Intake extends SubsystemBase {
   }
 
   public Tuple getPosition() {
-    return new Tuple(lEncoder.getVelocity(), rEncoder.getVelocity());
+    double left = lEncoder.getPosition() * ENCODER_CONSTANT;
+    double right = rEncoder.getPosition() * ENCODER_CONSTANT;
+    return new Tuple(left, right);
   }
 
   public Tuple getVelocity() {
-    return new Tuple(lEncoder.getVelocity(), rEncoder.getVelocity());
+    double left = lEncoder.getVelocity() * ENCODER_CONSTANT;
+    double right = rEncoder.getVelocity() * ENCODER_CONSTANT;
+    return new Tuple(left, right);
   }
 
   @Log

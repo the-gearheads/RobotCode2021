@@ -99,6 +99,12 @@ public final class Constants {
     public static final int WINCH_ROTATIONS = 10;
     ////
 
+    //// INTAKE SETTINGS
+    public static final double INTAKE_EPR = 42;
+    public static final double INTAKE_GEARING = 4;
+    public static final double LEAD_SCREW = 1;
+    ////
+
     //// MISC
 
     public static final int CONTROLLER_PORT = 0;
