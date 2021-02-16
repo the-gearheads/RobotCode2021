@@ -30,7 +30,7 @@ import frc.robot.Constants;
 import frc.robot.commands.drive.ArcadeDrive;
 import frc.robot.util.Deadband;
 import frc.robot.util.Lidar;
-import frc.robot.util.Voltages;
+import frc.robot.util.Tuple;
 import io.github.oblarg.oblog.Logger;
 import io.github.oblarg.oblog.annotations.Log;
 
@@ -74,7 +74,6 @@ public class DriveSubsystem extends SubsystemBase {
   private double speedMultiplier = 1;
   private double rotMultiplier = 1;
 
-
   public DriveSubsystem() {
     Logger.configureLoggingAndConfig(this, false);
     lidar = new Lidar(Port.kMXP);
@@ -99,7 +98,6 @@ public class DriveSubsystem extends SubsystemBase {
     frMotor.setNeutralMode(NeutralMode.Brake);
     blMotor.setNeutralMode(NeutralMode.Brake);
     brMotor.setNeutralMode(NeutralMode.Brake);
-    
 
     gyro = new AHRS(Constants.GYRO_PORT);
     while (gyro.isCalibrating()) {
@@ -141,6 +139,7 @@ public class DriveSubsystem extends SubsystemBase {
     blMotor.setSafetyEnabled(state);
     brMotor.setSafetyEnabled(state);
   }
+
   public double getAngle() {
     return (-gyro.getAngle()) - initAngle;
   }
@@ -212,7 +211,7 @@ public class DriveSubsystem extends SubsystemBase {
       rightSide.setVoltage(right);
     }
 
-    public void driveVoltageFF(Voltages voltages, DifferentialDriveWheelSpeeds speeds) {
+    public void driveVoltageFF(Tuple voltages, DifferentialDriveWheelSpeeds speeds) {
       leftSide.setVoltage(voltages.left + leftFF.calculate(speeds.leftMetersPerSecond));
       rightSide.setVoltage(voltages.right + rightFF.calculate(speeds.rightMetersPerSecond));
     }
@@ -236,13 +235,15 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     public void arcadeDrive(ChassisSpeeds chs) {
-      ChassisSpeeds chs2 = new ChassisSpeeds(chs.vxMetersPerSecond*speedMultiplier, chs.vyMetersPerSecond*speedMultiplier, Math.toRadians(Math.toDegrees(chs.omegaRadiansPerSecond)*rotMultiplier));
+      ChassisSpeeds chs2 = new ChassisSpeeds(chs.vxMetersPerSecond * speedMultiplier,
+          chs.vyMetersPerSecond * speedMultiplier,
+          Math.toRadians(Math.toDegrees(chs.omegaRadiansPerSecond) * rotMultiplier));
       DifferentialDriveWheelSpeeds speeds = kinematics.toWheelSpeeds(gyroLoop(chs2));
       tankDrive(speeds);
     }
 
     public void tankDrive(DifferentialDriveWheelSpeeds speeds) {
-      Voltages voltages = new Voltages(leftPid.calculate(leftVelocity.get(), speeds.leftMetersPerSecond),
+      Tuple voltages = new Tuple(leftPid.calculate(leftVelocity.get(), speeds.leftMetersPerSecond),
           rightPid.calculate(rightVelocity.get(), speeds.rightMetersPerSecond));
       driveVoltageFF(voltages, speeds);
     }

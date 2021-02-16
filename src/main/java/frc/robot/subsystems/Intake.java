@@ -12,9 +12,10 @@ import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.util.Deadband;
+import frc.robot.util.Tuple;
 import io.github.oblarg.oblog.Logger;
 import io.github.oblarg.oblog.annotations.Log;
 
@@ -31,18 +32,15 @@ public class Intake extends SubsystemBase {
   private final CANEncoder lEncoder;
   private final CANEncoder rEncoder;
   private final CANEncoder intakeEncoder;
-  @Log
-  private double left;
-  @Log
-  private double right;
 
   public Intake() {
     lExtension = new CANSparkMax(27, MotorType.kBrushless);
     rExtension = new CANSparkMax(6, MotorType.kBrushless);
     lExtension.setInverted(true);
     rExtension.setInverted(true);
-    lExtension.setIdleMode(IdleMode.kCoast);
-    rExtension.setIdleMode(IdleMode.kCoast);
+
+    // lExtension.setIdleMode(IdleMode.kCoast);
+    // rExtension.setIdleMode(IdleMode.kCoast);
 
     pft = new CANSparkMax(28, MotorType.kBrushless);
     pft.setIdleMode(IdleMode.kCoast);
@@ -64,12 +62,6 @@ public class Intake extends SubsystemBase {
     rExtension.setVoltage(right);
   }
 
-  @Override
-  public void periodic() {
-    left = lEncoder.getPosition();
-    right = rEncoder.getPosition();
-  }
-
   public void pft(double speed) {
     pft.set(speed);
   }
@@ -83,12 +75,12 @@ public class Intake extends SubsystemBase {
     rExtension.set(-speed);
   }
 
-  public double getLPosition() {
-    return lEncoder.getPosition();
+  public Tuple getPosition() {
+    return new Tuple(lEncoder.getVelocity(), rEncoder.getVelocity());
   }
 
-  public double getRPosition() {
-    return rEncoder.getPosition();
+  public Tuple getVelocity() {
+    return new Tuple(lEncoder.getVelocity(), rEncoder.getVelocity());
   }
 
   @Log

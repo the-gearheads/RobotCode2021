@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
-import frc.robot.util.Voltages;
+import frc.robot.util.Tuple;
 import io.github.oblarg.oblog.Logger;
 import io.github.oblarg.oblog.annotations.Log;
 
@@ -84,7 +84,7 @@ public class Shooter extends SubsystemBase {
     rShooter.set(speed);
   }
 
-  public void shootVolts(double setpoint, Voltages voltages) {
+  public void shootVolts(double setpoint, Tuple voltages) {
     lShooter.setVoltage(leftFF.calculate(setpoint / 60) + voltages.left);
     rShooter.setVoltage(rightFF.calculate(setpoint / 60) + voltages.right);
   }

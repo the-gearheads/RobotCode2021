@@ -13,7 +13,7 @@ import edu.wpi.first.wpiutil.math.MathUtil;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.Shooter;
-import frc.robot.util.Voltages;
+import frc.robot.util.Tuple;
 
 public class Shoot extends CommandBase {
   private Shooter shooter;
@@ -42,7 +42,7 @@ public class Shoot extends CommandBase {
     double right = rightController.calculate(shooter.getRightVelocity() / 60);
     left = MathUtil.clamp(left, -250, 250);
     right = MathUtil.clamp(right, -250, 250);
-    shooter.shootVolts(rpm, new Voltages(left, right));
+    shooter.shootVolts(rpm, new Tuple(left, right));
   }
 
   // Called once the command ends or is interrupted.
