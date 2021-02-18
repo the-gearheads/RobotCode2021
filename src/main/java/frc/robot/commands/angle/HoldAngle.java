@@ -37,14 +37,14 @@ public class HoldAngle extends CommandBase {
 
   @Override
   public void execute() {
-    up.setSetpoint(angle.getAngle());
-    down.setSetpoint(angle.getAngle());
-    if (Deadband.get(angle.getPosition(), angle.getAngle(), 0.25) == 0) {
+    up.setSetpoint(angle.getSetpoint());
+    down.setSetpoint(angle.getSetpoint());
+    if (Deadband.get(angle.getPosition(), angle.getSetpoint(), 0.25) == 0) {
       angle.turnAngle(0);
       return;
     }
 
-    double error = angle.getAngle() - angle.getPosition();
+    double error = angle.getSetpoint() - angle.getPosition();
     double effort;
     if (Math.signum(error) == 1) {
       effort = up.calculate(angle.getPosition());

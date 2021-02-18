@@ -13,6 +13,7 @@ import frc.robot.subsystems.ShooterAngle;
 public class DriveTest extends CommandBase {
   private final ShooterAngle angle;
   private final double speed;
+
   public DriveTest(ShooterAngle angle, double speed) {
     this.angle = angle;
     this.speed = speed;
@@ -32,6 +33,7 @@ public class DriveTest extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    angle.turnAngle(0);
   }
 
   // Returns true when the command should end.

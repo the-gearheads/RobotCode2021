@@ -25,7 +25,7 @@ public class Intake extends SubsystemBase {
 
   private final CANSparkMax lExtension;
   private final CANSparkMax rExtension;
-  private final CANSparkMax pft;
+  // private final CANSparkMax pft;
 
   private final CANSparkMax intake;
 
@@ -39,8 +39,8 @@ public class Intake extends SubsystemBase {
     lExtension.setInverted(true);
     rExtension.setInverted(true);
 
-    pft = new CANSparkMax(28, MotorType.kBrushless);
-    pft.setIdleMode(IdleMode.kCoast);
+    // pft = new CANSparkMax(28, MotorType.kBrushless);
+    // pft.setIdleMode(IdleMode.kCoast);
 
     intake = new CANSparkMax(35, MotorType.kBrushless);
     intake.setIdleMode(IdleMode.kCoast);
@@ -60,7 +60,7 @@ public class Intake extends SubsystemBase {
   }
 
   public void pft(double speed) {
-    pft.set(speed);
+    // pft.set(speed);
   }
 
   public void intake(double speed) {

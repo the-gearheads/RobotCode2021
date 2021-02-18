@@ -41,13 +41,13 @@ public class AngleCalibrate extends CommandBase {
         state = 1;
         topVoltage = angle.getVoltage();
       } else {
-        angle.turnAngle(.18);
+        angle.turnAngle(.1);
       }
     } else if (state == 1) {
       if (angle.isLimited(-1)) {
         state = 2;
       } else {
-        angle.turnAngle(-.18);
+        angle.turnAngle(-.1);
       }
     } else if (state == 2) {
       if (!(angle.isLimited(-1))) {

@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpiutil.net.PortForwarder;
 import frc.robot.commands.angle.AngleCalibrate;
 import frc.robot.commands.angle.DriveAngle;
+import frc.robot.commands.angle.DriveTest;
 import frc.robot.commands.angle.SetAngle;
 import frc.robot.commands.arms.WinchHold;
 import frc.robot.commands.drive.DriveToWall;
@@ -151,14 +152,21 @@ public class RobotContainer {
     // XboxController.Button.kA.value).whenPressed(new Retract(intake));
     // new JoystickButton(controller, XboxController.Button.kX.value).whileHeld(new
     // FullIntake(intake));
-    new JoystickButton(controller, XboxController.Button.kB.value).whenPressed(new CancelAll());
+    new JoystickTrigger(controller, XboxController.Axis.kLeftTrigger, 0.1).whileHeld(new Elevate(elevator));
+    new JoystickTrigger(controller, XboxController.Axis.kRightTrigger, 0.1)
+        .whileHeld((new Shoot(shooter).withTimeout(1)).andThen((new Shoot(shooter))));
+    new JoystickButton(controller, XboxController.Button.kA.value).whenPressed(new SetAngle(angle, 45));
+    new JoystickButton(controller, XboxController.Button.kB.value).whenPressed(new SetAngle(angle, 20));
+    new JoystickButton(controller, XboxController.Button.kX.value).whenPressed(new SetAngle(angle, 5));
 
     new JoystickButton(joystick, 2).whileHeld(new DriveAngle(angle));
     new JoystickButton(joystick, 7).whenPressed(new SetAngle(angle, 45));
     new JoystickButton(joystick, 9).whenPressed(new SetAngle(angle, 28));
     new JoystickButton(joystick, 11).whenPressed(new SetAngle(angle, 0));
-    new JoystickButton(joystick, 4).whileHeld(new WinchHold(arms, -1).withTimeout(10));
-    new JoystickButton(joystick, 6).whileHeld(new WinchHold(arms, 1).withTimeout(8));
+    // new JoystickButton(joystick, 4).whileHeld(new WinchHold(arms,
+    // -1).withTimeout(10));
+    // new JoystickButton(joystick, 6).whileHeld(new WinchHold(arms,
+    // 1).withTimeout(8));
 
     // buttons[0].setIcon("arms up").addAutoStatus(thirtySeconds)
     // .whenPressed(new Winch(arms, Constants.WINCH_ROTATIONS, 1));
@@ -167,8 +175,9 @@ public class RobotContainer {
     // buttons[2].setIcon("arms down").setMode("hold").whileHeld(new WinchHold(arms,
     // -1));
     // buttons[3].setIcon("aim").whenPressed(new TurnToAngle(drive));
-    buttons[4].setIcon("blue").setMode("hold").whileHeld((new FullIntake(intake)).alongWith(new Extend(intake)))
-        .whenReleased((new Retract(intake)));
+    // buttons[4].setIcon("blue").setMode("hold").whileHeld((new
+    // FullIntake(intake)).alongWith(new Extend(intake)))
+    // .whenReleased((new Retract(intake)));
     // buttons[5].setIcon("yellow").setMode("hold").whileHeld(new
     // CloseShoot(shooter, angle, elevator));
     // buttons[6].setIcon("green");

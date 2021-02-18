@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.commands.angle.HoldAngle;
 import io.github.oblarg.oblog.Logger;
+import io.github.oblarg.oblog.annotations.Config;
 import io.github.oblarg.oblog.annotations.Log;
 
 public class ShooterAngle extends SubsystemBase {
@@ -33,6 +34,7 @@ public class ShooterAngle extends SubsystemBase {
 
   private final CANSparkMax angleMotor;
   private final AnalogInput pot;
+  @Log
   private double setpoint;
 
   public ShooterAngle() {
@@ -58,7 +60,7 @@ public class ShooterAngle extends SubsystemBase {
   @Log
   public double getPosition() {
     double p = (getVoltage() - bottomVolts) / (topVolts - bottomVolts);
-    return Constants.SHOOTER_ANGLE_MIN + (p * (Constants.SHOOTER_ANGLE_MAX-Constants.SHOOTER_ANGLE_MIN));
+    return Constants.SHOOTER_ANGLE_MIN + (p * (Constants.SHOOTER_ANGLE_MAX - Constants.SHOOTER_ANGLE_MIN));
   }
 
   public void updateVolts() {
@@ -77,12 +79,12 @@ public class ShooterAngle extends SubsystemBase {
     return pot.getVoltage();
   }
 
-  public void setSetpoint(double angle) {
-    this.setpoint = angle;
+  @Config
+  public void setSetpoint(double setpoint) {
+    this.setpoint = setpoint;
   }
 
-  @Log
-  public double getAngle() {
+  public double getSetpoint() {
     return setpoint;
   }
 

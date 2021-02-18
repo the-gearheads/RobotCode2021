@@ -39,7 +39,7 @@ public class BlockedElevate extends CommandBase {
 
   @Override
   public void execute() {
-    //TODO: if ball count is < 2, don't run top elavator motors.
+    // TODO: if ball count is < 2, don't run top elavator motors.
     if (Shooter.topBlocked()) {
       elevator.lower(0);
       elevator.upper(0);
@@ -54,7 +54,7 @@ public class BlockedElevate extends CommandBase {
       if (last) {
         setpoint = elevator.getLowerPosition() + Constants.SINGLE_BALL_ROTS;
       }
-      if (elevator.getLowerPosition() < setpoint) {
+      if (elevator.getLowerPosition() < setpoint && Shooter.getBallCount() >= 2) {
         elevator.lower(0.3);
         elevator.upper(0.1);
         intake.pft(0.4);

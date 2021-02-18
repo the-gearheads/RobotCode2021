@@ -18,15 +18,15 @@ public class Arms extends SubsystemBase {
   /**
    * Creates a new Extender.
    */
-  private final CANSparkMax arm;
-  private final CANEncoder encoder;
+  // private final CANSparkMax arm;
+  // private final CANEncoder encoder;
 
   @Log
   private double position;
 
   public Arms() {
-    arm = new CANSparkMax(25, MotorType.kBrushless);
-    encoder = arm.getEncoder();
+    // arm = new CANSparkMax(25, MotorType.kBrushless);
+    // encoder = arm.getEncoder();
   }
 
   public double getPosition() {
@@ -36,11 +36,11 @@ public class Arms extends SubsystemBase {
   public void run(double speed) {
     // NEVER RUN BACKWARD
     // speed = Math.abs(speed);
-    arm.set(speed);
+    // arm.set(speed);
   }
 
   @Override
   public void periodic() {
-    position = encoder.getPosition();
+    // position = encoder.getPosition();
   }
 }

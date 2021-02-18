@@ -79,8 +79,8 @@ public final class Constants {
     public static final int SHOOTER_GEARING = 1;
 
     // Shooter angle
-    public static final double SHOOTER_ANGLE_MIN = 5.1;
-    public static final double SHOOTER_ANGLE_MAX = 67.3;
+    public static final double SHOOTER_ANGLE_MIN = 2.8;
+    public static final double SHOOTER_ANGLE_MAX = 66.5;
 
     ////
 

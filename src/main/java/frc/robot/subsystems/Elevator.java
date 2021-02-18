@@ -33,7 +33,7 @@ public class Elevator extends SubsystemBase {
     lowerEncoder = elevatorLower.getEncoder();
 
     elevatorLower.setInverted(true);
-    setDefaultCommand(new BlockedElevate(this, RobotContainer.getIntake()));
+    // setDefaultCommand(new BlockedElevate(this, RobotContainer.getIntake()));
   }
 
   public void zero() {
