@@ -18,59 +18,72 @@ import io.github.oblarg.oblog.annotations.Log;
 
 public class Extend extends CommandBase {
   private Intake intake;
-  @Log
   private PIDController leftController;
-  @Log
   private PIDController rightController;
-
   @Log
-  private double MAX_VOLTS = 2;
-
-  // TODO: replace with proper measurements
-  private final double LEFT_DISTANCE = 0.75;
-  private final double RIGHT_DISTANCE = 0.75;
-
+  private double debug0;
   @Log
-  private double SETPOINT = 0.1; // m/s
+  private double debug1;
+  @Log
+  private boolean debug2;
+  private final double L_SETPOINT = 30.64;
+  private final double R_SETPOINT = 30.64;
 
+  /**
+   * Creates a new Intake.
+   */
   public Extend(Intake intake) {
+    // Use addRequirements() here to declare subsystem dependencies.
     this.intake = intake;
-    leftController = new PIDController(2, 0, 0);
-    rightController = new PIDController(2, 0, 0);
-
-    leftController.setSetpoint(SETPOINT);
-    rightController.setSetpoint(SETPOINT);
-
+    leftController = new PIDController(1.2, 0, 0);
+    rightController = new PIDController(1, 0, 0);
+    leftController.setSetpoint(L_SETPOINT);
+    rightController.setSetpoint(R_SETPOINT);
     Logger.configureLoggingAndConfig(this, false);
   }
 
+  // Called when the command is initially scheduled.
   @Override
   public void initialize() {
   }
 
+  // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Tuple velocity = intake.getVelocity();
-    double left = leftController.calculate(velocity.left);
-    double right = rightController.calculate(velocity.right);
+    // double axis = RobotContainer.controller.getRawAxis(1) * 0.5;
+    // intake.extend(axis);
+    Tuple position = intake.getPosition();
+    double left = leftController.calculate(position.left);
+    left = MathUtil.clamp(left, 0, 2);
+    double right = rightController.calculate(position.right);
+    right = MathUtil.clamp(right, 0, 2);
 
-    // REMINDER: with 0 as the second parameter, it will only correct forward, not
-    // backward!
-    left = MathUtil.clamp(left, 0, MAX_VOLTS);
-    right = MathUtil.clamp(right, 0, MAX_VOLTS);
-
+    debug0 = left;
+    debug1 = right;
     intake.extend(left, right);
+    // intake.setCoast();
   }
 
+  // @Config
+  // public void setLeft(double kP) {
+  // leftController.setP(kP);
+  // }
+
+  // @Config
+  // public void setRight(double kP) {
+  // rightController.setP(kP);
+  // }
+
+  // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     intake.extend(0, 0);
   }
 
+  // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     Tuple position = intake.getPosition();
-    return (Deadband.get(position.left, LEFT_DISTANCE, 0.2) == 0)
-        && (Deadband.get(position.right, RIGHT_DISTANCE, 0.2) == 0);
+    return Deadband.get(position.left, L_SETPOINT, .3) == 0 && Deadband.get(position.right, R_SETPOINT, .3) == 0;
   }
 }

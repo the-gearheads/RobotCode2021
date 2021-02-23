@@ -22,48 +22,57 @@ public class Retract extends CommandBase {
   private PIDController leftController;
   @Log
   private PIDController rightController;
+  private final double SETPOINT = .1;
 
   @Log
-  private double MAX_VOLTS = 2;
-
+  private double debug0;
   @Log
-  private double SETPOINT = -0.1; // m/s
+  private double debug1;
 
+  /**
+   * Creates a new Intake.
+   */
   public Retract(Intake intake) {
+    // Use addRequirements() here to declare subsystem dependencies.
     this.intake = intake;
-    leftController = new PIDController(2, 0, 0);
-    rightController = new PIDController(2, 0, 0);
-
+    leftController = new PIDController(.95, 0, 0);
+    rightController = new PIDController(.98, 0, 0);
     leftController.setSetpoint(SETPOINT);
     rightController.setSetpoint(SETPOINT);
-
     Logger.configureLoggingAndConfig(this, false);
   }
 
+  // Called when the command is initially scheduled.
   @Override
   public void initialize() {
   }
 
+  // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Tuple velocity = intake.getVelocity();
-    double left = leftController.calculate(velocity.left);
-    double right = rightController.calculate(velocity.right);
+    Tuple position = intake.getPosition();
+    double left = leftController.calculate(position.left);
+    left = MathUtil.clamp(left, -8, 0);
+    double right = rightController.calculate(position.right);
+    right = MathUtil.clamp(right, -8, 0);
 
-    left = MathUtil.clamp(left, -MAX_VOLTS, 0);
-    right = MathUtil.clamp(right, -MAX_VOLTS, 0);
+    debug0 = left;
+    debug1 = right;
 
+    // intake.extend(-2, -2);
     intake.extend(left, right);
   }
 
+  // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     intake.extend(0, 0);
   }
 
+  // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     Tuple position = intake.getPosition();
-    return (Deadband.get(position.left, 0, 0.2) == 0) && (Deadband.get(position.right, 0, 0.2) == 0);
+    return Deadband.get(position.left, SETPOINT, .4) == 0 && Deadband.get(position.right, SETPOINT, .4) == 0;
   }
 }
