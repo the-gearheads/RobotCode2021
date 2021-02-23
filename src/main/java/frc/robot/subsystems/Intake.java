@@ -33,6 +33,11 @@ public class Intake extends SubsystemBase {
   private final CANEncoder rEncoder;
   private final CANEncoder intakeEncoder;
 
+  @Log
+  private double leftPos;
+  @Log
+  private double rightPos;
+
   public Intake() {
     lExtension = new CANSparkMax(27, MotorType.kBrushless);
     rExtension = new CANSparkMax(6, MotorType.kBrushless);
@@ -73,15 +78,21 @@ public class Intake extends SubsystemBase {
   }
 
   public Tuple getPosition() {
-    double left = lEncoder.getPosition() * ENCODER_CONSTANT;
-    double right = rEncoder.getPosition() * ENCODER_CONSTANT;
+    double left = lEncoder.getPosition(); // * ENCODER_CONSTANT;
+    double right = rEncoder.getPosition(); // * ENCODER_CONSTANT;
     return new Tuple(left, right);
   }
 
   public Tuple getVelocity() {
-    double left = lEncoder.getVelocity() * ENCODER_CONSTANT;
-    double right = rEncoder.getVelocity() * ENCODER_CONSTANT;
+    double left = lEncoder.getVelocity(); // * ENCODER_CONSTANT;
+    double right = rEncoder.getVelocity(); // * ENCODER_CONSTANT;
     return new Tuple(left, right);
+  }
+
+  public void periodic() {
+    Tuple pos = getPosition();
+    leftPos = pos.left;
+    rightPos = pos.right;
   }
 
   @Log

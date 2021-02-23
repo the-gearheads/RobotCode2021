@@ -149,15 +149,21 @@ public class RobotContainer {
     // Shoot(shooter)).deadlineWith(new Elevate(elevator))));
     new JoystickButton(controller, XboxController.Button.kY.value).whenPressed(new Extend(intake));
     new JoystickButton(controller, XboxController.Button.kA.value).whenPressed(new Retract(intake));
-    new JoystickButton(controller, XboxController.Button.kX.value).whileHeld(new FullIntake(intake));
+    new JoystickButton(controller, XboxController.Button.kX.value).whileHeld(new DriveTest(angle, 0.1));
+    new JoystickButton(controller, XboxController.Button.kB.value).whileHeld(new DriveTest(angle, -0.1));
+    // new JoystickButton(controller, XboxController.Button.kX.value).whileHeld(new
+    // FullIntake(intake));
     // new JoystickTrigger(controller, XboxController.Axis.kLeftTrigger,
     // 0.1).whileHeld(new Elevate(elevator));
     // new JoystickTrigger(controller, XboxController.Axis.kRightTrigger, 0.1)
     // .whileHeld((new ShootAt(shooter).withTimeout(1)).andThen((new
     // ShootAt(shooter))));
-    new JoystickButton(controller, XboxController.Button.kA.value).whenPressed(new SetAngle(angle, 45));
-    new JoystickButton(controller, XboxController.Button.kB.value).whenPressed(new SetAngle(angle, 20));
-    new JoystickButton(controller, XboxController.Button.kX.value).whenPressed(new SetAngle(angle, 5));
+    // new JoystickButton(controller,
+    // XboxController.Button.kA.value).whenPressed(new SetAngle(angle, 45));
+    // new JoystickButton(controller,
+    // XboxController.Button.kB.value).whenPressed(new SetAngle(angle, 20));
+    // new JoystickButton(controller,
+    // XboxController.Button.kX.value).whenPressed(new SetAngle(angle, 5));
 
     new JoystickButton(joystick, 2).whileHeld(new DriveAngle(angle));
     new JoystickButton(joystick, 7).whenPressed(new SetAngle(angle, 45));
