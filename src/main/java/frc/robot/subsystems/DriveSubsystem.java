@@ -70,6 +70,12 @@ public class DriveSubsystem extends SubsystemBase {
   private double x;
   @Log
   private double y;
+
+  @Log
+  private double leftVel;
+  @Log
+  private double rightVel;
+
   private double initAngle;
   private double speedMultiplier = 1;
   private double rotMultiplier = 1;
@@ -162,6 +168,8 @@ public class DriveSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    leftVel = leftVelocity.get();
+    rightVel = rightVelocity.get();
     angularVelocity = getAngularVelocity();
     angle = getAngle();
     Rotation2d gyroAngle = Rotation2d.fromDegrees(angle);

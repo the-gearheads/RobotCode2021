@@ -47,6 +47,8 @@ public class Shooter extends SubsystemBase {
   private double shooterLeft;
   @Log
   private double shooterRight;
+  @Log
+  private double shooterRPM;
   private final SimpleMotorFeedforward leftFF;
   private final SimpleMotorFeedforward rightFF;
   @Log
@@ -123,6 +125,7 @@ public class Shooter extends SubsystemBase {
   public void periodic() {
     shooterLeft = leftVelocity.get();
     shooterRight = rightVelocity.get();
+    shooterRPM = (shooterLeft + shooterRight) / (double) 2;
     double range = Constants.RPM_MAX - Constants.RPM_MIN;
     rpm = (Math.abs(((RobotContainer.joystick.getRawAxis(2) - 1)) / 2)) * range + Constants.RPM_MIN;
 

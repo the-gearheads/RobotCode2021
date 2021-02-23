@@ -48,6 +48,7 @@ import frc.robot.commands.intake.Pft;
 import frc.robot.commands.intake.Retract;
 import frc.robot.commands.intake.RunIntake;
 import frc.robot.commands.shooter.Shoot;
+import frc.robot.commands.shooter.ShootAt;
 import frc.robot.subsystems.Arms;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Elevator;
@@ -146,15 +147,14 @@ public class RobotContainer {
     // new JoystickButton(joystick, 1).whileHeld(
     // (new Shoot(shooter).withTimeout(1)).andThen((new
     // Shoot(shooter)).deadlineWith(new Elevate(elevator))));
-    // new JoystickButton(controller,
-    // XboxController.Button.kY.value).whenPressed(new Extend(intake));
-    // new JoystickButton(controller,
-    // XboxController.Button.kA.value).whenPressed(new Retract(intake));
-    // new JoystickButton(controller, XboxController.Button.kX.value).whileHeld(new
-    // FullIntake(intake));
-    new JoystickTrigger(controller, XboxController.Axis.kLeftTrigger, 0.1).whileHeld(new Elevate(elevator));
-    new JoystickTrigger(controller, XboxController.Axis.kRightTrigger, 0.1)
-        .whileHeld((new Shoot(shooter).withTimeout(1)).andThen((new Shoot(shooter))));
+    new JoystickButton(controller, XboxController.Button.kY.value).whenPressed(new Extend(intake));
+    new JoystickButton(controller, XboxController.Button.kA.value).whenPressed(new Retract(intake));
+    new JoystickButton(controller, XboxController.Button.kX.value).whileHeld(new FullIntake(intake));
+    // new JoystickTrigger(controller, XboxController.Axis.kLeftTrigger,
+    // 0.1).whileHeld(new Elevate(elevator));
+    // new JoystickTrigger(controller, XboxController.Axis.kRightTrigger, 0.1)
+    // .whileHeld((new ShootAt(shooter).withTimeout(1)).andThen((new
+    // ShootAt(shooter))));
     new JoystickButton(controller, XboxController.Button.kA.value).whenPressed(new SetAngle(angle, 45));
     new JoystickButton(controller, XboxController.Button.kB.value).whenPressed(new SetAngle(angle, 20));
     new JoystickButton(controller, XboxController.Button.kX.value).whenPressed(new SetAngle(angle, 5));
