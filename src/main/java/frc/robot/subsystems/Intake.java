@@ -20,13 +20,10 @@ import io.github.oblarg.oblog.annotations.Log;
 
 public class Intake extends SubsystemBase {
 
-  private final double ENCODER_CONSTANT = (1 / (double) Constants.INTAKE_EPR) * (1 / (double) Constants.INTAKE_GEARING)
-      * (1 / (double) Constants.LEAD_SCREW) * Math.PI;
-
   private final CANSparkMax lExtension;
   private final CANSparkMax rExtension;
-  // private final CANSparkMax pft;
 
+  private final CANSparkMax pft;
   private final CANSparkMax intake;
 
   private final CANEncoder lEncoder;
@@ -37,6 +34,8 @@ public class Intake extends SubsystemBase {
   private double leftPos;
   @Log
   private double rightPos;
+  @Log
+  private double velocity;
 
   public Intake() {
     lExtension = new CANSparkMax(27, MotorType.kBrushless);
@@ -44,8 +43,8 @@ public class Intake extends SubsystemBase {
     lExtension.setInverted(true);
     rExtension.setInverted(true);
 
-    // pft = new CANSparkMax(28, MotorType.kBrushless);
-    // pft.setIdleMode(IdleMode.kCoast);
+    pft = new CANSparkMax(28, MotorType.kBrushless);
+    pft.setIdleMode(IdleMode.kCoast);
 
     intake = new CANSparkMax(35, MotorType.kBrushless);
     intake.setIdleMode(IdleMode.kCoast);
@@ -53,6 +52,7 @@ public class Intake extends SubsystemBase {
 
     lEncoder = lExtension.getEncoder();
     rEncoder = rExtension.getEncoder();
+
     lEncoder.setPosition(0);
     rEncoder.setPosition(0);
 
@@ -65,7 +65,7 @@ public class Intake extends SubsystemBase {
   }
 
   public void pft(double speed) {
-    // pft.set(speed);
+    pft.set(speed);
   }
 
   public void intake(double speed) {
@@ -93,6 +93,8 @@ public class Intake extends SubsystemBase {
     Tuple pos = getPosition();
     leftPos = pos.left;
     rightPos = pos.right;
+    Tuple vel = getVelocity();
+    velocity = (vel.left + vel.right) / 2;
   }
 
   @Log

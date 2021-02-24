@@ -18,30 +18,27 @@ import io.github.oblarg.oblog.annotations.Log;
 
 public class Extend extends CommandBase {
   private Intake intake;
+
   @Log
   private PIDController leftController;
   @Log
   private PIDController rightController;
 
-  @Log
-  private double MAX_VOLTS = 8;
+  private final double LEFT_DISTANCE = 27.21;
+  private final double RIGHT_DISTANCE = 27.71;
 
-  private final double LEFT_DISTANCE = 29.9;
-  private final double RIGHT_DISTANCE = 32.83;
+  private final double MAX_VOLTS = 8;
 
-  @Log
-  private double SETPOINT = 1600;
-
-  @Log
-  private double debug0;
+  private double errorLeft;
+  private double errorRight;
 
   public Extend(Intake intake) {
     this.intake = intake;
-    leftController = new PIDController(2, 0, 0);
+    leftController = new PIDController(1, 0, 0);
     rightController = new PIDController(1, 0, 0);
 
-    leftController.setSetpoint(SETPOINT);
-    rightController.setSetpoint(SETPOINT);
+    leftController.setSetpoint(LEFT_DISTANCE);
+    rightController.setSetpoint(RIGHT_DISTANCE);
 
     Logger.configureLoggingAndConfig(this, false);
   }
@@ -52,17 +49,20 @@ public class Extend extends CommandBase {
 
   @Override
   public void execute() {
-    Tuple velocity = intake.getVelocity();
-    double left = leftController.calculate(velocity.left);
-    double right = rightController.calculate(velocity.right);
+    Tuple position = intake.getPosition();
 
-    left = MathUtil.clamp(left, 0, MAX_VOLTS);
-    right = MathUtil.clamp(right, 0, MAX_VOLTS);
+    double left = leftController.calculate(position.left);
+    double right = rightController.calculate(position.right);
 
-    // left = 2;
-    // right = 2;
-    Tuple vel = intake.getVelocity();
-    debug0 = (vel.left + vel.right) * .5;
+    errorLeft = Math.abs(position.left - LEFT_DISTANCE);
+    errorRight = Math.abs(position.right - RIGHT_DISTANCE);
+
+    boolean leftGoal = Deadband.get(errorLeft, 0, 0.2) == 0;
+    boolean rightGoal = Deadband.get(errorRight, 0, 0.2) == 0;
+
+    left = MathUtil.clamp(left, -2, leftGoal ? 0 : MAX_VOLTS);
+    right = MathUtil.clamp(right, -2, rightGoal ? 0 : MAX_VOLTS);
+
     intake.extend(left, right);
   }
 
@@ -73,9 +73,6 @@ public class Extend extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    Tuple position = intake.getPosition();
-    System.out.println(Deadband.get(position.left, LEFT_DISTANCE, 0.2));
-    return (Deadband.get(position.left, LEFT_DISTANCE, 0.2) == 0)
-        && (Deadband.get(position.right, RIGHT_DISTANCE, 0.2) == 0);
+    return Deadband.get(errorLeft + errorRight, 0, 0.5) == 0;
   }
 }

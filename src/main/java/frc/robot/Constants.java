@@ -23,9 +23,9 @@ public final class Constants {
     //// DRIVER CONFIG
 
     // Meters per second
-    public static double THROTTLE_SPEED = 2;
+    public static double THROTTLE_SPEED = 6;
     // Degrees per second
-    public static double ROT_SPEED = 60;
+    public static double ROT_SPEED = 120;
 
     // Controller deadband in % of stick
     public static double THROTTLE_DEADBAND = 0.05;

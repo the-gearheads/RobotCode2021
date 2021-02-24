@@ -18,24 +18,24 @@ import io.github.oblarg.oblog.annotations.Log;
 
 public class Retract extends CommandBase {
   private Intake intake;
+
   @Log
   private PIDController leftController;
   @Log
   private PIDController rightController;
 
-  @Log
-  private double MAX_VOLTS = 2;
+  private final double MAX_VOLTS = -8;
 
-  @Log
-  private double SETPOINT = -100; // RPM(?)
+  private double errorLeft;
+  private double errorRight;
 
   public Retract(Intake intake) {
     this.intake = intake;
-    leftController = new PIDController(2, 0, 0);
-    rightController = new PIDController(2, 0, 0);
+    leftController = new PIDController(1, 0, 0);
+    rightController = new PIDController(1, 0, 0);
 
-    leftController.setSetpoint(SETPOINT);
-    rightController.setSetpoint(SETPOINT);
+    leftController.setSetpoint(0);
+    rightController.setSetpoint(0);
 
     Logger.configureLoggingAndConfig(this, false);
   }
@@ -46,15 +46,20 @@ public class Retract extends CommandBase {
 
   @Override
   public void execute() {
-    Tuple velocity = intake.getVelocity();
-    double left = leftController.calculate(velocity.left);
-    double right = rightController.calculate(velocity.right);
+    Tuple position = intake.getPosition();
 
-    left = MathUtil.clamp(left, 0, MAX_VOLTS);
-    right = MathUtil.clamp(right, 0, MAX_VOLTS);
+    double left = leftController.calculate(position.left);
+    double right = rightController.calculate(position.right);
 
-    left = -2;
-    right = -2;
+    errorLeft = position.left;
+    errorRight = position.right;
+
+    boolean leftGoal = Deadband.get(errorLeft, 0, 0.2) == 0;
+    boolean rightGoal = Deadband.get(errorRight, 0, 0.2) == 0;
+
+    left = MathUtil.clamp(left, leftGoal ? 0 : MAX_VOLTS, 2);
+    right = MathUtil.clamp(right, rightGoal ? 0 : MAX_VOLTS, 2);
+
     intake.extend(left, right);
   }
 
@@ -65,7 +70,6 @@ public class Retract extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    Tuple position = intake.getPosition();
-    return (Deadband.get(position.left, 0, 0.2) == 0) && (Deadband.get(position.right, 0, 0.2) == 0);
+    return Deadband.get(errorLeft + errorRight, 0, 0.5) == 0;
   }
 }
