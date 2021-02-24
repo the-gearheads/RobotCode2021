@@ -35,7 +35,7 @@ public class ShooterAngle extends SubsystemBase {
   private final CANSparkMax angleMotor;
   private final AnalogInput pot;
   @Log
-  private double setpoint;
+  private double setpoint = 45;
 
   public ShooterAngle() {
 

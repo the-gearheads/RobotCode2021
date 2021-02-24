@@ -31,13 +31,13 @@ public class FullIntake extends CommandBase {
     this.controller = new PIDController(1, 0, 0);
     feedforward = new SimpleMotorFeedforward(0.18, 0.0626, 0.00475);
 
-    Logger.configureLoggingAndConfig(this, false);
+    // Logger.configureLoggingAndConfig(this, false);
     addRequirements(intake);
   }
 
   @Override
   public void initialize() {
-    this.controller.setSetpoint(9000);
+    this.controller.setSetpoint(1000);
   }
 
   @Override

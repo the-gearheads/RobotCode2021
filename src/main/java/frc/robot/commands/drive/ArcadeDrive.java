@@ -24,14 +24,14 @@ public class ArcadeDrive extends CommandBase {
 
   @Override
   public void execute() {
-    double x = RobotContainer.controller.getRawAxis(4);
+    double x = RobotContainer.controller.getRawAxis(0);
     double y = RobotContainer.controller.getRawAxis(1);
 
     x = Deadband.getSmart(x, Constants.ROT_DEADBAND);
     y = Deadband.getSmart(y, Constants.THROTTLE_DEADBAND);
 
     x *= -Math.toRadians(Constants.ROT_SPEED);
-    y *= -(Constants.THROTTLE_SPEED);
+    y *= Constants.THROTTLE_SPEED;
 
     ChassisSpeeds speeds = new ChassisSpeeds(y, 0, x);
     drive.controller.arcadeDrive(speeds);

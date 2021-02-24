@@ -23,7 +23,7 @@ public final class Constants {
     //// DRIVER CONFIG
 
     // Meters per second
-    public static double THROTTLE_SPEED = 6;
+    public static double THROTTLE_SPEED = 2;
     // Degrees per second
     public static double ROT_SPEED = 120;
 

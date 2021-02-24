@@ -144,15 +144,28 @@ public class RobotContainer {
     // .whenPressed(CommandScheduler.getInstance().cancelAll())
     // .whenPressed((new FullIntake(intake)).alongWith(new
     // Retract(intake))).whenPressed(this::init);
-    // new JoystickButton(joystick, 1).whileHeld(
-    // (new Shoot(shooter).withTimeout(1)).andThen((new
-    // Shoot(shooter)).deadlineWith(new Elevate(elevator))));
-    new JoystickButton(controller, XboxController.Button.kBumperLeft.value).whenPressed(new Extend(intake));
-    new JoystickButton(controller, XboxController.Button.kBumperRight.value).whenPressed(new Retract(intake));
-    new JoystickButton(controller, XboxController.Button.kB.value).whileHeld(new FullIntake(intake));
-    new JoystickTrigger(controller, XboxController.Axis.kLeftTrigger, 0.1).whileHeld(new Elevate(elevator));
+    // new JoystickButton(controller,
+    // XboxController.Button.kBumperLeft.value).whenPressed(new Extend(intake));
+    // new JoystickButton(controller,
+    // XboxController.Button.kBumperRight.value).whenPressed(new Retract(intake));
+    // new JoystickButton(controller, XboxController.Button.kB.value).whileHeld(new
+    // FullIntake(intake)); new JoystickTrigger(controller, XboxControll
+    // er.Axis.kLeftTrigger,
+    // 0.1).whileHeld(new Elevate(elevator));
+    // new JoystickTrigger(controller, XboxController.Axis.kRightTrigger, 0.1)
+    // .whileHeld((new ShootAt(shooter).withTimeout(1)).andThen(
+    // ShootAt(shooter))));
+    new JoystickTrigger(controller, XboxController.Axis.kLeftTrigger, 0.1).whileHeld(
+        (new Shoot(shooter).withTimeout(1)).andThen((new Shoot(shooter)).deadlineWith(new Elevate(elevator))));
     new JoystickTrigger(controller, XboxController.Axis.kRightTrigger, 0.1)
-        .whileHeld((new ShootAt(shooter).withTimeout(1)).andThen((new ShootAt(shooter))));
+        .whileHeld((new FullIntake(intake)).alongWith(new Elevate(elevator)).alongWith(new ShootAt(shooter)))
+        .whenPressed((new Extend(intake).withTimeout(3)).andThen(new Retract(intake)));
+    // .whileHeld((new FullIntake(intake)).alongWith(new
+    // Extend(intake)).alongWith(new Elevate(elevator)))
+    // .whenReleased((new Retract(intake)
+    // .alongWith((new Elevate(elevator).withTimeout(1)).alongWith(new Pft(intake,
+    // false).withTimeout(1.5)))));
+
     // new JoystickButton(controller,
     // XboxController.Button.kA.value).whenPressed(new SetAngle(angle, 45));
     // new JoystickButton(controller,
