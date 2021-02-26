@@ -69,7 +69,7 @@ public class Intake extends SubsystemBase {
   }
 
   public void intake(double speed) {
-    intake.set(speed);
+    intake.setVoltage(speed);
   }
 
   public void retract(double speed) {

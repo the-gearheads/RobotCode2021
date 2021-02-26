@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpiutil.net.PortForwarder;
+import frc.robot.commands.NOP;
 import frc.robot.commands.angle.AngleCalibrate;
 import frc.robot.commands.angle.DriveAngle;
 import frc.robot.commands.angle.DriveTest;
@@ -157,9 +158,22 @@ public class RobotContainer {
     // ShootAt(shooter))));
     new JoystickTrigger(controller, XboxController.Axis.kLeftTrigger, 0.1).whileHeld(
         (new Shoot(shooter).withTimeout(1)).andThen((new Shoot(shooter)).deadlineWith(new Elevate(elevator))));
+
+    //// THE THING AKHIL WANTED (cringe)
+    // new JoystickTrigger(controller, XboxController.Axis.kRightTrigger, 0.1)
+    // .whileHeld((new FullIntake(intake)).alongWith(new
+    //// Elevate(elevator)).alongWith(new ShootAt(shooter)))
+    // .whenPressed((new Extend(intake).alongWith(new
+    //// NOP()).withTimeout(3).andThen(new Retract(intake))));
     new JoystickTrigger(controller, XboxController.Axis.kRightTrigger, 0.1)
-        .whileHeld((new FullIntake(intake)).alongWith(new Elevate(elevator)).alongWith(new ShootAt(shooter)))
-        .whenPressed((new Extend(intake).withTimeout(3)).andThen(new Retract(intake)));
+        .whileHeld(new Extend(intake).alongWith(new FullIntake(intake)).alongWith(new Elevate(elevator))
+            .alongWith(new ShootAt(shooter)))
+        .whenReleased(new Retract(intake).alongWith(
+            (new Elevate(elevator).alongWith(new FullIntake(intake)).alongWith(new ShootAt(shooter))).withTimeout(2)));
+
+    // new JoystickButton(controller, XboxController.Button.kA.value).whileHeld(new
+    //// FullIntake(intake));
+
     // .whileHeld((new FullIntake(intake)).alongWith(new
     // Extend(intake)).alongWith(new Elevate(elevator)))
     // .whenReleased((new Retract(intake)

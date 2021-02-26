@@ -76,7 +76,10 @@ public final class Constants {
     public static final int SHOOTER_POT = 0;
     public static final int IR_TOP = 2;
     public static final int IR_BOTTOM = 1;
+    public static final int RANGE_FINDER = 3;
     public static final int SHOOTER_GEARING = 1;
+    public static final double SHOOTER_P = .02;
+    public static final double SHOOTER_D = .005;
 
     // Shooter angle
     public static final double SHOOTER_ANGLE_MIN = 2.8;

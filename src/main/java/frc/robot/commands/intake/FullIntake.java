@@ -28,8 +28,8 @@ public class FullIntake extends CommandBase {
 
   public FullIntake(Intake intake) {
     this.intake = intake;
-    this.controller = new PIDController(1, 0, 0);
-    feedforward = new SimpleMotorFeedforward(0.18, 0.0626, 0.00475);
+    this.controller = new PIDController(0.01, 0, 0);
+    feedforward = new SimpleMotorFeedforward(0.22, 0.00103, 0);
 
     // Logger.configureLoggingAndConfig(this, false);
     addRequirements(intake);
@@ -37,17 +37,16 @@ public class FullIntake extends CommandBase {
 
   @Override
   public void initialize() {
-    this.controller.setSetpoint(1000);
+    this.controller.setSetpoint(5000);
   }
 
   @Override
   public void execute() {
-    intake.pft(.5);
-    double ff = feedforward.calculate(controller.getSetpoint());
     double effort = controller.calculate(intake.getIntakeVelocity());
-    effort = MathUtil.clamp(effort, -2, 2);
-    debug0 = ff;
+    double ff = feedforward.calculate(controller.getSetpoint());
+    effort = MathUtil.clamp(effort, 0, 12);
     debug1 = effort;
+    intake.pft(.5);
     intake.intake(ff + effort);
   }
 

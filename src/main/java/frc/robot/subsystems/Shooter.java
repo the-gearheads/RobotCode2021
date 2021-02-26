@@ -34,6 +34,10 @@ public class Shooter extends SubsystemBase {
   private static AnalogInput irTop;
   @Log
   private static AnalogInput irBottom;
+
+  @Log
+  private static AnalogInput rangeFinder;
+
   private boolean topPrimed;
   private boolean bottomPrimed;
 
@@ -76,6 +80,7 @@ public class Shooter extends SubsystemBase {
 
     irTop = new AnalogInput(Constants.IR_TOP);
     irBottom = new AnalogInput(Constants.IR_BOTTOM);
+    rangeFinder = new AnalogInput(Constants.RANGE_FINDER);
 
     setBrake();
     Logger.configureLoggingAndConfig(this, false);
@@ -93,6 +98,10 @@ public class Shooter extends SubsystemBase {
 
   public static int getBallCount() {
     return ballCount;
+  }
+
+  public double getRange() {
+    return rangeFinder.getVoltage();
   }
 
   public double getLeftVelocity() {
