@@ -52,9 +52,9 @@ public final class Constants {
     public static final double GEARING = 10.71; // gear ratio
     public static final double WHEEL_DIAMETER = .2032; // m
     public static final double ENCODER_EPR = 2048; // encoder units
-    public static final double MAX_VELOCITY = .25; // m/s
-    public static final double MAX_ACCEL = .1; // m/s²
-    public static final double RAMSETE_B = 2.0;
+    public static final double MAX_VELOCITY = 3; // m/s
+    public static final double MAX_ACCEL = 3; // m/s²
+    public static final double RAMSETE_B = 2;
     public static final double RAMSETE_ZETA = 0.7;
 
     // Feed Forward
@@ -75,8 +75,8 @@ public final class Constants {
     public static final SimpleMotorFeedforward SHOOTER_FF_RIGHT = new SimpleMotorFeedforward(0.124, 0.063, 0.00566);
     public static final int SHOOTER_POT = 0;
     public static final int IR_TOP = 2;
-    public static final int IR_BOTTOM = 1;
-    public static final int RANGE_FINDER = 3;
+    public static final int IR_BOTTOM = 3;
+    public static final int RANGE_FINDER = 1;
     public static final int SHOOTER_GEARING = 1;
     public static final double SHOOTER_P = .02;
     public static final double SHOOTER_D = .005;

@@ -100,10 +100,6 @@ public class Shooter extends SubsystemBase {
     return ballCount;
   }
 
-  public double getRange() {
-    return rangeFinder.getVoltage();
-  }
-
   public double getLeftVelocity() {
     return leftVelocity.get();
   }
@@ -128,6 +124,11 @@ public class Shooter extends SubsystemBase {
   public void setCoast() {
     lShooter.setIdleMode(IdleMode.kCoast);
     rShooter.setIdleMode(IdleMode.kCoast);
+  }
+
+  @Log
+  public double getRange() {
+    return rangeFinder.getValue() * 0.125;
   }
 
   @Override

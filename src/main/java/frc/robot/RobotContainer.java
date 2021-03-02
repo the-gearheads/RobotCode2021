@@ -159,12 +159,18 @@ public class RobotContainer {
     new JoystickTrigger(controller, XboxController.Axis.kLeftTrigger, 0.1).whileHeld(
         (new Shoot(shooter).withTimeout(1)).andThen((new Shoot(shooter)).deadlineWith(new Elevate(elevator))));
 
+    // new JoystickButton(controller, XboxController.Button.kB.value).whileHeld(new
+    // FullIntake(intake));
+    new JoystickButton(controller, XboxController.Button.kA.value).whenPressed(this::routeToOrigin);
+
     //// THE THING AKHIL WANTED (cringe)
     // new JoystickTrigger(controller, XboxController.Axis.kRightTrigger, 0.1)
     // .whileHeld((new FullIntake(intake)).alongWith(new
     //// Elevate(elevator)).alongWith(new ShootAt(shooter)))
     // .whenPressed((new Extend(intake).alongWith(new
     //// NOP()).withTimeout(3).andThen(new Retract(intake))));
+
+    //// REAL AUTOSHOOT
     new JoystickTrigger(controller, XboxController.Axis.kRightTrigger, 0.1)
         .whileHeld(new Extend(intake).alongWith(new FullIntake(intake)).alongWith(new Elevate(elevator))
             .alongWith(new ShootAt(shooter)))
@@ -229,7 +235,7 @@ public class RobotContainer {
 
   public void routeToOrigin() {
     final DifferentialDriveVoltageConstraint autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
-        Constants.leftFF, drive.kinematics, 2);
+        Constants.leftFF, drive.kinematics, 10);
     final TrajectoryConfig config = new TrajectoryConfig(Constants.MAX_VELOCITY, Constants.MAX_ACCEL)
         .setKinematics(drive.kinematics).addConstraint(autoVoltageConstraint);
 
