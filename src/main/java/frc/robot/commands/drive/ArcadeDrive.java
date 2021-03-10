@@ -24,8 +24,14 @@ public class ArcadeDrive extends CommandBase {
 
   @Override
   public void execute() {
-    double x = RobotContainer.controller.getRawAxis(0);
     double y = RobotContainer.controller.getRawAxis(1);
+    double x;
+    if (Constants.DRIVER_DEBUG) {
+      x = RobotContainer.controller.getRawAxis(4);
+    } else {
+      x = RobotContainer.controller.getRawAxis(0);
+      y *= -1;
+    }
 
     x = Deadband.getSmart(x, Constants.ROT_DEADBAND);
     y = Deadband.getSmart(y, Constants.THROTTLE_DEADBAND);

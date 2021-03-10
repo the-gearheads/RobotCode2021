@@ -15,6 +15,9 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.I2C.Port;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
@@ -25,6 +28,7 @@ import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.commands.drive.ArcadeDrive;
@@ -71,19 +75,37 @@ public class DriveSubsystem extends SubsystemBase {
   private double x;
   @Log
   private double y;
+  @Log
+  private double xFeet;
 
   @Log
   private double leftVel;
   @Log
   private double rightVel;
 
+  @Log 
+  private double leftRotations;
+
   private double initAngle;
   private double speedMultiplier = 1;
   private double rotMultiplier = 1;
 
+
+  private NetworkTableInstance inst; 
+  private NetworkTable table;
+  private NetworkTableEntry xEntry;
+  private NetworkTableEntry yEntry;
+  private NetworkTableEntry robotHeading;
+
   public DriveSubsystem() {
     Logger.configureLoggingAndConfig(this, false);
     lidar = new Lidar(Port.kMXP);
+
+    this.inst = NetworkTableInstance.getDefault();
+    this.table = inst.getTable("Live_Dashboard");
+    this.xEntry = this.table.getEntry("robotX");
+    this.yEntry = this.table.getEntry("robotY");
+    this.robotHeading = this.table.getEntry("robotHeading");
 
     // Setup motors
     flMotor = new WPI_TalonFX(Constants.FL_ID);
@@ -178,6 +200,14 @@ public class DriveSubsystem extends SubsystemBase {
     x = pose.getTranslation().getX();
     y = pose.getTranslation().getY();
     lidarDistance = lidar.getDistance(false);
+
+    xFeet = Units.metersToFeet(x);
+
+    leftRotations = this.blMotor.getSelectedSensorPosition();
+
+    this.xEntry.setNumber(x + 17);
+    this.yEntry.setNumber(y + 12);
+    this.robotHeading.setNumber(Units.degreesToRadians(angle));
   }
 
   public class Control {

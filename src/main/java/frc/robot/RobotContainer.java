@@ -7,6 +7,8 @@
 
 package frc.robot;
 
+// so many unused imports but cant remove them because at least of half of them will be used when we set up the controls
+// cries
 import java.util.Collections;
 
 import edu.wpi.first.cameraserver.CameraServer;
@@ -24,6 +26,7 @@ import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
+import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -34,7 +37,9 @@ import frc.robot.commands.angle.DriveAngle;
 import frc.robot.commands.angle.DriveTest;
 import frc.robot.commands.angle.SetAngle;
 import frc.robot.commands.arms.WinchHold;
+import frc.robot.commands.auton.AccuracyChallenge;
 import frc.robot.commands.drive.DriveToWall;
+import frc.robot.commands.drive.Goto;
 import frc.robot.commands.drive.SetSafety;
 import frc.robot.commands.drive.SpeedModifier;
 import frc.robot.commands.drive.TurnToAngle;
@@ -96,6 +101,7 @@ public class RobotContainer {
     chooser.setDefaultOption("On Line (Backward)", new MilfordAuton(drive, shooter, angle, elevator, -1));
     chooser.addOption("On Line (Forward)", new MilfordAuton(drive, shooter, angle, elevator, 1));
     chooser.addOption("Calibrate Shooter Angle", new AngleCalibrate(angle));
+    //chooser.addOption("Accuracy Challange", new AccuracyChallenge(drive, shooter, intake, elevator, ));
     SmartDashboard.putData("Auton Selector", chooser);
 
     PortForwarder.add(8000, "10.11.89.100", 80);
@@ -159,11 +165,21 @@ public class RobotContainer {
     new JoystickTrigger(controller, XboxController.Axis.kLeftTrigger, 0.1).whileHeld(
         (new Shoot(shooter).withTimeout(1)).andThen((new Shoot(shooter)).deadlineWith(new Elevate(elevator))));
 
-    // new JoystickButton(controller, XboxController.Button.kB.value).whileHeld(new
-    // FullIntake(intake));
-    new JoystickButton(controller, XboxController.Button.kA.value).whenPressed(this::routeToOrigin);
+    new JoystickButton(controller, XboxController.Button.kB.value).whileHeld(new FullIntake(intake));
 
-    //// THE THING AKHIL WANTED (cringe)
+    new JoystickButton(controller, XboxController.Button.kA.value).whileHeld(new Extend(intake
+    ));
+    // new JoystickButton(controller, XboxController.Button.kStart.value)
+    //     .whenPressed(new Goto(drive, new Pose2d(-Units.feetToMeters(0), 0.0, new Rotation2d(0.0, 0.0)), false));
+    // new JoystickButton(controller, XboxController.Button.kA.value)
+    //     .whenPressed(new Goto(drive, new Pose2d(-Units.feetToMeters(5), 0.0, new Rotation2d(0.0, 0.0)), true));
+    // new JoystickButton(controller, XboxController.Button.kB.value)
+    //     .whenPressed(new Goto(drive, new Pose2d(-Units.feetToMeters(15), 0.0, new Rotation2d(0.0, 0.0)), true));
+    // new JoystickButton(controller, XboxController.Button.kX.value)
+    //     .whenPressed(new Goto(drive, new Pose2d(-Units.feetToMeters(20), 0.0, new Rotation2d(0.0, 0.0)), true));
+    // new JoystickButton(controller, XboxController.Button.kY.value)
+    //     .whenPressed(new Goto(drive, new Pose2d(-Units.feetToMeters(25), 0.0, new Rotation2d(0.0, 0.0)), true));
+        //// THE THING AKHIL WANTED (cringe)
     // new JoystickTrigger(controller, XboxController.Axis.kRightTrigger, 0.1)
     // .whileHeld((new FullIntake(intake)).alongWith(new
     //// Elevate(elevator)).alongWith(new ShootAt(shooter)))
@@ -171,14 +187,22 @@ public class RobotContainer {
     //// NOP()).withTimeout(3).andThen(new Retract(intake))));
 
     //// REAL AUTOSHOOT
-    new JoystickTrigger(controller, XboxController.Axis.kRightTrigger, 0.1)
-        .whileHeld(new Extend(intake).alongWith(new FullIntake(intake)).alongWith(new Elevate(elevator))
-            .alongWith(new ShootAt(shooter)))
-        .whenReleased(new Retract(intake).alongWith(
-            (new Elevate(elevator).alongWith(new FullIntake(intake)).alongWith(new ShootAt(shooter))).withTimeout(2)));
+    // new JoystickTrigger(controller, XboxController.Axis.kRightTrigger, 0.1)
+    // .whileHeld(new Extend(intake).alongWith(new FullIntake(intake)).alongWith(new Elevate(elevator))
+    // .alongWith(new ShootAt(shooter)))
+    // .whenReleased(new Retract(intake).alongWith(
 
-    // new JoystickButton(controller, XboxController.Button.kA.value).whileHeld(new
-    //// FullIntake(intake));
+
+    // (new Elevate(elevator).alongWith(new FullIntake(intake)).alongWith(new ShootAt(shooter))).withTimeout(2)));
+
+    // new JoystickButton(controller, XboxController.Button.kY.value).whenPressed(new Extend(intake));
+    // new JoystickButton(controller, XboxController.Button.kX.value).whenPressed(new Retract(intake));
+    // new JoystickButton(controller, XboxController.Button.kA.value)
+    // .whileHeld(new FullIntake(intake).alongWith(new Elevate(elevator)));
+    // new JoystickButton(controller, XboxController.Button.kB.value)
+    // .whileHeld(new Shoot(shooter));
+
+    // new JoystickButton(controller, XboxController.Button.kA.value).whileHeld(new FullIntake(intake).alongWith(new Elevate(elevator)));
 
     // .whileHeld((new FullIntake(intake)).alongWith(new
     // Extend(intake)).alongWith(new Elevate(elevator)))
@@ -197,10 +221,8 @@ public class RobotContainer {
     new JoystickButton(joystick, 7).whenPressed(new SetAngle(angle, 45));
     new JoystickButton(joystick, 9).whenPressed(new SetAngle(angle, 28));
     new JoystickButton(joystick, 11).whenPressed(new SetAngle(angle, 0));
-    // new JoystickButton(joystick, 4).whileHeld(new WinchHold(arms,
-    // -1).withTimeout(10));
-    // new JoystickButton(joystick, 6).whileHeld(new WinchHold(arms,
-    // 1).withTimeout(8));
+    new JoystickButton(joystick, 4).whileHeld(new WinchHold(arms, -1).withTimeout(10));
+    new JoystickButton(joystick, 6).whileHeld(new WinchHold(arms, 1).withTimeout(8));
 
     // buttons[0].setIcon("arms up").addAutoStatus(thirtySeconds)
     // .whenPressed(new Winch(arms, Constants.WINCH_ROTATIONS, 1));
@@ -233,21 +255,7 @@ public class RobotContainer {
     return chooser.getSelected();
   }
 
-  public void routeToOrigin() {
-    final DifferentialDriveVoltageConstraint autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
-        Constants.leftFF, drive.kinematics, 10);
-    final TrajectoryConfig config = new TrajectoryConfig(Constants.MAX_VELOCITY, Constants.MAX_ACCEL)
-        .setKinematics(drive.kinematics).addConstraint(autoVoltageConstraint);
-
-    try {
-      Trajectory trajectory = TrajectoryGenerator.generateTrajectory(drive.getPose(), Collections.emptyList(),
-          new Pose2d(0, 0, new Rotation2d(0)), config);
-      Ramsete ramseteCommand = new Ramsete(trajectory,
-          new RamseteController(Constants.RAMSETE_B, Constants.RAMSETE_ZETA), drive);
-      ramseteCommand.schedule();
-    } catch (MalformedSplineException e) {
-      DriverStation.reportError("Failed to generate routeToOrigin trajectory", e.getStackTrace());
-    }
+  public void routeTo(Pose2d pose) {
 
   }
 

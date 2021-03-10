@@ -57,6 +57,8 @@ public class Shooter extends SubsystemBase {
   private final SimpleMotorFeedforward rightFF;
   @Log
   private double rpm;
+  private boolean incremented;
+  private boolean decremented;
 
   /**
    * Creates a new Shooter.
@@ -128,11 +130,23 @@ public class Shooter extends SubsystemBase {
 
   @Log
   public double getRange() {
-    return rangeFinder.getValue() * 0.125;
+    return rangeFinder.getAverageValue() * 0.125;
+  }
+
+  // returns true if the ball count has decremented since the last update
+  public boolean getDecremented() {
+    return decremented;
+  }
+
+  public boolean getIncremented() {
+    return decremented;
   }
 
   @Override
   public void periodic() {
+    incremented = false;
+    decremented = false;
+
     shooterLeft = leftVelocity.get();
     shooterRight = rightVelocity.get();
     shooterRPM = (shooterLeft + shooterRight) / (double) 2;
@@ -141,6 +155,7 @@ public class Shooter extends SubsystemBase {
 
     if (bottomBlocked()) {
       if (bottomPrimed) {
+        incremented = true;
         ballCount += 1;
         bottomPrimed = false;
       }
@@ -151,6 +166,7 @@ public class Shooter extends SubsystemBase {
     if (topBlocked()) {
       if (topPrimed) {
         if (ballCount > 0) {
+          decremented = true;
           ballCount -= 1;
         }
         topPrimed = false;

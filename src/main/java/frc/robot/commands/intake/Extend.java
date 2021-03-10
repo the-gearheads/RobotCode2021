@@ -24,8 +24,8 @@ public class Extend extends CommandBase {
   @Log
   private PIDController rightController;
 
-  private final double LEFT_DISTANCE = 27.21;
-  private final double RIGHT_DISTANCE = 27.71;
+  private final double LEFT_DISTANCE = 26.09;
+  private final double RIGHT_DISTANCE = 26.14;
 
   private final double MAX_VOLTS = 8;
 
@@ -40,7 +40,7 @@ public class Extend extends CommandBase {
     leftController.setSetpoint(LEFT_DISTANCE);
     rightController.setSetpoint(RIGHT_DISTANCE);
 
-    Logger.configureLoggingAndConfig(this, false);
+    //Logger.configureLoggingAndConfig(this, false);
   }
 
   @Override

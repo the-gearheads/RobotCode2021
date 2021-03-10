@@ -51,7 +51,7 @@ public class ShooterAngle extends SubsystemBase {
     bottom.setPersistent();
 
     updateVolts();
-    setpoint = getPosition();
+    // setpoint = getPosition();
 
     setDefaultCommand(new HoldAngle(this));
     Logger.configureLoggingAndConfig(this, false);

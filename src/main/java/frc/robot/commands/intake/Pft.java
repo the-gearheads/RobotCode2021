@@ -27,10 +27,10 @@ public class Pft extends CommandBase {
   @Override
   public void execute() {
     if (reverse) {
-      intake.pft(-.5);
+      intake.pft(-.4);
     }
     else {
-      intake.pft(.5);
+      intake.pft(.4);
     }
   }
 

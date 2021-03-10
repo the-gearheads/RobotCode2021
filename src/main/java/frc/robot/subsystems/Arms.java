@@ -9,6 +9,7 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -18,15 +19,16 @@ public class Arms extends SubsystemBase {
   /**
    * Creates a new Extender.
    */
-  // private final CANSparkMax arm;
-  // private final CANEncoder encoder;
+  private final CANSparkMax arm;
+  private final CANEncoder encoder;
 
   @Log
   private double position;
 
   public Arms() {
-    // arm = new CANSparkMax(25, MotorType.kBrushless);
-    // encoder = arm.getEncoder();
+    arm = new CANSparkMax(25, MotorType.kBrushless);
+    arm.setIdleMode(IdleMode.kBrake);
+    encoder = arm.getEncoder();
   }
 
   public double getPosition() {
@@ -35,12 +37,11 @@ public class Arms extends SubsystemBase {
 
   public void run(double speed) {
     // NEVER RUN BACKWARD
-    // speed = Math.abs(speed);
-    // arm.set(speed);
+    arm.set(Math.abs(speed));
   }
 
   @Override
   public void periodic() {
-    // position = encoder.getPosition();
+    position = encoder.getPosition();
   }
 }

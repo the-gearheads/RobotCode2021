@@ -31,7 +31,7 @@ public class FullIntake extends CommandBase {
     this.controller = new PIDController(0.01, 0, 0);
     feedforward = new SimpleMotorFeedforward(0.22, 0.00103, 0);
 
-    // Logger.configureLoggingAndConfig(this, false);
+    //Logger.configureLoggingAndConfig(this, false);
     addRequirements(intake);
   }
 
@@ -47,7 +47,9 @@ public class FullIntake extends CommandBase {
     effort = MathUtil.clamp(effort, 0, 12);
     debug1 = effort;
     intake.pft(.5);
-    intake.intake(ff + effort);
+    debug1 = intake.getIntakeVelocity();
+    System.out.println(ff);
+    intake.intakePer(1.00);
   }
 
   @Override

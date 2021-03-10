@@ -72,6 +72,10 @@ public class Intake extends SubsystemBase {
     intake.setVoltage(speed);
   }
 
+  public void intakePer(double per) {
+    intake.set(per);
+  }
+
   public void retract(double speed) {
     lExtension.set(-speed);
     rExtension.set(-speed);
