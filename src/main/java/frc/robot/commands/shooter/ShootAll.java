@@ -13,8 +13,8 @@ import frc.robot.subsystems.Shooter;
 public class ShootAll extends Shoot {
   private final Timer timer;
 
-  public ShootAll(Shooter shooter) {
-    super(shooter);
+  public ShootAll(Shooter shooter, double rpm) {
+    super(shooter, rpm);
 
     timer = new Timer();
   }

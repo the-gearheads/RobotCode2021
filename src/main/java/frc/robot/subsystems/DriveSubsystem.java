@@ -28,8 +28,10 @@ import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpiutil.math.MathUtil;
 import frc.robot.Constants;
 import frc.robot.commands.drive.ArcadeDrive;
 import frc.robot.commands.drive.TankDrive;
@@ -43,6 +45,9 @@ public class DriveSubsystem extends SubsystemBase {
 
   private final double ENCODER_CONSTANT = (1 / (double) Constants.ENCODER_EPR) * (1 / (double) Constants.GEARING)
       * Constants.WHEEL_DIAMETER * Math.PI;
+  private final double LEFT_ERROR = 0.9618;
+  private final double RIGHT_ERROR = 0.9454;
+
   private final WPI_TalonFX flMotor;
   private final WPI_TalonFX frMotor;
   private final WPI_TalonFX blMotor;
@@ -85,6 +90,8 @@ public class DriveSubsystem extends SubsystemBase {
 
   @Log 
   private double leftRotations;
+  @Log 
+  private double rightRotations;
 
   private double initAngle;
   private double speedMultiplier = 1;
@@ -96,6 +103,8 @@ public class DriveSubsystem extends SubsystemBase {
   private NetworkTableEntry xEntry;
   private NetworkTableEntry yEntry;
   private NetworkTableEntry robotHeading;
+
+  private final double maxVolt = 4;
 
   public DriveSubsystem() {
     Logger.configureLoggingAndConfig(this, false);
@@ -141,10 +150,10 @@ public class DriveSubsystem extends SubsystemBase {
     odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getAngle()),
         new Pose2d(0, 0, Rotation2d.fromDegrees(getAngle())));
 
-    leftPosition = () -> -blMotor.getSelectedSensorPosition() * (ENCODER_CONSTANT);
-    rightPosition = () -> -brMotor.getSelectedSensorPosition() * (-ENCODER_CONSTANT);
-    leftVelocity = () -> blMotor.getSelectedSensorVelocity() * (ENCODER_CONSTANT * 10);
-    rightVelocity = () -> brMotor.getSelectedSensorVelocity() * (-ENCODER_CONSTANT * 10);
+    leftPosition = () -> -blMotor.getSelectedSensorPosition() * (ENCODER_CONSTANT * LEFT_ERROR);
+    rightPosition = () -> -brMotor.getSelectedSensorPosition() * (-ENCODER_CONSTANT * RIGHT_ERROR);
+    leftVelocity = () -> blMotor.getSelectedSensorVelocity() * (ENCODER_CONSTANT * LEFT_ERROR * 10);
+    rightVelocity = () -> brMotor.getSelectedSensorVelocity() * (-ENCODER_CONSTANT * RIGHT_ERROR * 10);
 
     leftSide = new SpeedControllerGroup(flMotor, blMotor);
     rightSide = new SpeedControllerGroup(frMotor, brMotor);
@@ -203,8 +212,7 @@ public class DriveSubsystem extends SubsystemBase {
 
     xFeet = Units.metersToFeet(x);
 
-    leftRotations = this.blMotor.getSelectedSensorPosition();
-
+  // falcon dashbord
     this.xEntry.setNumber(x + 17);
     this.yEntry.setNumber(y + 12);
     this.robotHeading.setNumber(Units.degreesToRadians(angle));
@@ -246,13 +254,16 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     public void rawDriveVoltage(double left, double right) {
+      left = MathUtil.clamp(left, -maxVolt, maxVolt);
+      right = MathUtil.clamp(right, -maxVolt, maxVolt);
       leftSide.setVoltage(left);
       rightSide.setVoltage(right);
     }
 
     public void driveVoltageFF(Tuple voltages, DifferentialDriveWheelSpeeds speeds) {
-      leftSide.setVoltage(voltages.left + leftFF.calculate(speeds.leftMetersPerSecond));
-      rightSide.setVoltage(voltages.right + rightFF.calculate(speeds.rightMetersPerSecond));
+      double left = voltages.left + leftFF.calculate(speeds.leftMetersPerSecond);
+      double right = voltages.right + rightFF.calculate(speeds.rightMetersPerSecond);
+      rawDriveVoltage(left, right);
     }
 
     public double angleFeedForward(double input) {

@@ -69,6 +69,9 @@ public final class Constants {
     public static final double ANGLE_P = 0;
 
     ////
+    public static final double LEFT_DISTANCE = 26.93;
+    public static final double RIGHT_DISTANCE = 28.17;
+
 
     //// SHOOTER SETTINGS
 

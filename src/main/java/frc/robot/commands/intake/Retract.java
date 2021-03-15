@@ -37,7 +37,7 @@ public class Retract extends CommandBase {
     leftController.setSetpoint(0);
     rightController.setSetpoint(0);
 
-    Logger.configureLoggingAndConfig(this, false);
+    //Logger.configureLoggingAndConfig(this, false);
   }
 
   @Override

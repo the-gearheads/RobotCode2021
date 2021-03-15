@@ -40,6 +40,7 @@ import frc.robot.commands.arms.WinchHold;
 import frc.robot.commands.auton.AccuracyChallenge;
 import frc.robot.commands.drive.DriveToWall;
 import frc.robot.commands.drive.Goto;
+import frc.robot.commands.drive.Pathweaver;
 import frc.robot.commands.drive.SetSafety;
 import frc.robot.commands.drive.SpeedModifier;
 import frc.robot.commands.drive.TurnToAngle;
@@ -47,12 +48,12 @@ import frc.robot.commands.elevator.Elevate;
 import frc.robot.commands.group.CancelAll;
 import frc.robot.commands.group.CloseShoot;
 import frc.robot.commands.group.MilfordAuton;
-import frc.robot.commands.group.Unjam;
 import frc.robot.commands.intake.Extend;
 import frc.robot.commands.intake.FullIntake;
 import frc.robot.commands.intake.Pft;
 import frc.robot.commands.intake.Retract;
 import frc.robot.commands.intake.RunIntake;
+import frc.robot.commands.intake.SetExtended;
 import frc.robot.commands.shooter.Shoot;
 import frc.robot.commands.shooter.ShootAt;
 import frc.robot.subsystems.Arms;
@@ -98,10 +99,10 @@ public class RobotContainer {
     setupStreamDeck();
     configureButtonBindings();
 
-    chooser.setDefaultOption("On Line (Backward)", new MilfordAuton(drive, shooter, angle, elevator, -1));
-    chooser.addOption("On Line (Forward)", new MilfordAuton(drive, shooter, angle, elevator, 1));
+    chooser.addOption("Accuracy Challenge", new AccuracyChallenge(drive, shooter, intake, elevator, angle));
+    chooser.addOption("Return to Origin", new Goto(drive, new Pose2d(0, 0, new Rotation2d(0)), false));
     chooser.addOption("Calibrate Shooter Angle", new AngleCalibrate(angle));
-    //chooser.addOption("Accuracy Challange", new AccuracyChallenge(drive, shooter, intake, elevator, ));
+
     SmartDashboard.putData("Auton Selector", chooser);
 
     PortForwarder.add(8000, "10.11.89.100", 80);
@@ -162,47 +163,58 @@ public class RobotContainer {
     // new JoystickTrigger(controller, XboxController.Axis.kRightTrigger, 0.1)
     // .whileHeld((new ShootAt(shooter).withTimeout(1)).andThen(
     // ShootAt(shooter))));
+
     new JoystickTrigger(controller, XboxController.Axis.kLeftTrigger, 0.1).whileHeld(
-        (new Shoot(shooter).withTimeout(1)).andThen((new Shoot(shooter)).deadlineWith(new Elevate(elevator))));
+        (new ShootAt(shooter).withTimeout(1)).andThen((new ShootAt(shooter)).deadlineWith(new Elevate(elevator))));
 
     new JoystickButton(controller, XboxController.Button.kB.value).whileHeld(new FullIntake(intake));
+    // new JoystickButton(controller,
+    // XboxController.Button.kA.value).whenPressed(new Extend(intake));
+    new JoystickButton(controller, XboxController.Button.kY.value).whenPressed(new Pathweaver(drive, "test"));
 
-    new JoystickButton(controller, XboxController.Button.kA.value).whileHeld(new Extend(intake
-    ));
-    // new JoystickButton(controller, XboxController.Button.kStart.value)
-    //     .whenPressed(new Goto(drive, new Pose2d(-Units.feetToMeters(0), 0.0, new Rotation2d(0.0, 0.0)), false));
-    // new JoystickButton(controller, XboxController.Button.kA.value)
+    
+
+    // GOTO TESTS (accuracy challenge)
+
+    new JoystickButton(controller, XboxController.Button.kStart.value)
+        .whenPressed(new Goto(drive, new Pose2d(-Units.feetToMeters(0), 0.0, new Rotation2d(0.0, 0.0)), false));
+
+    new JoystickButton(controller, XboxController.Button.kBack.value)
+        .whenPressed(new SetExtended(intake));
+        // new JoystickButton(controller, XboxController.Button.kA.value)
     //     .whenPressed(new Goto(drive, new Pose2d(-Units.feetToMeters(5), 0.0, new Rotation2d(0.0, 0.0)), true));
     // new JoystickButton(controller, XboxController.Button.kB.value)
-    //     .whenPressed(new Goto(drive, new Pose2d(-Units.feetToMeters(15), 0.0, new Rotation2d(0.0, 0.0)), true));
-    // new JoystickButton(controller, XboxController.Button.kX.value)
-    //     .whenPressed(new Goto(drive, new Pose2d(-Units.feetToMeters(20), 0.0, new Rotation2d(0.0, 0.0)), true));
+    //     .whenPressed(new Goto(drive, new Pose2d(-Units.feetToMeters(10), 0.0, new Rotation2d(0.0, 0.0)), true));
     // new JoystickButton(controller, XboxController.Button.kY.value)
-    //     .whenPressed(new Goto(drive, new Pose2d(-Units.feetToMeters(25), 0.0, new Rotation2d(0.0, 0.0)), true));
-        //// THE THING AKHIL WANTED (cringe)
+    //     .whenPressed(new Goto(drive, new Pose2d(-Units.feetToMeters(15), 0.0, new Rotation2d(0.0, 0.0)), true));
+    new JoystickButton(controller, XboxController.Button.kX.value)
+        .whenPressed(new AccuracyChallenge(drive, shooter, intake, elevator, angle));
+
+    //// THE THING AKHIL WANTED (cringe)
     // new JoystickTrigger(controller, XboxController.Axis.kRightTrigger, 0.1)
     // .whileHeld((new FullIntake(intake)).alongWith(new
     //// Elevate(elevator)).alongWith(new ShootAt(shooter)))
     // .whenPressed((new Extend(intake).alongWith(new
     //// NOP()).withTimeout(3).andThen(new Retract(intake))));
 
-    //// REAL AUTOSHOOT
-    // new JoystickTrigger(controller, XboxController.Axis.kRightTrigger, 0.1)
-    // .whileHeld(new Extend(intake).alongWith(new FullIntake(intake)).alongWith(new Elevate(elevator))
-    // .alongWith(new ShootAt(shooter)))
-    // .whenReleased(new Retract(intake).alongWith(
+    // REAL AUTOSHOOT
+    new JoystickTrigger(controller, XboxController.Axis.kRightTrigger, 0.1)
+        .whileHeld(new Extend(intake).alongWith(new FullIntake(intake)).alongWith(new Elevate(elevator))
+            .alongWith(new ShootAt(shooter)))
+        .whenReleased(new Retract(intake).alongWith(
+            (new Elevate(elevator).alongWith(new FullIntake(intake)).alongWith(new ShootAt(shooter))).withTimeout(2)));
 
-
-    // (new Elevate(elevator).alongWith(new FullIntake(intake)).alongWith(new ShootAt(shooter))).withTimeout(2)));
-
-    // new JoystickButton(controller, XboxController.Button.kY.value).whenPressed(new Extend(intake));
-    // new JoystickButton(controller, XboxController.Button.kX.value).whenPressed(new Retract(intake));
+    // new JoystickButton(controller,
+    // XboxController.Button.kY.value).whenPressed(new Extend(intake));
+    // new JoystickButton(controller,
+    // XboxController.Button.kX.value).whenPressed(new Retract(intake));
     // new JoystickButton(controller, XboxController.Button.kA.value)
     // .whileHeld(new FullIntake(intake).alongWith(new Elevate(elevator)));
     // new JoystickButton(controller, XboxController.Button.kB.value)
     // .whileHeld(new Shoot(shooter));
 
-    // new JoystickButton(controller, XboxController.Button.kA.value).whileHeld(new FullIntake(intake).alongWith(new Elevate(elevator)));
+    new JoystickButton(controller, XboxController.Button.kA.value).whileHeld(new
+    FullIntake(intake).alongWith(new Elevate(elevator)));
 
     // .whileHeld((new FullIntake(intake)).alongWith(new
     // Extend(intake)).alongWith(new Elevate(elevator)))

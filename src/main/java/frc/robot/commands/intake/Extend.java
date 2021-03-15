@@ -10,6 +10,7 @@ package frc.robot.commands.intake;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpiutil.math.MathUtil;
+import frc.robot.Constants;
 import frc.robot.subsystems.Intake;
 import frc.robot.util.Deadband;
 import frc.robot.util.Tuple;
@@ -24,9 +25,6 @@ public class Extend extends CommandBase {
   @Log
   private PIDController rightController;
 
-  private final double LEFT_DISTANCE = 26.09;
-  private final double RIGHT_DISTANCE = 26.14;
-
   private final double MAX_VOLTS = 8;
 
   private double errorLeft;
@@ -37,8 +35,8 @@ public class Extend extends CommandBase {
     leftController = new PIDController(1, 0, 0);
     rightController = new PIDController(1, 0, 0);
 
-    leftController.setSetpoint(LEFT_DISTANCE);
-    rightController.setSetpoint(RIGHT_DISTANCE);
+    leftController.setSetpoint(Constants.LEFT_DISTANCE);
+    rightController.setSetpoint(Constants.RIGHT_DISTANCE);
 
     //Logger.configureLoggingAndConfig(this, false);
   }
@@ -54,8 +52,8 @@ public class Extend extends CommandBase {
     double left = leftController.calculate(position.left);
     double right = rightController.calculate(position.right);
 
-    errorLeft = Math.abs(position.left - LEFT_DISTANCE);
-    errorRight = Math.abs(position.right - RIGHT_DISTANCE);
+    errorLeft = Math.abs(position.left - Constants.LEFT_DISTANCE);
+    errorRight = Math.abs(position.right - Constants.RIGHT_DISTANCE);
 
     boolean leftGoal = Deadband.get(errorLeft, 0, 0.2) == 0;
     boolean rightGoal = Deadband.get(errorRight, 0, 0.2) == 0;

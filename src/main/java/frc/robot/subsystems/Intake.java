@@ -7,6 +7,8 @@
 
 package frc.robot.subsystems;
 
+import javax.sound.midi.Receiver;
+
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
@@ -120,5 +122,10 @@ public class Intake extends SubsystemBase {
   public void setBrake() {
     // lExtension.setIdleMode(IdleMode.kBrake);
     // rExtension.setIdleMode(IdleMode.kBrake);
+  }
+
+  public void setExtended() {
+    lEncoder.setPosition(Constants.LEFT_DISTANCE);
+    rEncoder.setPosition(Constants.RIGHT_DISTANCE);
   }
 }

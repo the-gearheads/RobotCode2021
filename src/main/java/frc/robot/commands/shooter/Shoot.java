@@ -21,7 +21,8 @@ public class Shoot extends CommandBase {
   private PIDController rightController;
   private double rpm;
 
-  public Shoot(Shooter shooter) {
+  public Shoot(Shooter shooter, double rpm) {
+    this.rpm = rpm;
     this.shooter = shooter;
     this.leftController = new PIDController(Constants.SHOOTER_P, 0, Constants.SHOOTER_D);
     this.rightController = new PIDController(Constants.SHOOTER_P, 0, Constants.SHOOTER_D);
@@ -31,7 +32,7 @@ public class Shoot extends CommandBase {
   @Override
   public void initialize() {
     double range = Constants.RPM_MAX - Constants.RPM_MIN;
-    rpm = (Math.abs(((RobotContainer.joystick.getRawAxis(2) - 1)) / 2)) * range + Constants.RPM_MIN;
+    //rpm = (Math.abs(((RobotContainer.joystick.getRawAxis(2) - 1)) / 2)) * range + Constants.RPM_MIN;
     leftController.setSetpoint(rpm / 60);
     rightController.setSetpoint(rpm / 60);
   }

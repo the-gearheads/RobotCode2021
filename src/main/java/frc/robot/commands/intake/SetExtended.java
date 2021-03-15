@@ -5,41 +5,32 @@
 package frc.robot.commands.intake;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Intake;
 
-public class WaitFull extends CommandBase {
+public class SetExtended extends CommandBase {
+  private final Intake intake; 
 
-  private final Shooter shooter;
-  private final int ballsToShoot;
-  private int decrements;
-
-  public WaitFull(Shooter shooter, int ballsToShoot) {
-    this.shooter = shooter;
-    this.ballsToShoot = ballsToShoot;
+  public SetExtended(Intake intake) {
+    this.intake = intake;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    decrements = 0;
+    this.intake.setExtended();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-    if (shooter.getDecremented()) {
-      decrements += 1;
-    }
-  }
+  public void execute() {}
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return decrements >= ballsToShoot;
+    return true;
   }
 }
