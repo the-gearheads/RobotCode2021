@@ -57,7 +57,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   private final DifferentialDrive drive;
   public final DifferentialDriveKinematics kinematics;
-  private final DifferentialDriveOdometry odometry;
+  public final DifferentialDriveOdometry odometry;
 
   private final AHRS gyro;
 

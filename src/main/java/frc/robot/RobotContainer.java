@@ -170,7 +170,7 @@ public class RobotContainer {
     new JoystickButton(controller, XboxController.Button.kB.value).whileHeld(new FullIntake(intake));
     // new JoystickButton(controller,
     // XboxController.Button.kA.value).whenPressed(new Extend(intake));
-    new JoystickButton(controller, XboxController.Button.kY.value).whenPressed(new Pathweaver(drive, "test"));
+    new JoystickButton(controller, XboxController.Button.kY.value).whenPressed(new Pathweaver(drive, "autonav"));
 
     
 

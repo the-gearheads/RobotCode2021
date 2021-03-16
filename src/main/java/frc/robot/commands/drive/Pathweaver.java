@@ -44,6 +44,7 @@ public class Pathweaver extends CommandBase {
       Path path = Filesystem.getDeployDirectory().toPath().resolve("output/" + name + ".wpilib.json"); 
       Trajectory trajectory = TrajectoryUtil.fromPathweaverJson(path);
       
+      drive.odometry.resetPosition(trajectory.getInitialPose(), trajectory.getInitialPose().getRotation());
       ramsete = new Ramsete(trajectory, new RamseteController(Constants.RAMSETE_B, Constants.RAMSETE_ZETA), drive);
       ramsete.schedule();
       
