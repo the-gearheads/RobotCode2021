@@ -35,6 +35,7 @@ import edu.wpi.first.wpiutil.math.MathUtil;
 import frc.robot.Constants;
 import frc.robot.commands.drive.ArcadeDrive;
 import frc.robot.commands.drive.TankDrive;
+import frc.robot.profile.DriverProfile;
 import frc.robot.util.Deadband;
 import frc.robot.util.Lidar;
 import frc.robot.util.Tuple;
@@ -56,8 +57,10 @@ public class DriveSubsystem extends SubsystemBase {
   private final SpeedControllerGroup rightSide;
 
   private final DifferentialDrive drive;
+
   public final DifferentialDriveKinematics kinematics;
   public final DifferentialDriveOdometry odometry;
+  public final DriverProfile profile;
 
   private final AHRS gyro;
 
@@ -104,11 +107,13 @@ public class DriveSubsystem extends SubsystemBase {
   private NetworkTableEntry yEntry;
   private NetworkTableEntry robotHeading;
 
+
   private final double maxVolt = 4;
 
-  public DriveSubsystem() {
+  public DriveSubsystem(DriverProfile profile) {
     Logger.configureLoggingAndConfig(this, false);
     lidar = new Lidar(Port.kMXP);
+    this.profile = profile;
 
     this.inst = NetworkTableInstance.getDefault();
     this.table = inst.getTable("Live_Dashboard");
@@ -164,7 +169,7 @@ public class DriveSubsystem extends SubsystemBase {
     drive.setDeadband(0);
     setSafety(true);
 
-    setDefaultCommand(new ArcadeDrive(this));
+    setDefaultCommand(profile.getDriveCommand(this));
   }
 
   public double getAngularVelocity() {

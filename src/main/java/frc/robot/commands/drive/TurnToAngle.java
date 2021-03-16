@@ -52,7 +52,7 @@ public class TurnToAngle extends CommandBase {
 
   @Override
   public void execute() {
-    effort = MathUtil.clamp(controller.calculate(getAngle()), -Constants.ROT_SPEED, Constants.ROT_SPEED);
+    effort = MathUtil.clamp(controller.calculate(getAngle()), drive.profile.getSettings().THROTTLE_SPEED, drive.profile.getSettings().ROT_SPEED);
     drive.controller.arcadeDrive(new ChassisSpeeds(0.0, 0.0, Math.toRadians(effort)));
   }
 

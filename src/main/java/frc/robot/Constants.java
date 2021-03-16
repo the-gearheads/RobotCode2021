@@ -9,8 +9,13 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.SPI.Port;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
+import frc.robot.profile.DriverDebug;
+import frc.robot.profile.DriverProfile;
 
 public final class Constants {
+
+    //// PROFILE SELECT
+    public static final DriverProfile profile = new DriverDebug();
 
     //// MOTOR CONTROLLER IDs
     public static final int FL_ID = 3;
@@ -20,21 +25,8 @@ public final class Constants {
 
     ////
 
-    //// DRIVER CONFIG
-
-    // Meters per second
-    public static double THROTTLE_SPEED = 2;
-    // Degrees per second
-    public static double ROT_SPEED = 120;
-
-    // Controller deadband in % of stick
     public static double THROTTLE_DEADBAND = 0.05;
     public static double ROT_DEADBAND = 0.3;
-
-    public static double SLOW_MULTIPLIER = (2 / (double) 6);
-    public static double FAST_MULTIPLIER = 1.5;
-
-    public static boolean DRIVER_DEBUG = true;
 
     ////
 
