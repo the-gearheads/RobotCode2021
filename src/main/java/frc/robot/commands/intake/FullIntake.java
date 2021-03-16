@@ -46,7 +46,7 @@ public class FullIntake extends CommandBase {
     double ff = feedforward.calculate(controller.getSetpoint());
     effort = MathUtil.clamp(effort, 0, 12);
     debug1 = effort;
-    intake.pft(.7);
+    intake.pft(.8);
     debug1 = intake.getIntakeVelocity();
     System.out.println(ff);
     intake.intakePer(1.00);

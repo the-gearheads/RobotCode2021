@@ -41,7 +41,7 @@ public class Pathweaver extends CommandBase {
   @Override
   public void initialize() {
     try {
-      Path path = Filesystem.getDeployDirectory().toPath().resolve(name + ".wpilib.json"); 
+      Path path = Filesystem.getDeployDirectory().toPath().resolve("output/" + name + ".wpilib.json"); 
       Trajectory trajectory = TrajectoryUtil.fromPathweaverJson(path);
       
       ramsete = new Ramsete(trajectory, new RamseteController(Constants.RAMSETE_B, Constants.RAMSETE_ZETA), drive);

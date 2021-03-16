@@ -2,6 +2,7 @@ package frc.robot.util;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.controller.RamseteController;
+import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DriveSubsystem;
@@ -32,9 +33,8 @@ public class Ramsete extends CommandBase {
     @Override
     public void execute() {
         double curTime = m_timer.get();
-        var chs = (m_controller.calculate(m_drive.getPose(), m_trajectory.sample(curTime)));
-        var targetWheelSpeeds = m_drive.getKinematics().toWheelSpeeds(chs);
-        m_drive.controller.tankDrive(targetWheelSpeeds);
+        ChassisSpeeds chs = m_controller.calculate(m_drive.getPose(), m_trajectory.sample(curTime));
+        m_drive.controller.arcadeDrive(chs);
     }
 
     @Override
