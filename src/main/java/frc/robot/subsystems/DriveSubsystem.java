@@ -14,10 +14,10 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.kauailabs.navx.frc.AHRS;
 
-import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
@@ -28,13 +28,9 @@ import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
-import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpiutil.math.MathUtil;
 import frc.robot.Constants;
-import frc.robot.commands.drive.ArcadeDrive;
-import frc.robot.commands.drive.TankDrive;
 import frc.robot.profile.DriverProfile;
 import frc.robot.util.Deadband;
 import frc.robot.util.Lidar;
@@ -97,7 +93,8 @@ public class DriveSubsystem extends SubsystemBase {
   private double rightRotations;
 
   private double initAngle;
-  private double speedMultiplier = 1;
+  private double xSpeedMultiplier = 1;
+  private double ySpeedMultiplier = 1;
   private double rotMultiplier = 1;
 
 
@@ -108,7 +105,7 @@ public class DriveSubsystem extends SubsystemBase {
   private NetworkTableEntry robotHeading;
 
 
-  private final double maxVolt = 4;
+  // private final double maxVolt = 4;
 
   public DriveSubsystem(DriverProfile profile) {
     Logger.configureLoggingAndConfig(this, false);
@@ -240,8 +237,9 @@ public class DriveSubsystem extends SubsystemBase {
       rightFF = Constants.rightFF;
     }
 
-    public void setMultipliers(double drive, double rot) {
-      speedMultiplier = drive;
+    public void setMultipliers(double x, double y, double rot) {
+      xSpeedMultiplier = x;
+      ySpeedMultiplier = y;
       rotMultiplier = rot;
     }
 
@@ -259,8 +257,8 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     public void rawDriveVoltage(double left, double right) {
-      left = MathUtil.clamp(left, -maxVolt, maxVolt);
-      right = MathUtil.clamp(right, -maxVolt, maxVolt);
+      // left = MathUtil.clamp(left, -maxVolt, maxVolt);
+      // right = MathUtil.clamp(right, -maxVolt, maxVolt);
       leftSide.setVoltage(left);
       rightSide.setVoltage(right);
     }
@@ -290,8 +288,8 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     public void arcadeDrive(ChassisSpeeds chs) {
-      ChassisSpeeds chs2 = new ChassisSpeeds(chs.vxMetersPerSecond * speedMultiplier,
-          chs.vyMetersPerSecond * speedMultiplier,
+      ChassisSpeeds chs2 = new ChassisSpeeds(chs.vxMetersPerSecond * xSpeedMultiplier,
+          chs.vyMetersPerSecond * ySpeedMultiplier,
           Math.toRadians(Math.toDegrees(chs.omegaRadiansPerSecond) * rotMultiplier));
       DifferentialDriveWheelSpeeds speeds = kinematics.toWheelSpeeds(gyroLoop(chs2));
       tankDrive(speeds);

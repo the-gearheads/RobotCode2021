@@ -6,23 +6,13 @@ package frc.robot.commands.drive;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Collections;
 
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.controller.RamseteController;
-import edu.wpi.first.wpilibj.geometry.Pose2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.spline.SplineParameterizer.MalformedSplineException;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
-import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
-import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
-import edu.wpi.first.wpilibj.trajectory.TrajectoryParameterizer;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryUtil;
-import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.DriveSubsystem;

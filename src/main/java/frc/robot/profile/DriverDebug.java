@@ -21,6 +21,10 @@ import frc.robot.util.Subsystems;
 
 public class DriverDebug extends DriverBase {
 
+    public DriverSettings getSettings() {
+        return new DriverSettings(2, 120, (1 / (double) 3), 1.5);
+    }
+
     public void createBinds(XboxController controller, Joystick joystick, StreamDeck streamdeck, Subsystems s) {
         new JoystickTrigger(controller, XboxController.Axis.kLeftTrigger, 0.1)
                 .whileHeld((new ShootAt(s.shooter).withTimeout(1))

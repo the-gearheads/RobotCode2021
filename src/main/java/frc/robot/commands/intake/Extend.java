@@ -14,7 +14,6 @@ import frc.robot.Constants;
 import frc.robot.subsystems.Intake;
 import frc.robot.util.Deadband;
 import frc.robot.util.Tuple;
-import io.github.oblarg.oblog.Logger;
 import io.github.oblarg.oblog.annotations.Log;
 
 public class Extend extends CommandBase {

@@ -9,13 +9,13 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.SPI.Port;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
-import frc.robot.profile.DriverDebug;
+import frc.robot.profile.AkhilDrive;
 import frc.robot.profile.DriverProfile;
 
 public final class Constants {
 
     //// PROFILE SELECT
-    public static final DriverProfile profile = new DriverDebug();
+    public static final DriverProfile profile = new AkhilDrive();
 
     //// MOTOR CONTROLLER IDs
     public static final int FL_ID = 3;

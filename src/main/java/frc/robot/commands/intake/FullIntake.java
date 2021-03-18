@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpiutil.math.MathUtil;
 import frc.robot.subsystems.Intake;
-import io.github.oblarg.oblog.Logger;
 import io.github.oblarg.oblog.annotations.Log;
 
 public class FullIntake extends CommandBase {

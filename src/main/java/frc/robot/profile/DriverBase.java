@@ -12,7 +12,7 @@ import frc.robot.util.Tuple;
 public class DriverBase implements DriverProfile {
 
     public DriverSettings getSettings() {
-        return new DriverSettings(2, 120, (1 / (double) 3), 1.5);
+        return new DriverSettings(4, 120, (1 / (double) 3), 1.5);
     }
 
     public void createBinds(XboxController controller, Joystick joystick, StreamDeck streamdeck, Subsystems s) {};

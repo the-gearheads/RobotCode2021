@@ -12,23 +12,25 @@ import frc.robot.subsystems.DriveSubsystem;
 
 public class SpeedModifier extends CommandBase {
   private final DriveSubsystem drive;
-  private final double driveMultiplier;
+  private final double xDriveMultiplier;
+  private final double yDriveMultiplier;
   private final double angleMultiplier;
 
-  public SpeedModifier(DriveSubsystem drive, double driveMultiplier, double angleMultiplier) {
+  public SpeedModifier(DriveSubsystem drive, double xDriveMultiplier, double yDriveMultiplier, double angleMultiplier) {
     this.drive = drive;
-    this.driveMultiplier = driveMultiplier;
+    this.xDriveMultiplier = xDriveMultiplier;
+    this.yDriveMultiplier = yDriveMultiplier;
     this.angleMultiplier = angleMultiplier;
   }
 
   @Override
   public void initialize() {
-    drive.controller.setMultipliers(driveMultiplier, angleMultiplier);
+    drive.controller.setMultipliers(xDriveMultiplier, yDriveMultiplier, angleMultiplier);
   }
 
   @Override
   public void end(boolean interrupted) {
-    drive.controller.setMultipliers(1, 1);
+    drive.controller.setMultipliers(1, 1, 1);
   }
 
   @Override
