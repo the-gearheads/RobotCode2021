@@ -10,8 +10,8 @@ import frc.robot.util.Subsystems;
 
 public class JuliaDrive extends DriverBase {
     public void createBinds(XboxController controller, Joystick joystick, StreamDeck streamdeck, Subsystems s) {
-        new JoystickTrigger(controller, XboxController.Axis.kRightTrigger, 0.1)
-            .whileHeld(new SpeedModifier(s.drive, s.drive.profile.getSettings().FAST_MULTIPLIER, s.drive.profile.getSettings().FAST_MULTIPLIER, 1));
+        // new JoystickTrigger(controller, XboxController.Axis.kRightTrigger, 0.1)
+        //     .whileHeld(new SpeedModifier(s.drive, s.drive.profile.getSettings().FAST_MULTIPLIER, s.drive.profile.getSettings().FAST_MULTIPLIER, 1));
         
     }
 

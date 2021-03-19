@@ -19,7 +19,7 @@ import frc.robot.util.JoystickTrigger;
 import frc.robot.util.StreamDeck;
 import frc.robot.util.Subsystems;
 
-public class DriverDebug extends DriverBase {
+public class DebugDrive extends DriverBase {
 
     public DriverSettings getSettings() {
         return new DriverSettings(2, 120, (1 / (double) 3), 1.5);

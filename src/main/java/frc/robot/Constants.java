@@ -10,12 +10,16 @@ package frc.robot;
 import edu.wpi.first.wpilibj.SPI.Port;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import frc.robot.profile.AkhilDrive;
+import frc.robot.profile.DebugDrive;
 import frc.robot.profile.DriverProfile;
+import frc.robot.profile.OperatorProfile;
+import frc.robot.profile.StevenOperate;
 
 public final class Constants {
 
     //// PROFILE SELECT
-    public static final DriverProfile profile = new AkhilDrive();
+    public static final DriverProfile driverProfile = new AkhilDrive();
+    public static final OperatorProfile operatorProfile = new StevenOperate();
 
     //// MOTOR CONTROLLER IDs
     public static final int FL_ID = 3;
@@ -26,7 +30,7 @@ public final class Constants {
     ////
 
     public static double THROTTLE_DEADBAND = 0.05;
-    public static double ROT_DEADBAND = 0.3;
+    public static double ROT_DEADBAND = 0.15;
 
     ////
 

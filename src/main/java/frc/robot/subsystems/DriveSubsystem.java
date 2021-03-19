@@ -93,9 +93,9 @@ public class DriveSubsystem extends SubsystemBase {
   private double rightRotations;
 
   private double initAngle;
-  private double xSpeedMultiplier = 1;
-  private double ySpeedMultiplier = 1;
-  private double rotMultiplier = 1;
+  public double leftSpeedMultiplier = 1;
+  public double rightSpeedMultiplier = 1;
+  public double rotMultiplier = 1;
 
 
   private NetworkTableInstance inst; 
@@ -237,12 +237,6 @@ public class DriveSubsystem extends SubsystemBase {
       rightFF = Constants.rightFF;
     }
 
-    public void setMultipliers(double x, double y, double rot) {
-      xSpeedMultiplier = x;
-      ySpeedMultiplier = y;
-      rotMultiplier = rot;
-    }
-
     public void rawDrive(double left, double right) {
       leftSide.set(left);
       rightSide.set(right);
@@ -288,10 +282,13 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     public void arcadeDrive(ChassisSpeeds chs) {
-      ChassisSpeeds chs2 = new ChassisSpeeds(chs.vxMetersPerSecond * xSpeedMultiplier,
-          chs.vyMetersPerSecond * ySpeedMultiplier,
+      ChassisSpeeds chs2 = new ChassisSpeeds(
+          chs.vxMetersPerSecond,
+          chs.vyMetersPerSecond,
           Math.toRadians(Math.toDegrees(chs.omegaRadiansPerSecond) * rotMultiplier));
       DifferentialDriveWheelSpeeds speeds = kinematics.toWheelSpeeds(gyroLoop(chs2));
+      speeds.leftMetersPerSecond = speeds.leftMetersPerSecond * leftSpeedMultiplier;
+      speeds.rightMetersPerSecond = speeds.rightMetersPerSecond * rightSpeedMultiplier;
       tankDrive(speeds);
     }
 

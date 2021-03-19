@@ -54,7 +54,7 @@ public class RobotContainer {
   private SendableChooser<Command> chooser = new SendableChooser<>();
 
   public RobotContainer() {
-    drive = new DriveSubsystem(Constants.profile);
+    drive = new DriveSubsystem(Constants.driverProfile);
     shooter = new Shooter();
     angle = new ShooterAngle();
     intake = new Intake();
@@ -106,7 +106,8 @@ public class RobotContainer {
 
   private void configureButtonBindings() {
 
-    Constants.profile.createBinds(controller, joystick, streamdeck, subsystems);
+    Constants.driverProfile.createBinds(controller, joystick, streamdeck, subsystems);
+    Constants.operatorProfile.createBinds(controller, joystick, streamdeck, subsystems);
 
     // Supplier<Boolean> thirtySeconds = () ->
     // ((DriverStation.getInstance().getMatchTime() <= 30)
