@@ -22,6 +22,7 @@ public class BlockedElevate extends CommandBase {
   private double setpoint;
   @Log
   private double debug;
+  private boolean needToIntake;
   private boolean last;
 
   public BlockedElevate(Elevator elevator, Intake intake) {
@@ -35,33 +36,40 @@ public class BlockedElevate extends CommandBase {
   @Override
   public void initialize() {
     elevator.zero();
+    elevator.setUpperCoast(true);
   }
 
   @Override
   public void execute() {
-    // TODO: if ball count is < 2, don't run top elavator motors.
-    if (Shooter.topBlocked()) {
-      elevator.lower(0);
-      elevator.upper(0);
-      intake.pft(0);
-      return;
+    // if (needToIntake) {
+    //   if (Shooter.bottomBlocked()) {
+    //     needToIntake = false;
+    //     setpoint = elevator.getLowerPosition() + Constants.SINGLE_BALL_ROTS;
+    //   }
+    //   elevator.elevate(0, .2);
+    //   return;
+    // }
+    if (Shooter.getBallCount() > 2) {
+      elevator.setUpperCoast(false);
     }
+    needToIntake = intake.getIntook();
+    boolean noTop = Shooter.topBlocked();
     if (Shooter.bottomBlocked()) {
-      elevator.lower(0.3);
-      elevator.upper(0.25);
-      intake.pft(0.4);
+      elevator.elevateLower();
+      if (!noTop) {
+        elevator.elevateUpper();
+      }
     } else {
       if (last) {
-        setpoint = elevator.getLowerPosition() + Constants.SINGLE_BALL_ROTS;
+        setpoint = elevator.getLowerPosition() + 5;
       }
-      if (elevator.getLowerPosition() < setpoint && Shooter.getBallCount() >= 2) {
-        elevator.lower(0.3);
-        elevator.upper(0.1);
-        intake.pft(0.4);
+      if (elevator.getLowerPosition() < setpoint) {
+        elevator.elevateLower();
+        if (!noTop) {
+          elevator.elevateUpper();
+        }
       } else {
-        elevator.lower(0);
-        elevator.upper(0);
-        intake.pft(0);
+        elevator.stop();
       }
     }
     last = Shooter.bottomBlocked();

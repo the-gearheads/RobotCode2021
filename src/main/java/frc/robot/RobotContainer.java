@@ -58,7 +58,7 @@ public class RobotContainer {
     shooter = new Shooter();
     angle = new ShooterAngle();
     intake = new Intake();
-    elevator = new Elevator();
+    elevator = new Elevator(intake);
     arms = new Arms();
 
     subsystems = new Subsystems(drive, shooter, angle, elevator, intake, arms);

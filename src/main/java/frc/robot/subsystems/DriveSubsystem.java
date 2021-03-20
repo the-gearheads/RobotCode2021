@@ -169,6 +169,11 @@ public class DriveSubsystem extends SubsystemBase {
     setDefaultCommand(profile.getDriveCommand(this));
   }
 
+  public void resetEncoders() {
+    blMotor.setSelectedSensorPosition(0);
+    brMotor.setSelectedSensorPosition(0);
+  }
+
   public double getAngularVelocity() {
     return gyro.getRawGyroZ();
   }

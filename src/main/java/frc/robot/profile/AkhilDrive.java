@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.drive.SpeedModifier;
+import frc.robot.commands.drive.StartTimer;
 import frc.robot.util.JoystickTrigger;
 import frc.robot.util.StreamDeck;
 import frc.robot.util.Subsystems;
@@ -18,7 +19,7 @@ public class AkhilDrive extends DriverBase {
         double y = controller.getRawAxis(1);
         return new Tuple(x, y);
     }
-
+    
     public void createBinds(XboxController controller, Joystick joystick, StreamDeck streamdeck, Subsystems s) {
         new JoystickTrigger(controller, XboxController.Axis.kLeftTrigger, 0.1)
             .whileHeld(new SpeedModifier(s.drive, Optional.of(0.0), Optional.empty(), Optional.empty()));
@@ -31,6 +32,8 @@ public class AkhilDrive extends DriverBase {
 
         new JoystickButton(controller, XboxController.Button.kBumperRight.value)
             .whileHeld(new SpeedModifier(s.drive, Optional.of(s.drive.profile.getSettings().FAST_MULTIPLIER), Optional.of(s.drive.profile.getSettings().FAST_MULTIPLIER), Optional.empty()));
-       
+            
+        new JoystickButton(controller, XboxController.Button.kBumperLeft.value)
+            .whenPressed(new StartTimer(s.drive));
     }
 }

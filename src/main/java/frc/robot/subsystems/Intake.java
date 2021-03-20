@@ -30,6 +30,7 @@ public class Intake extends SubsystemBase {
   private final CANEncoder lEncoder;
   private final CANEncoder rEncoder;
   private final CANEncoder intakeEncoder;
+  private final CANEncoder pftEncoder;
 
   @Log
   private double leftPos;
@@ -37,6 +38,10 @@ public class Intake extends SubsystemBase {
   private double rightPos;
   @Log
   private double velocity;
+  @Log
+  private double pftVelocity;
+  @Log
+  private boolean intook;
 
   public Intake() {
     lExtension = new CANSparkMax(27, MotorType.kBrushless);
@@ -53,6 +58,7 @@ public class Intake extends SubsystemBase {
 
     lEncoder = lExtension.getEncoder();
     rEncoder = rExtension.getEncoder();
+    pftEncoder = pft.getEncoder();
 
     lEncoder.setPosition(0);
     rEncoder.setPosition(0);
@@ -100,11 +106,21 @@ public class Intake extends SubsystemBase {
     rightPos = pos.right;
     Tuple vel = getVelocity();
     velocity = (vel.left + vel.right) / 2;
+    // if large rpm drop in one update while motor running, denote intake
+    intook = false;
+    if (pftVelocity - pftEncoder.getVelocity() > 100 && pft.get() > 0) {
+      intook = true;
+    }
+    pftVelocity = pftEncoder.getVelocity();
   }
 
   @Log
   public double getIntakeVelocity() {
     return intakeEncoder.getVelocity();
+  }
+
+  public boolean getIntook() {
+    return intook;
   }
 
   @Log

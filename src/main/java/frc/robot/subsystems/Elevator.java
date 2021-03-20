@@ -13,6 +13,7 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.commands.group.BlockedElevate;
 
 public class Elevator extends SubsystemBase {
 
@@ -24,14 +25,14 @@ public class Elevator extends SubsystemBase {
   private double lowerPosition;
   private double upperPosition;
 
-  public Elevator() {
+  public Elevator(Intake intake) {
     elevatorUpper = new CANSparkMax(15, MotorType.kBrushless);
     elevatorLower = new CANSparkMax(11, MotorType.kBrushless);
     upperEncoder = elevatorUpper.getEncoder();
     lowerEncoder = elevatorLower.getEncoder();
 
     elevatorLower.setInverted(true);
-    // setDefaultCommand(new BlockedElevate(this, RobotContainer.getIntake()));
+    setDefaultCommand(new BlockedElevate(this, intake));
   }
 
   public void zero() {
@@ -52,9 +53,26 @@ public class Elevator extends SubsystemBase {
     elevatorUpper.set(speed);
   }
 
+  public void setUpperCoast(boolean mode) {
+    elevatorUpper.setIdleMode(mode ? IdleMode.kCoast : IdleMode.kBrake);
+  }
+
   public void elevate() {
     // elevate(.6, .35);
-    elevate(.3, .25);
+    elevateUpper();
+    elevateLower();
+  }
+
+  public void elevateUpper() {
+    upper(.1);
+  }
+
+  public void elevateLower() {
+    lower(.25);
+  }
+
+  public void stop() {
+    elevate(0, 0);
   }
 
   public double getUpperPosition() {
