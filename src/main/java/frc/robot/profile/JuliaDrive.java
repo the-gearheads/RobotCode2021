@@ -3,8 +3,6 @@ package frc.robot.profile;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
-import frc.robot.commands.drive.SpeedModifier;
-import frc.robot.util.JoystickTrigger;
 import frc.robot.util.StreamDeck;
 import frc.robot.util.Subsystems;
 
