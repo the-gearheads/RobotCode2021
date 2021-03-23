@@ -26,7 +26,6 @@ public class StartTimer extends CommandBase {
 
   public StartTimer(DriveSubsystem drive) {
     this.drive = drive;
-    Logger.configureLoggingAndConfig(this, false);
   }
 
   // Called when the command is initially scheduled.

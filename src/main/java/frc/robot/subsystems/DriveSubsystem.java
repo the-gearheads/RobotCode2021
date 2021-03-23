@@ -31,7 +31,8 @@ import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.profile.DriverProfile;
+import frc.robot.RobotContainer;
+import frc.robot.commands.drive.ArcadeDrive;
 import frc.robot.util.Deadband;
 import frc.robot.util.Lidar;
 import frc.robot.util.Tuple;
@@ -56,7 +57,6 @@ public class DriveSubsystem extends SubsystemBase {
 
   public final DifferentialDriveKinematics kinematics;
   public final DifferentialDriveOdometry odometry;
-  public final DriverProfile profile;
 
   private final AHRS gyro;
 
@@ -107,10 +107,9 @@ public class DriveSubsystem extends SubsystemBase {
 
   // private final double maxVolt = 4;
 
-  public DriveSubsystem(DriverProfile profile) {
+  public DriveSubsystem() {
     Logger.configureLoggingAndConfig(this, false);
     lidar = new Lidar(Port.kMXP);
-    this.profile = profile;
 
     this.inst = NetworkTableInstance.getDefault();
     this.table = inst.getTable("Live_Dashboard");
@@ -166,7 +165,7 @@ public class DriveSubsystem extends SubsystemBase {
     drive.setDeadband(0);
     setSafety(true);
 
-    setDefaultCommand(profile.getDriveCommand(this));
+    setDefaultCommand(new ArcadeDrive(this));
   }
 
   public void resetEncoders() {

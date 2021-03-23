@@ -25,15 +25,15 @@ public class ArcadeDrive extends CommandBase {
 
   @Override
   public void execute() {
-    Tuple axises = drive.profile.getArcadeAxis(RobotContainer.controller);
+    Tuple axises = RobotContainer.driverProfile.getArcadeAxis(RobotContainer.controller);
     double x = axises.left;
     double y = axises.right;
 
     x = Deadband.getSmart(x, Constants.ROT_DEADBAND);
     y = Deadband.getSmart(y, Constants.THROTTLE_DEADBAND);
 
-    x *= -Math.toRadians(drive.profile.getSettings().ROT_SPEED);
-    y *= drive.profile.getSettings().THROTTLE_SPEED;
+    x *= -Math.toRadians(RobotContainer.driverProfile.getSettings().ROT_SPEED);
+    y *= RobotContainer.driverProfile.getSettings().THROTTLE_SPEED;
 
     ChassisSpeeds speeds = new ChassisSpeeds(y, 0, x);
     drive.controller.arcadeDrive(speeds);

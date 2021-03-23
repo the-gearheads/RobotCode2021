@@ -21,6 +21,7 @@ public class AngleCalibrate extends CommandBase {
 
   public AngleCalibrate(ShooterAngle angle) {
     this.angle = angle;
+    addRequirements(angle);
   }
 
   @Override

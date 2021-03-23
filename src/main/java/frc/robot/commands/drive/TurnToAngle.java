@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpiutil.math.MathUtil;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.util.Deadband;
 import io.github.oblarg.oblog.annotations.Log;
@@ -51,7 +52,7 @@ public class TurnToAngle extends CommandBase {
 
   @Override
   public void execute() {
-    effort = MathUtil.clamp(controller.calculate(getAngle()), drive.profile.getSettings().THROTTLE_SPEED, drive.profile.getSettings().ROT_SPEED);
+    effort = MathUtil.clamp(controller.calculate(getAngle()), RobotContainer.driverProfile.getSettings().THROTTLE_SPEED, RobotContainer.driverProfile.getSettings().ROT_SPEED);
     drive.controller.arcadeDrive(new ChassisSpeeds(0.0, 0.0, Math.toRadians(effort)));
   }
 

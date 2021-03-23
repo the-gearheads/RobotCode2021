@@ -16,6 +16,4 @@ public interface DriverProfile {
 
     public Tuple getArcadeAxis(XboxController controller);
 
-    public Command getDriveCommand(DriveSubsystem drive);
-
 }
