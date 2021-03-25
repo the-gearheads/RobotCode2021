@@ -20,6 +20,7 @@ import edu.wpi.first.wpiutil.net.PortForwarder;
 import frc.robot.commands.angle.AngleCalibrate;
 import frc.robot.commands.auton.AccuracyChallenge;
 import frc.robot.commands.drive.Goto;
+import frc.robot.commands.drive.Pathweaver;
 import frc.robot.profile.AkhilDrive;
 import frc.robot.profile.DebugDrive;
 import frc.robot.profile.DriverProfile;
@@ -75,7 +76,8 @@ public class RobotContainer {
 
     subsystems = new Subsystems(drive, shooter, angle, elevator, intake, arms);
 
-    chooser.addOption("Accuracy Challenge", new AccuracyChallenge(drive, shooter, intake, elevator, angle));
+    chooser.setDefaultOption("Accuracy Challenge", new AccuracyChallenge(drive, shooter, intake, elevator, angle));
+    chooser.addOption("Barrel Race", new Pathweaver(drive, "barrel race"));
     chooser.addOption("Return to Origin", new Goto(drive, new Pose2d(0, 0, new Rotation2d(0)), false));
     chooser.addOption("Calibrate Shooter Angle", new AngleCalibrate(angle));
     SmartDashboard.putData("Select Auton", chooser);

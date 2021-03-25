@@ -31,6 +31,8 @@ public class ShooterAngle extends SubsystemBase {
   private double topVolts;
   @Log
   private double bottomVolts;
+  @Log 
+  private double voltsReal;
 
   private final CANSparkMax angleMotor;
   private final AnalogInput pot;
@@ -50,6 +52,8 @@ public class ShooterAngle extends SubsystemBase {
     top.setPersistent();
     bottom.setPersistent();
 
+    //voltsReal = pot.getVoltage();
+
     updateVolts();
     // setpoint = getPosition();
 
@@ -66,6 +70,8 @@ public class ShooterAngle extends SubsystemBase {
   public void updateVolts() {
     topVolts = top.getDouble(0);
     bottomVolts = bottom.getDouble(5);
+    voltsReal = pot.getVoltage();
+
   }
 
   public void setVolts(double top, double bottom) {

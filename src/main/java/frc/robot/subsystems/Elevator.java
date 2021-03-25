@@ -32,7 +32,7 @@ public class Elevator extends SubsystemBase {
     lowerEncoder = elevatorLower.getEncoder();
 
     elevatorLower.setInverted(true);
-    setDefaultCommand(new BlockedElevate(this, intake));
+    // setDefaultCommand(new BlockedElevate(this, intake));
   }
 
   public void zero() {

@@ -138,13 +138,7 @@ public class DriveSubsystem extends SubsystemBase {
     brMotor.setNeutralMode(NeutralMode.Brake);
 
     gyro = new AHRS(Constants.GYRO_PORT);
-    while (gyro.isCalibrating()) {
-    }
-    gyro.reset();
-    gyro.zeroYaw();
-    while (gyro.getAngle() == 0) {
-    }
-    initAngle = -gyro.getAngle();
+    resetGyro();
 
     kinematics = new DifferentialDriveKinematics(Constants.TRACK_WIDTH);
     odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getAngle()),
@@ -165,6 +159,16 @@ public class DriveSubsystem extends SubsystemBase {
     setSafety(true);
 
     setDefaultCommand(new ArcadeDrive(this));
+  }
+
+  public void resetGyro() {
+    while (gyro.isCalibrating()) {
+    }
+    gyro.reset();
+    gyro.zeroYaw();
+    while (gyro.getAngle() == 0) {
+    }
+    initAngle = -gyro.getAngle();
   }
 
   public void resetEncoders() {

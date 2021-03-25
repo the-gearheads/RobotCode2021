@@ -73,17 +73,17 @@ public final class Constants {
     // Main shooter
     public static final SimpleMotorFeedforward SHOOTER_FF_LEFT = new SimpleMotorFeedforward(0.113, 0.0622, 0.00721);
     public static final SimpleMotorFeedforward SHOOTER_FF_RIGHT = new SimpleMotorFeedforward(0.124, 0.063, 0.00566);
-    public static final int SHOOTER_POT = 0;
+    public static final int SHOOTER_POT = 1;
     public static final int IR_TOP = 2;
     public static final int IR_BOTTOM = 3;
-    public static final int RANGE_FINDER = 1;
+    public static final int RANGE_FINDER = 0;
     public static final int SHOOTER_GEARING = 1;
     public static final double SHOOTER_P = .02;
     public static final double SHOOTER_D = .005;
 
     // Shooter angle
-    public static final double SHOOTER_ANGLE_MIN = 2.8;
-    public static final double SHOOTER_ANGLE_MAX = 66.5;
+    public static final double SHOOTER_ANGLE_MIN = 2.5;
+    public static final double SHOOTER_ANGLE_MAX = 61.0;
 
     ////
 

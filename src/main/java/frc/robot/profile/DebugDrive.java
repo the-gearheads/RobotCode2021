@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.auton.AccuracyChallenge;
 import frc.robot.commands.drive.Goto;
 import frc.robot.commands.drive.Pathweaver;
+import frc.robot.commands.drive.Zero;
 import frc.robot.commands.elevator.Elevate;
 import frc.robot.commands.intake.Extend;
 import frc.robot.commands.intake.FullIntake;
@@ -52,5 +53,7 @@ public class DebugDrive extends DriverBase {
 
         new JoystickButton(controller, XboxController.Button.kA.value)
                 .whileHeld(new FullIntake(s.intake).alongWith(new Elevate(s.elevator)));
+
+        new JoystickButton(controller, XboxController.Button.kBumperLeft.value).whenPressed(new Zero(s.drive));
     }
 }
