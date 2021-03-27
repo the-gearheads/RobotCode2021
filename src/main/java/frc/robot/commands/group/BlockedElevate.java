@@ -8,6 +8,7 @@
 package frc.robot.commands.group;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
@@ -40,14 +41,18 @@ public class BlockedElevate extends CommandBase {
 
   @Override
   public void execute() {
-    // if (needToIntake) {
-    //   if (Shooter.bottomBlocked()) {
-    //     needToIntake = false;
-    //     setpoint = elevator.getLowerPosition() + Constants.SINGLE_BALL_ROTS;
-    //   }
-    //   elevator.elevate(0, .2);
+    // if (!Shooter.topBlocked()) {
+    //   elevator.elevate();
     //   return;
     // }
+    if (needToIntake) {
+      if (Shooter.bottomBlocked()) {
+        needToIntake = false;
+        setpoint = elevator.getLowerPosition() + Constants.SINGLE_BALL_ROTS;
+      }
+      elevator.elevate(0, .2);
+      return;
+    }
     if (Shooter.getBallCount() > 2) {
       elevator.setUpperCoast(false);
     }

@@ -52,7 +52,7 @@ public class ShooterAngle extends SubsystemBase {
     top.setPersistent();
     bottom.setPersistent();
 
-    //voltsReal = pot.getVoltage();
+    voltsReal = pot.getVoltage();
 
     updateVolts();
     // setpoint = getPosition();
@@ -71,7 +71,6 @@ public class ShooterAngle extends SubsystemBase {
     topVolts = top.getDouble(0);
     bottomVolts = bottom.getDouble(5);
     voltsReal = pot.getVoltage();
-
   }
 
   public void setVolts(double top, double bottom) {
@@ -88,6 +87,10 @@ public class ShooterAngle extends SubsystemBase {
   @Config
   public void setSetpoint(double setpoint) {
     this.setpoint = setpoint;
+  }
+
+  public void periodic() {
+    updateVolts();
   }
 
   public double getSetpoint() {
