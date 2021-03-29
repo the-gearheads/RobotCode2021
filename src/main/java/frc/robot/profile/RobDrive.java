@@ -12,15 +12,15 @@ import frc.robot.util.StreamDeck;
 import frc.robot.util.Subsystems;
 import frc.robot.util.Tuple;
 
-public class AkhilDrive extends DriverBase {
+public class RobDrive extends DriverBase {
 
     public DriverSettings getSettings() {
-        return new DriverSettings(5, 240, (1 / 3d), 1.5);
+        return new DriverSettings(5, 240, (1 / 2d), 1.5);
     }
 
     public Tuple getArcadeAxis(XboxController controller) {
         double x = controller.getRawAxis(4);
-        double y = controller.getRawAxis(1);
+        double y = -controller.getRawAxis(1);
         return new Tuple(x, y);
     }
     
@@ -34,7 +34,10 @@ public class AkhilDrive extends DriverBase {
         new JoystickButton(controller, XboxController.Button.kB.value)
             .whileHeld(new SpeedModifier(s.drive, Optional.of(0.0), Optional.of(0.0), Optional.empty()));
 
-        new JoystickButton(controller, XboxController.Button.kBumperRight.value)
+        new JoystickButton(controller, XboxController.Button.kBumperLeft.value)
             .whileHeld(new SpeedModifier(s.drive, Optional.of(getSettings().FAST_MULTIPLIER), Optional.of(getSettings().FAST_MULTIPLIER), Optional.empty()));
+
+        new JoystickButton(controller, XboxController.Button.kBumperLeft.value)
+            .whileHeld(new SpeedModifier(s.drive, Optional.of(getSettings().SLOW_MULTIPLIER), Optional.of(getSettings().SLOW_MULTIPLIER), Optional.of(getSettings().SLOW_MULTIPLIER)));
     }
 }
