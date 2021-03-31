@@ -23,6 +23,7 @@ import frc.robot.commands.drive.Goto;
 import frc.robot.commands.drive.Pathweaver;
 import frc.robot.profile.AkhilDrive;
 import frc.robot.profile.DebugDrive;
+import frc.robot.profile.DebugOperate;
 import frc.robot.profile.DriverProfile;
 import frc.robot.profile.JuliaDrive;
 import frc.robot.profile.OperatorProfile;
@@ -89,7 +90,8 @@ public class RobotContainer {
     driverChooser.addOption("Rob", new RobDrive());
     SmartDashboard.putData("Select Driver", driverChooser);
 
-    operatorChooser.setDefaultOption("Steven", new StevenOperate());
+    operatorChooser.setDefaultOption("Debug", new DebugOperate());
+    operatorChooser.addOption("Steven", new StevenOperate());
     SmartDashboard.putData("Select Operator", operatorChooser);
 
     PortForwarder.add(8000, "10.11.89.100", 80);

@@ -89,7 +89,7 @@ public final class Constants {
 
     //// ELEVATOR SETTINGS
 
-    public static final double SINGLE_BALL_ROTS = 2.5;
+    public static final double SINGLE_BALL_ROTS = 40;
 
     ////
 

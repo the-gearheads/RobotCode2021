@@ -16,35 +16,55 @@ import frc.robot.commands.NOP;
 import frc.robot.commands.angle.SetAngle;
 import frc.robot.commands.drive.Goto;
 import frc.robot.commands.elevator.Elevate;
+import frc.robot.commands.group.BlockedElevate;
 import frc.robot.commands.intake.Extend;
 import frc.robot.commands.intake.FullIntake;
 import frc.robot.commands.intake.Retract;
-import frc.robot.commands.intake.WaitFull;
+import frc.robot.commands.intake.WaitElevate;
 import frc.robot.commands.shooter.Shoot;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.ShooterAngle;
+import frc.robot.util.ACSet;
+import frc.robot.util.AccuracySettings;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class AccuracyChallenge extends ParallelDeadlineGroup {
   /** Creates a new AccuracyChallenge. */
-  public AccuracyChallenge(DriveSubsystem drive, Shooter shooter, Intake intake, Elevator elevator, ShooterAngle shooterAngle) {
+  public AccuracyChallenge(DriveSubsystem drive, Shooter shooter, Intake intake, Elevator elevator, ShooterAngle angle) {
     super(new NOP(), new NOP());
 
     ArrayList<Command> commands = new ArrayList<Command>();
 
-    double angles[] = {47.5, 50.0, 51.0, 52.5};
-    double rpms[] = {5550, 5650, 6050, 6700};
+    AccuracySettings settings[] = new AccuracySettings[]{
+      ACSet.GREEN.value,
+      ACSet.YELLOW.value,
+      ACSet.YELLOW.value,
+      ACSet.BLUE.value,
+      ACSet.BLUE.value,
+      ACSet.RED.value,
+    };
 
-    for (int i = 1; i < 5; i++) {
-      commands.add((new WaitFull(shooter, 3).andThen(new NOP().withTimeout(0.5))).deadlineWith(new Shoot(shooter, rpms[i - 1])));
-      if (i != 4) { // don't go back on last iter
-        commands.add(new Goto(drive, new Pose2d(-Units.feetToMeters(5 * i), 0, new Rotation2d(0)), true).alongWith(new SetAngle(shooterAngle, angles[i - 1])));
-      }
+    // start by shooting 3 pre-loaded balls (rev up for .5 seconds, shoot for 2 seconds)
+    commands.add(new Shoot(shooter, ACSet.GREEN.value.rpm).withTimeout(.5));
+    commands.add((new Shoot(shooter, ACSet.GREEN.value.rpm).alongWith(new Elevate(elevator))).withTimeout(2));
+
+    // iter 0: 2 green
+    // iter 1: 2 yellow
+    // iter 2: 2 yellow
+    // iter 3: 2 blue
+    // iter 4: 2 blue
+    // iter 5: 2 red
+    for (AccuracySettings setting : settings) {
+      commands.add(new Goto(drive, new Pose2d(-Units.feetToMeters(20), 0, new Rotation2d(0)), true));
+      commands.add(new WaitElevate(elevator, intake, 2));
+      commands.add(new Goto(drive, setting.pose, false).alongWith(new SetAngle(angle, setting.angle)));
+      commands.add(new Shoot(shooter, setting.rpm).withTimeout(.5));
+      commands.add((new Shoot(shooter, setting.rpm).alongWith(new Elevate(elevator))).withTimeout(3.5));
     }
 
     commands.add(new Retract(intake));
@@ -57,8 +77,7 @@ public class AccuracyChallenge extends ParallelDeadlineGroup {
       ));
 
     addCommands(
-      new SetAngle(shooterAngle, angles[0]),
-      new Elevate(elevator), 
+      new SetAngle(angle, ACSet.GREEN.value.angle),
       new Extend(intake), 
       new FullIntake(intake)
     );

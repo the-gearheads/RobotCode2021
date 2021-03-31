@@ -41,6 +41,7 @@ public class Intake extends SubsystemBase {
   @Log
   private double pftVelocity;
   @Log
+  private boolean lastIntook;
   private boolean intook;
 
   public Intake() {
@@ -107,9 +108,18 @@ public class Intake extends SubsystemBase {
     Tuple vel = getVelocity();
     velocity = (vel.left + vel.right) / 2;
     // if large rpm drop in one update while motor running, denote intake
+    //intook = false;
     intook = false;
-    if (pftVelocity - pftEncoder.getVelocity() > 100 && pft.get() > 0) {
+    if (pftEncoder.getVelocity() < 6500 &&  pft.get() > 0 && !lastIntook) {
+      lastIntook = true;
       intook = true;
+    }
+    if (lastIntook)
+    {
+      if (pftEncoder.getVelocity() > 9000)
+      {
+        lastIntook = false;
+      }
     }
     pftVelocity = pftEncoder.getVelocity();
   }

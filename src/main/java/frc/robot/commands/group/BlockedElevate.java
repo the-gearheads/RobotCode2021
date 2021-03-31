@@ -12,6 +12,7 @@ import frc.robot.Constants;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
+import frc.robot.util.Deadband;
 import io.github.oblarg.oblog.Logger;
 import io.github.oblarg.oblog.annotations.Log;
 
@@ -20,16 +21,14 @@ public class BlockedElevate extends CommandBase {
   private final Intake intake;
   @Log
   private double setpoint;
-  @Log
   private double debug;
-  private boolean needToIntake;
   private boolean last;
 
   public BlockedElevate(Elevator elevator, Intake intake) {
     this.elevator = elevator;
     this.intake = intake;
     this.setpoint = elevator.getLowerPosition();
-    Logger.configureLoggingAndConfig(this, false);
+    // Logger.configureLoggingAndConfig(this, false);
     addRequirements(elevator);
   }
 
@@ -39,44 +38,57 @@ public class BlockedElevate extends CommandBase {
     elevator.setUpperCoast(true);
   }
 
+  @Log
+  public double getLowerPosition() {
+    return elevator.getLowerPosition();
+  }
+
   @Override
   public void execute() {
+    if (intake.getIntook()) {
+      setpoint = elevator.getLowerPosition() + Constants.SINGLE_BALL_ROTS;
+    }
+    if (setpoint > elevator.getLowerPosition()) {
+      elevator.elevate();
+    } else {
+      elevator.zero();
+    }
     // if (!Shooter.topBlocked()) {
     //   elevator.elevate();
     //   return;
     // }
-    if (needToIntake) {
-      if (Shooter.bottomBlocked()) {
-        needToIntake = false;
-        setpoint = elevator.getLowerPosition() + Constants.SINGLE_BALL_ROTS;
-      }
-      elevator.elevate(0, .2);
-      return;
-    }
-    if (Shooter.getBallCount() > 2) {
-      elevator.setUpperCoast(false);
-    }
-    needToIntake = intake.getIntook();
-    boolean noTop = Shooter.topBlocked();
-    if (Shooter.bottomBlocked()) {
-      elevator.elevateLower();
-      if (!noTop) {
-        elevator.elevateUpper();
-      }
-    } else {
-      if (last) {
-        setpoint = elevator.getLowerPosition() + 5;
-      }
-      if (elevator.getLowerPosition() < setpoint) {
-        elevator.elevateLower();
-        if (!noTop) {
-          elevator.elevateUpper();
-        }
-      } else {
-        elevator.stop();
-      }
-    }
-    last = Shooter.bottomBlocked();
+    // if (needToIntake) {
+    //   if (Shooter.bottomBlocked()) {
+    //     needToIntake = false;
+    //     setpoint = elevator.getLowerPosition() + Constants.SINGLE_BALL_ROTS;
+    //   }
+    //   elevator.elevate(0, .2);
+    //   return;
+    // }
+    // if (Shooter.getBallCount() > 2) {
+    //   elevator.setUpperCoast(false);
+    // }
+    // needToIntake = intake.getIntook();
+    // boolean noTop = Shooter.topBlocked();
+    // if (Shooter.bottomBlocked()) {
+    //   elevator.elevateLower();
+    //   if (!noTop) {
+    //     elevator.elevateUpper();
+    //   }
+    // } else {
+    //   if (last) {
+    //     setpoint = elevator.getLowerPosition() + 5;
+    //   }
+    //   if (elevator.getLowerPosition() < setpoint) {
+    //     elevator.elevateLower();
+    //     if (!noTop) {
+    //       elevator.elevateUpper();
+    //     }
+    //   } else {
+    //     elevator.stop();
+    //   }
+    // }
+    // last = Shooter.bottomBlocked();
   }
 
   @Override

@@ -18,7 +18,7 @@ import frc.robot.commands.shooter.ShootAt;
 import frc.robot.util.StreamDeck;
 import frc.robot.util.Subsystems;
 
-public class StevenOperate extends OperatorProfile {
+public class DebugOperate extends OperatorProfile {
 
     public void createBinds(XboxController controller, Joystick joystick, StreamDeck streamdeck, Subsystems s) {
         setupStreamDeck(streamdeck);
@@ -36,10 +36,12 @@ public class StevenOperate extends OperatorProfile {
         // buttons[9].setIcon("elevator plus").setStatus(true).whenPressed(new IncrementAngle(s.angle, 5));
 
         // buttons[0].setMode("hold").whileHeld(shootAt(s, 4500));
+        buttons[4].setMode("hold").setIcon("near").whileHeld(shootAt(s, 2000, 40));
         buttons[0].setMode("hold").setIcon("near").whileHeld(shootAt(s, 4000, 40));
         buttons[1].setMode("hold").setIcon("medium").whileHeld(shootAt(s, 4500, 50));
         buttons[2].setMode("hold").setIcon("far").whileHeld(shootAt(s, 5250, 60));
         buttons[7].setIcon("aim").setStatus(true).whenPressed(new AngleCalibrate(s.angle));
+        buttons[14].setIcon("red").setStatus(true).whenPressed(new SetExtended(s.intake));
         // buttons[4].setMode("hold").whileHeld(shootAt(s, 6500));
     }
 

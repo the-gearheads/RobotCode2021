@@ -35,7 +35,7 @@ public class Elevator extends SubsystemBase {
     // setDefaultCommand(new BlockedElevate(this, intake));
   }
 
-  public void zero() {
+  public void resetPosition() {
     upperEncoder.setPosition(0);
     lowerEncoder.setPosition(0);
   }
@@ -64,14 +64,14 @@ public class Elevator extends SubsystemBase {
   }
 
   public void elevateUpper() {
-    upper(.1);
+    upper(.2);
   }
 
   public void elevateLower() {
     lower(.25);
   }
 
-  public void stop() {
+  public void zero() {
     elevate(0, 0);
   }
 
