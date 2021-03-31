@@ -36,6 +36,7 @@ public class StevenOperate extends OperatorProfile {
         // buttons[9].setIcon("elevator plus").setStatus(true).whenPressed(new IncrementAngle(s.angle, 5));
 
         // buttons[0].setMode("hold").whileHeld(shootAt(s, 4500));
+        buttons[4].setMode("hold").setIcon("near").whileHeld(shootAt(s, 2000, 40));
         buttons[0].setMode("hold").setIcon("near").whileHeld(shootAt(s, 4000, 40));
         buttons[1].setMode("hold").setIcon("medium").whileHeld(shootAt(s, 4500, 50));
         buttons[2].setMode("hold").setIcon("far").whileHeld(shootAt(s, 5250, 60));

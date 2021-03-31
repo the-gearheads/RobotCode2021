@@ -57,6 +57,12 @@ public class Shooter extends SubsystemBase {
   private final SimpleMotorFeedforward rightFF;
   @Log
   private double rpm;
+
+  @Log
+  private double currentLeft;
+  @Log
+  private double currentRight;
+
   private boolean incremented;
   private boolean decremented;
 
@@ -65,7 +71,7 @@ public class Shooter extends SubsystemBase {
    */
   public Shooter() {
     lShooter = new CANSparkMax(7, MotorType.kBrushless);
-    rShooter = new CANSparkMax(5, MotorType.kBrushless);
+    rShooter = new CANSparkMax(30, MotorType.kBrushless);
     rShooter.setInverted(true);
 
     lShooterEncoder = lShooter.getEncoder();
@@ -146,6 +152,9 @@ public class Shooter extends SubsystemBase {
   public void periodic() {
     incremented = false;
     decremented = false;
+
+    currentLeft = lShooter.getOutputCurrent();
+    currentRight = rShooter.getOutputCurrent();
 
     shooterLeft = leftVelocity.get();
     shooterRight = rightVelocity.get();
