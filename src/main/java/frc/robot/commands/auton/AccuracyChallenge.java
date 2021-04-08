@@ -43,8 +43,6 @@ public class AccuracyChallenge extends ParallelDeadlineGroup {
     AccuracySettings settings[] = new AccuracySettings[]{
       ACSet.GREEN.value,
       ACSet.YELLOW.value,
-      ACSet.YELLOW.value,
-      ACSet.BLUE.value,
       ACSet.BLUE.value,
       ACSet.RED.value,
     };
@@ -53,17 +51,17 @@ public class AccuracyChallenge extends ParallelDeadlineGroup {
     commands.add(new Shoot(shooter, ACSet.GREEN.value.rpm).withTimeout(.5));
     commands.add((new Shoot(shooter, ACSet.GREEN.value.rpm).alongWith(new Elevate(elevator))).withTimeout(2));
 
-    // iter 0: 2 green
-    // iter 1: 2 yellow
-    // iter 2: 2 yellow
-    // iter 3: 2 blue
-    // iter 4: 2 blue
-    // iter 5: 2 red
+    // iter 0: 3 green
+    // iter 1: 3 green
+    // iter 2: 3 yellow
+    // iter 3: 3 blue
+    // iter 4: 3 red
     for (AccuracySettings setting : settings) {
-      commands.add(new Goto(drive, new Pose2d(-Units.feetToMeters(20), 0, new Rotation2d(0)), true));
-      commands.add(new WaitElevate(elevator, intake, 2));
+      commands.add(new Goto(drive, new Pose2d(-Units.feetToMeters(20), 0, new Rotation2d(0)), true).deadlineWith(new Extend(intake), new FullIntake(intake, -.5)));
+      commands.add(new FullIntake(intake).withTimeout(1));
+      commands.add(new WaitElevate(elevator, intake, 3).deadlineWith(new FullIntake(intake)));
       commands.add(new Goto(drive, setting.pose, false).alongWith(new SetAngle(angle, setting.angle)));
-      commands.add(new Shoot(shooter, setting.rpm).withTimeout(.5));
+      commands.add(new Shoot(shooter, setting.rpm).withTimeout(.75));
       commands.add((new Shoot(shooter, setting.rpm).alongWith(new Elevate(elevator))).withTimeout(3.5));
     }
 
@@ -77,9 +75,9 @@ public class AccuracyChallenge extends ParallelDeadlineGroup {
       ));
 
     addCommands(
-      new SetAngle(angle, ACSet.GREEN.value.angle),
-      new Extend(intake), 
-      new FullIntake(intake)
+      new SetAngle(angle, ACSet.GREEN.value.angle)
+      // new Extend(intake), 
+      // new FullIntake(intake)
     );
   }
 }

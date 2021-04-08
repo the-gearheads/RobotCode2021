@@ -24,31 +24,35 @@ public class FullIntake extends CommandBase {
   private double debug0;
   @Log
   private double debug1;
+  private double speed;
 
   public FullIntake(Intake intake) {
+    this(intake, 1);
+  }
+
+  public FullIntake(Intake intake, double speed) {
     this.intake = intake;
     this.controller = new PIDController(0.01, 0, 0);
     feedforward = new SimpleMotorFeedforward(0.22, 0.00103, 0);
+    this.speed = speed;
 
     //Logger.configureLoggingAndConfig(this, false);
-    addRequirements(intake);
+    // addRequirements(intake);
   }
 
   @Override
   public void initialize() {
-    this.controller.setSetpoint(5000);
   }
 
   @Override
   public void execute() {
-    double effort = controller.calculate(intake.getIntakeVelocity());
-    double ff = feedforward.calculate(controller.getSetpoint());
-    effort = MathUtil.clamp(effort, 0, 12);
-    debug1 = effort;
-    intake.pft(.8);
-    debug1 = intake.getIntakeVelocity();
-    System.out.println(ff);
-    intake.intakePer(1.00);
+    // double effort = controller.calculate(intake.getIntakeVelocity());
+    // double ff = feedforward.calculate(controller.getSetpoint());
+    // effort = MathUtil.clamp(effort, 0, 12);
+    // debug1 = effort;
+    intake.pft(.8 * speed);
+    // debug1 = intake.getIntakeVelocity();
+    intake.intakePer(1.00 * speed);
   }
 
   @Override

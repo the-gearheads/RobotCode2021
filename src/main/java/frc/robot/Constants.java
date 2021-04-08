@@ -31,6 +31,7 @@ public final class Constants {
     public static double THROTTLE_DEADBAND = 0.05;
     public static double ROT_DEADBAND = 0.15;
 
+
     ////
 
     //// OPERATOR CONFIG
@@ -45,14 +46,19 @@ public final class Constants {
     //// DRIVETRAIN SETTINGS
 
     // Kinematics and Odometry
+
+    // https://docs.google.com/spreadsheets/d/1cBrfMQco34yFTKgGDFYsNibyJPC6CZj_KPqqjrW7pp8/edit?usp=sharing
+    public static final double LEFT_ERROR = 0.9620; // 0.9618;
+    public static final double RIGHT_ERROR = 0.9566; // 0.9454;
+
     public static final double TRACK_WIDTH = .68; // m
     public static final double GEARING = 12.75; // gear ratio
     public static final double WHEEL_DIAMETER = .195; // m
     public static final double ENCODER_EPR = 2048; // encoder units
-    public static final double MAX_VELOCITY = 1.5; // m/s
-    public static final double MAX_ACCEL = 3; // m/s²
-    public static final double RAMSETE_B = 2;
-    public static final double RAMSETE_ZETA = 0.7;
+    public static final double MAX_VELOCITY = 5.5; // m/s
+    public static final double MAX_ACCEL = 2; // m/s²
+    public static final double RAMSETE_B = 2.5; // tuning
+    public static final double RAMSETE_ZETA = 0.8; // damping
 
     // Feed Forward
     public static final SimpleMotorFeedforward leftFF = new SimpleMotorFeedforward(0.46, 1.84, 0.193);
@@ -89,7 +95,7 @@ public final class Constants {
 
     //// ELEVATOR SETTINGS
 
-    public static final double SINGLE_BALL_ROTS = 40;
+    public static final double SINGLE_BALL_ROTS = 26;
 
     ////
 

@@ -160,7 +160,7 @@ public class Shooter extends SubsystemBase {
     shooterRight = rightVelocity.get();
     shooterRPM = (shooterLeft + shooterRight) / (double) 2;
     double range = Constants.RPM_MAX - Constants.RPM_MIN;
-    rpm = (Math.abs(((RobotContainer.joystick.getRawAxis(2) - 1)) / 2)) * range + Constants.RPM_MIN;
+    // rpm = (Math.abs(((RobotContainer.joystick.getRawAxis(2) - 1)) / 2)) * range + Constants.RPM_MIN;
 
     if (bottomBlocked()) {
       if (bottomPrimed) {

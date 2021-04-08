@@ -42,6 +42,7 @@ public class Intake extends SubsystemBase {
   private double pftVelocity;
   @Log
   private boolean lastIntook;
+  @Log
   private boolean intook;
 
   public Intake() {
@@ -51,10 +52,10 @@ public class Intake extends SubsystemBase {
     rExtension.setInverted(true);
 
     pft = new CANSparkMax(28, MotorType.kBrushless);
-    pft.setIdleMode(IdleMode.kCoast);
+    pft.setIdleMode(IdleMode.kBrake);
 
     intake = new CANSparkMax(35, MotorType.kBrushless);
-    intake.setIdleMode(IdleMode.kCoast);
+    intake.setIdleMode(IdleMode.kBrake);
     intakeEncoder = intake.getEncoder();
 
     lEncoder = lExtension.getEncoder();
@@ -108,16 +109,14 @@ public class Intake extends SubsystemBase {
     Tuple vel = getVelocity();
     velocity = (vel.left + vel.right) / 2;
     // if large rpm drop in one update while motor running, denote intake
-    //intook = false;
+    // intook = false;
     intook = false;
-    if (pftEncoder.getVelocity() < 6500 &&  pft.get() > 0 && !lastIntook) {
+    if (intakeEncoder.getVelocity() < 5000 && intake.getOutputCurrent() > 3 && !lastIntook) {
       lastIntook = true;
       intook = true;
     }
-    if (lastIntook)
-    {
-      if (pftEncoder.getVelocity() > 9000)
-      {
+    if (lastIntook) {
+      if (intakeEncoder.getVelocity() > 5250) {
         lastIntook = false;
       }
     }
@@ -152,5 +151,10 @@ public class Intake extends SubsystemBase {
   public void setExtended() {
     lEncoder.setPosition(Constants.LEFT_DISTANCE);
     rEncoder.setPosition(Constants.RIGHT_DISTANCE);
+  }
+
+  public void setZero() {
+    lEncoder.setPosition(0);
+    rEncoder.setPosition(0);
   }
 }

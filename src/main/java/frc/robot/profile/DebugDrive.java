@@ -39,7 +39,6 @@ public class DebugDrive extends DriverBase {
         new JoystickButton(controller, XboxController.Button.kStart.value).whenPressed(
                 new Goto(s.drive, new Pose2d(-Units.feetToMeters(0), 0.0, new Rotation2d(0.0, 0.0)), false));
 
-        new JoystickButton(controller, XboxController.Button.kBack.value).whenPressed(new SetExtended(s.intake));
         new JoystickButton(controller, XboxController.Button.kX.value)
                 .whenPressed(new AccuracyChallenge(s.drive, s.shooter, s.intake, s.elevator, s.angle));
 

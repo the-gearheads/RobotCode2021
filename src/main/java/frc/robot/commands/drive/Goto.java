@@ -10,6 +10,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.spline.SplineParameterizer.MalformedSplineException;
@@ -32,6 +33,8 @@ public class Goto extends CommandBase {
   private NetworkTableEntry xEntry;
   private NetworkTableEntry yEntry;
   private NetworkTableEntry isFollowing;
+  private Timer timer = new Timer();
+  private Trajectory trajectory;
 
   public Goto(DriveSubsystem drive, Pose2d pose, boolean reversed) {
     this.drive = drive;
@@ -46,13 +49,14 @@ public class Goto extends CommandBase {
 
   @Override
   public void initialize() {
+    timer.reset();
+    timer.start();
     final DifferentialDriveVoltageConstraint autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
         Constants.leftFF, drive.kinematics, 10);
     final TrajectoryConfig config = new TrajectoryConfig(Constants.MAX_VELOCITY, Constants.MAX_ACCEL)
         .setKinematics(drive.kinematics).addConstraint(autoVoltageConstraint).setReversed(reversed);
 
     try {
-      Trajectory trajectory;
       trajectory = TrajectoryGenerator.generateTrajectory(drive.getPose(), Collections.emptyList(), pose,
         config);
       
@@ -78,6 +82,6 @@ public class Goto extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    return ramsete.isFinished();
+    return ramsete.isFinished() || timer.hasElapsed(trajectory.getTotalTimeSeconds() + .5);
   }
 }

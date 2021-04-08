@@ -42,8 +42,6 @@ public class DriveSubsystem extends SubsystemBase {
 
   private final double ENCODER_CONSTANT = (1 / (double) Constants.ENCODER_EPR) * (1 / (double) Constants.GEARING)
       * Constants.WHEEL_DIAMETER * Math.PI;
-  private final double LEFT_ERROR = 0.9618;
-  private final double RIGHT_ERROR = 0.9454;
 
   private final WPI_TalonFX flMotor;
   private final WPI_TalonFX frMotor;
@@ -144,10 +142,10 @@ public class DriveSubsystem extends SubsystemBase {
     odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getAngle()),
         new Pose2d(0, 0, Rotation2d.fromDegrees(getAngle())));
 
-    leftPosition = () -> -blMotor.getSelectedSensorPosition() * (ENCODER_CONSTANT * LEFT_ERROR);
-    rightPosition = () -> -brMotor.getSelectedSensorPosition() * (-ENCODER_CONSTANT * RIGHT_ERROR);
-    leftVelocity = () -> blMotor.getSelectedSensorVelocity() * (ENCODER_CONSTANT * LEFT_ERROR * 10);
-    rightVelocity = () -> brMotor.getSelectedSensorVelocity() * (-ENCODER_CONSTANT * RIGHT_ERROR * 10);
+    leftPosition = () -> -blMotor.getSelectedSensorPosition() * (ENCODER_CONSTANT * Constants.LEFT_ERROR);
+    rightPosition = () -> -brMotor.getSelectedSensorPosition() * (-ENCODER_CONSTANT * Constants.RIGHT_ERROR);
+    leftVelocity = () -> blMotor.getSelectedSensorVelocity() * (ENCODER_CONSTANT * Constants.LEFT_ERROR * 10);
+    rightVelocity = () -> brMotor.getSelectedSensorVelocity() * (-ENCODER_CONSTANT * Constants.RIGHT_ERROR * 10);
 
     leftSide = new SpeedControllerGroup(flMotor, blMotor);
     rightSide = new SpeedControllerGroup(frMotor, brMotor);
@@ -211,6 +209,8 @@ public class DriveSubsystem extends SubsystemBase {
   public void periodic() {
     leftVel = leftVelocity.get();
     rightVel = rightVelocity.get();
+    leftRotations = -blMotor.getSelectedSensorPosition();
+    rightRotations = -brMotor.getSelectedSensorPosition();
     angularVelocity = getAngularVelocity();
     angle = getAngle();
     Rotation2d gyroAngle = Rotation2d.fromDegrees(angle);
