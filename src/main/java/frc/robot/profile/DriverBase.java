@@ -23,7 +23,5 @@ public class DriverBase implements DriverProfile {
         return new Tuple(x, y);
     }
 
-    public Command getDriveCommand(DriveSubsystem drive) {
-        return new ArcadeDrive(drive);
-    }
+    
 }

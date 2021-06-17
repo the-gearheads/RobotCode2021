@@ -28,6 +28,7 @@ import frc.robot.profile.DriverProfile;
 import frc.robot.profile.JuliaDrive;
 import frc.robot.profile.OperatorProfile;
 import frc.robot.profile.RobDrive;
+import frc.robot.profile.SaadDrive;
 import frc.robot.profile.StevenOperate;
 import frc.robot.subsystems.Arms;
 import frc.robot.subsystems.DriveSubsystem;
@@ -88,6 +89,7 @@ public class RobotContainer {
     driverChooser.addOption("Akhil", new AkhilDrive());
     driverChooser.addOption("Julia", new JuliaDrive());
     driverChooser.addOption("Rob", new RobDrive());
+    driverChooser.addOption("Saad", new SaadDrive());
     SmartDashboard.putData("Select Driver", driverChooser);
 
     operatorChooser.setDefaultOption("Debug", new DebugOperate());
