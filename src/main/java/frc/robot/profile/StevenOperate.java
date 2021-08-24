@@ -8,6 +8,7 @@ import frc.robot.commands.angle.AngleCalibrate;
 import frc.robot.commands.angle.HoldAngle;
 import frc.robot.commands.angle.IncrementAngle;
 import frc.robot.commands.angle.SetAngle;
+import frc.robot.commands.arms.WinchHold;
 import frc.robot.commands.elevator.Elevate;
 import frc.robot.commands.intake.Extend;
 import frc.robot.commands.intake.FullIntake;
@@ -23,9 +24,11 @@ public class StevenOperate extends OperatorProfile {
 
     public void createBinds(XboxController controller, Joystick joystick, StreamDeck streamdeck, Subsystems s) {
         setupStreamDeck(streamdeck);
-        buttons[0].setMode("hold").setIcon("near").whileHeld(shootAt(s, 5000, 41));
-        buttons[1].setMode("hold").setIcon("medium").whileHeld(shootAt(s, 5000, 54));
-        buttons[2].setMode("hold").setIcon("far").whileHeld(shootAt(s, 5300, 58));
+        buttons[0].setMode("hold").setIcon("near").whileHeld(shootAt(s, 3600, 38));
+            //105 cm from base of target
+        buttons[1].setMode("hold").setIcon("medium").whileHeld(shootAt(s, 4750, 56));
+            //Back bumper on gray line
+        buttons[2].setMode("hold").setIcon("far").whileHeld(shootAt(s, 5300, 50));
         buttons[5].setMode("hold").setIcon("intake").setStatus(false)
                 .whileHeld(new Extend(s.intake).alongWith(new FullIntake(s.intake)))
                 .whenReleased(new Retract(s.intake).alongWith((new FullIntake(s.intake).withTimeout(0.5))));
@@ -35,6 +38,7 @@ public class StevenOperate extends OperatorProfile {
                 .whenReleased(new Retract(s.intake));
         buttons[7].setIcon("aim").setStatus(true).whenPressed(new AngleCalibrate(s.angle));
         buttons[8].setMode("hold").setIcon("blue").setStatus(true).whileHeld(new Elevate(s.elevator));
+        buttons[4].setMode("hold").setIcon("arms down").whileHeld(new WinchHold(s.arms, -1));
 
     }
 

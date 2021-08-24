@@ -23,7 +23,7 @@ import frc.robot.util.Subsystems;
 public class DebugDrive extends DriverBase {
 
     public DriverSettings getSettings() {
-        return new DriverSettings(2, 120, (1 / (double) 3), 1.5);
+        return new DriverSettings(1, 120, (1 / (double) 3), 1.5);
     }
 
     public void createBinds(XboxController controller, Joystick joystick, StreamDeck streamdeck, Subsystems s) {

@@ -8,6 +8,7 @@ import frc.robot.commands.angle.AngleCalibrate;
 import frc.robot.commands.angle.HoldAngle;
 import frc.robot.commands.angle.IncrementAngle;
 import frc.robot.commands.angle.SetAngle;
+import frc.robot.commands.arms.WinchHold;
 import frc.robot.commands.elevator.Elevate;
 import frc.robot.commands.intake.Extend;
 import frc.robot.commands.intake.FullIntake;
@@ -36,10 +37,12 @@ public class DebugOperate extends OperatorProfile {
         // IncrementAngle(s.angle, 5));
 
         // buttons[0].setMode("hold").whileHeld(shootAt(s, 4500));
-        buttons[4].setMode("hold").setIcon("near").whileHeld(shootAt(s, 2000, 40));
+       // buttons[4].setMode("hold").setIcon("near").whileHeld(shootAt(s, 2000, 40));
         buttons[0].setMode("hold").setIcon("near").whileHeld(shootAt(s, 4000, 40));
         buttons[1].setMode("hold").setIcon("medium").whileHeld(shootAt(s, 4500, 50));
         buttons[2].setMode("hold").setIcon("far").whileHeld(shootAt(s, 5250, 60));
+        buttons[3].setMode("hold").setIcon("arms up").whileHeld(new WinchHold(s.arms, 1));
+        buttons[4].setMode("hold").setIcon("arms down").whileHeld(new WinchHold(s.arms, -1));
         buttons[7].setIcon("aim").setStatus(true).whenPressed(new AngleCalibrate(s.angle));
         buttons[14].setIcon("red").setStatus(true).whenPressed(new SetExtended(s.intake, false));
         buttons[13].setIcon("green").setStatus(true).whenPressed(new SetExtended(s.intake, true));
