@@ -91,6 +91,10 @@ public final class Constants {
     public static final double SHOOTER_ANGLE_MIN = 1;
     public static final double SHOOTER_ANGLE_MAX = 64;
 
+    // pot readings in volts rather than angle (Upper is about 64 Lower about 1)
+    //public static final double SHOOTER_ANGLE_MIN = 4.04;
+    //public static final double SHOOTER_ANGLE_Voltage_MAX = 1.87;
+
     ////
 
     //// ELEVATOR SETTINGS

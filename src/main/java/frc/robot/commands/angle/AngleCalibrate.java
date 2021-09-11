@@ -40,7 +40,7 @@ public class AngleCalibrate extends CommandBase {
           e.printStackTrace();
         }
         state = 1;
-        topVoltage = 1.74;
+        topVoltage = angle.getVoltage();
       } else {
         angle.turnAngle(.1);
       }
@@ -59,7 +59,7 @@ public class AngleCalibrate extends CommandBase {
           e.printStackTrace();
         }
         state = 3;
-        bottomVoltage = 4.18;
+        bottomVoltage = angle.getVoltage();
       } else {
         angle.turnAngle(.1);
       }

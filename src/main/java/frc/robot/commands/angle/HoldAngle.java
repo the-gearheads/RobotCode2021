@@ -12,15 +12,22 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpiutil.math.MathUtil;
 import frc.robot.subsystems.ShooterAngle;
 import frc.robot.util.Deadband;
+import io.github.oblarg.oblog.Logger;
+//import io.github.oblarg.oblog.annotations.Log;
 
 public class HoldAngle extends CommandBase {
   private final ShooterAngle angle;
   private final PIDController up;
   private final PIDController down;
 
+  //@Log
+  double effort;
+
+
   private double target;
 
   public HoldAngle(ShooterAngle angle) {
+    Logger.configureLoggingAndConfig(this, false);
     this.angle = angle;
     up = new PIDController(0.5, 0, 0);
     down = new PIDController(0.2, 0, 0);
@@ -39,13 +46,12 @@ public class HoldAngle extends CommandBase {
   public void execute() {
     up.setSetpoint(angle.getSetpoint());
     down.setSetpoint(angle.getSetpoint());
-    if (Deadband.get(angle.getPosition(), angle.getSetpoint(), 0.25) == 0) {
+    if (Deadband.get(angle.getPosition(), angle.getSetpoint(), 0.1) == 0) {
       angle.turnAngle(0);
       return;
     }
 
     double error = angle.getSetpoint() - angle.getPosition();
-    double effort;
     if (Math.signum(error) == 1) {
       effort = up.calculate(angle.getPosition());
     } else {

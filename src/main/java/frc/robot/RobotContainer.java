@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpiutil.net.PortForwarder;
 import frc.robot.commands.angle.AngleCalibrate;
 import frc.robot.commands.auton.AccuracyChallenge;
+import frc.robot.commands.auton.KetteringAuton;
 import frc.robot.commands.drive.Goto;
 import frc.robot.commands.drive.Pathweaver;
 import frc.robot.profile.AkhilDrive;
@@ -79,10 +80,14 @@ public class RobotContainer {
 
     subsystems = new Subsystems(drive, shooter, angle, elevator, intake, arms);
 
-    chooser.setDefaultOption("Accuracy Challenge", new AccuracyChallenge(drive, shooter, intake, elevator, angle));
-    chooser.addOption("Barrel Race", new Pathweaver(drive, "barrel race"));
-    chooser.addOption("Return to Origin", new Goto(drive, new Pose2d(0, 0, new Rotation2d(0)), false));
-    chooser.addOption("Calibrate Shooter Angle", new AngleCalibrate(angle));
+    //chooser.setDefaultOption("Accuracy Challenge", new AccuracyChallenge(drive, shooter, intake, elevator, angle));
+    //chooser.addOption("Barrel Race", new Pathweaver(drive, "barrel race"));
+    //chooser.addOption("Return to Origin", new Goto(drive, new Pose2d(0, 0, new Rotation2d(0)), false));
+    //chooser.addOption("Calibrate Shooter Angle", new AngleCalibrate(angle));
+    chooser.setDefaultOption("Kettering Auton Front", new KetteringAuton(subsystems, 5000,  56, 1));
+    chooser.addOption("Kettering Auton Back", new KetteringAuton(subsystems, 5900, 60, -1));
+
+
     SmartDashboard.putData("Select Auton", chooser);
 
     driverChooser.setDefaultOption("Debug", new DebugDrive());

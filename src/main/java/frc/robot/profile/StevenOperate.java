@@ -26,19 +26,19 @@ public class StevenOperate extends OperatorProfile {
         setupStreamDeck(streamdeck);
         buttons[0].setMode("hold").setIcon("near").whileHeld(shootAt(s, 3600, 38));
             //105 cm from base of target
-        buttons[1].setMode("hold").setIcon("medium").whileHeld(shootAt(s, 4750, 56));
+        buttons[1].setMode("hold").setIcon("medium").whileHeld(shootAt(s, 5000, 56));
             //Back bumper on gray line
-        buttons[2].setMode("hold").setIcon("far").whileHeld(shootAt(s, 5300, 50));
+        buttons[2].setMode("hold").setIcon("far").whileHeld(shootAt(s, 7000, 62));
         buttons[5].setMode("hold").setIcon("intake").setStatus(false)
                 .whileHeld(new Extend(s.intake).alongWith(new FullIntake(s.intake)))
                 .whenReleased(new Retract(s.intake).alongWith((new FullIntake(s.intake).withTimeout(0.5))));
         buttons[6].setMode("hold").setIcon("intake").setStatus(true)
-                .whileHeld((new Extend(s.intake).deadlineWith(new FullIntake(s.intake)))
-                        .andThen(new WaitElevate(s.elevator, s.intake, 3).deadlineWith(new FullIntake(s.intake))))
+                .whileHeld(new Extend(s.intake).alongWith(new FullIntake(s.intake)))
                 .whenReleased(new Retract(s.intake));
         buttons[7].setIcon("aim").setStatus(true).whenPressed(new AngleCalibrate(s.angle));
         buttons[8].setMode("hold").setIcon("blue").setStatus(true).whileHeld(new Elevate(s.elevator));
         buttons[4].setMode("hold").setIcon("arms down").whileHeld(new WinchHold(s.arms, -1));
+        buttons[3].setMode("hold").setIcon("red").whileHeld(shootAt(s, 0, 0));
 
     }
 
