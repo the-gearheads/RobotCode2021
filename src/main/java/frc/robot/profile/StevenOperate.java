@@ -38,6 +38,7 @@ public class StevenOperate extends OperatorProfile {
         buttons[12].setMode("hold").setIcon("aim").setStatus(true).whileHeld(shootAt(s, 0, 0));
         buttons[8].setMode("hold").setIcon("blue").setStatus(true).whileHeld(new Elevate(s.elevator));
         buttons[4].setMode("hold").setIcon("arms down").whileHeld(new WinchHold(s.arms, -1));
+        buttons[10].setMode("hold").setIcon("red").whileHeld(new ReverseElevate(s.elevator));
         //buttons[3].setMode("hold").setIcon("red").whileHeld(shootAt(s, 0, 0));
 
     }
