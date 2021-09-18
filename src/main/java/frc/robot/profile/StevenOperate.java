@@ -10,6 +10,7 @@ import frc.robot.commands.angle.IncrementAngle;
 import frc.robot.commands.angle.SetAngle;
 import frc.robot.commands.arms.WinchHold;
 import frc.robot.commands.elevator.Elevate;
+import frc.robot.commands.elevator.ReverseElevate;
 import frc.robot.commands.intake.Extend;
 import frc.robot.commands.intake.FullIntake;
 import frc.robot.commands.intake.Retract;

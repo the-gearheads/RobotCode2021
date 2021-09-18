@@ -63,7 +63,7 @@ public class ShooterAngle extends SubsystemBase {
 
   @Log
   public double getPosition() {
-    return -24.2115 * voltsReal +105.8440;
+    return -24.2115 * voltsReal + 105.8440;
     //return Constants.SHOOTER_ANGLE_MIN + (p * (Constants.SHOOTER_ANGLE_MAX - Constants.SHOOTER_ANGLE_MIN));
   }
 

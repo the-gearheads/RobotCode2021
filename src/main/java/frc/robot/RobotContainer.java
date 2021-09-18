@@ -87,7 +87,6 @@ public class RobotContainer {
     chooser.setDefaultOption("Kettering Auton Front", new KetteringAuton(subsystems, 5000,  56, 1));
     chooser.addOption("Kettering Auton Back", new KetteringAuton(subsystems, 5900, 60, -1));
 
-
     SmartDashboard.putData("Select Auton", chooser);
 
     driverChooser.setDefaultOption("Debug", new DebugDrive());
@@ -97,8 +96,8 @@ public class RobotContainer {
     driverChooser.addOption("Saad", new SaadDrive());
     SmartDashboard.putData("Select Driver", driverChooser);
 
-    operatorChooser.setDefaultOption("Debug", new DebugOperate());
-    operatorChooser.addOption("Steven", new StevenOperate());
+    operatorChooser.setDefaultOption("Default (Steven)", new StevenOperate());
+    //operatorChooser.addOption("Steven", new StevenOperate());
     SmartDashboard.putData("Select Operator", operatorChooser);
 
     PortForwarder.add(8000, "10.11.89.100", 80);
@@ -106,6 +105,7 @@ public class RobotContainer {
     PortForwarder.add(5800, "10.11.89.100", 5800);
     PortForwarder.add(554, "10.11.89.100", 554);
     CameraServer.getInstance().startAutomaticCapture(0);
+    CameraServer.getInstance().startAutomaticCapture(1);
   }
 
   // run on any mode init

@@ -34,7 +34,7 @@ public class RobDrive extends DriverBase {
         new JoystickButton(controller, XboxController.Button.kB.value)
             .whileHeld(new SpeedModifier(s.drive, Optional.of(0.0), Optional.of(0.0), Optional.empty()));
 
-        new JoystickButton(controller, XboxController.Button.kBumperLeft.value)
+        new JoystickButton(controller, XboxController.Button.kBumperRight.value)
             .whileHeld(new SpeedModifier(s.drive, Optional.of(getSettings().FAST_MULTIPLIER), Optional.of(getSettings().FAST_MULTIPLIER), Optional.empty()));
 
         new JoystickButton(controller, XboxController.Button.kBumperLeft.value)
